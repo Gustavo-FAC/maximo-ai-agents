@@ -1,0 +1,34 @@
+# Segredos: nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Ambiente Python
+.venv/
+__pycache__/
+*.py[cod]
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Caches de ferramentas
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Editor e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Memória do projeto: fontes brutas (docs do cliente) e estado local do MemPalace
+memoria/raw/*
+!memoria/raw/.gitkeep
+.mempalace/

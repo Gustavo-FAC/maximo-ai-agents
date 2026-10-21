@@ -1,0 +1,14 @@
+repos:
+  # Bloqueia o commit se encontrar algo parecido com chave de API ou senha
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks
+
+  # Formatação e verificação de qualidade do código
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
