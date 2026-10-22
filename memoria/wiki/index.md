@@ -15,4 +15,5 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[automation-scripts-como-ferramentas]] – regras, parâmetros, perguntas abertas.
 
 ## Fontes
-- (nenhuma ainda)
+- [[doc-mcp-server]] – doc IBM do MCP Server: registro de ferramenta, flags, auth.
+- [[guia-automation-scripts]] – IBM Autoscripting Guide: variáveis, REST, segurança.

@@ -4,7 +4,7 @@ type: entity
 sources: []
 related: [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[itambe-cimentos]]
 created: 2026-10-21
-updated: 2026-10-21
+updated: 2026-10-22
 ---
 
 # MCP Server do MAS 9.2
@@ -36,7 +36,8 @@ CREATESR. Ver [[allowlist-somente-leitura]].
   `streamable_http_client(url, http_client=...)`.
 - Console do Windows: forçar `sys.stdout.reconfigure(encoding="utf-8")` para acentos.
 
-## Pendente
+## Documentação
 
-- Documentação do MCP Server em `docs/Maximo MCP Server — Documentação.docx`. Ingest pendente. Necessária
-  para saber como automation script vira ferramenta.
+Resumo em [[doc-mcp-server]] (ingest 2026-10-22). Destaques: polling de 10 min,
+timeout de 10 min, auth `apikey` ou `x-access-token` (JWT), endpoints de depuração
+`/api/listmcptools` e `/api/oas?aitools=1`.

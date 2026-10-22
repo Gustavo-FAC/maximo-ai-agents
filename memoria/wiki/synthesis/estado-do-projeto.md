@@ -28,8 +28,7 @@ Commit inicial feito em 2026-10-21 na branch `chore/esqueleto-inicial` (sem push
 
 ## Próximo
 
-1. Ingest da doc do MCP Server (já em `docs/Maximo MCP Server — Documentação.docx`) e responder as
-   perguntas de [[automation-scripts-como-ferramentas]].
+1. ~~Ingest das docs~~ feito em 2026-10-22: ver [[doc-mcp-server]], [[guia-automation-scripts]].
 2. Escrever primeiro automation script (consulta genérica de OS) em `maximo_scripts/`.
 3. Em paralelo, sem depender do Maximo: gateway de LLM em `llm/` com Ollama (passo 5)
    e agente de teste com `apischema` (passo 6).

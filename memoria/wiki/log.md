@@ -17,3 +17,11 @@ Criado `memoria/` com esquema, índice, log, 2 entidades, 3 conceitos e
 Doc do MCP Server adicionada em `docs/` pelo usuário (verificada: sem segredos, só URLs
 de exemplo). Commit inicial na branch `chore/esqueleto-inicial`, sem push. Ingest da
 doc fica para a próxima sessão.
+
+## [2026-10-22] ingest | Doc do MCP Server e guia de Automation Scripts
+Lidos `docs/Maximo MCP Server — Documentação.docx` e
+`docs/Automation_Scripts_IBM_Maximo.docx` (novo, não versionado). Criadas
+[[doc-mcp-server]] e [[guia-automation-scripts]]. Respondidas as perguntas de
+[[automation-scripts-como-ferramentas]] (registro, parâmetros literais, Jython) e
+abertas 4 novas para testar no primeiro script. [[allowlist-somente-leitura]]:
+IBM define "Read only?" incluindo edições reversíveis.
