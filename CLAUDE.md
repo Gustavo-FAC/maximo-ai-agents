@@ -49,6 +49,9 @@ Cliente piloto: **Itambé Cimentos**.
   `.pre-commit-config.yaml`, `config/settings.py`, `mcp/check_connection.py`
   e teste unitário de settings.
 - Fase 0 concluída (ambiente MAS 9.2 com MCP Server validado).
+- 1º automation script `QUERYWORKORDERS` em `maximo_scripts/queryworkorders/`
+  (Jython 2.7, 22 testes). Reinstalação em homologação pendente (ver
+  `INSTALACAO.md` e `memoria/wiki/synthesis/estado-do-projeto.md`).
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 
 ## Memória do projeto
@@ -69,6 +72,7 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 6. Primeiro agente: laço com uma ferramenta de consulta, limite de 5 voltas.
 7. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
+   Primeiro script genérico (`QUERYWORKORDERS`) já escrito em 2026-10-22.
 
 ## Referências
 

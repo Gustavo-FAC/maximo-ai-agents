@@ -11,8 +11,10 @@ Catálogo de páginas. Atualizar a cada alteração.
 
 ## Conceitos
 - [[allowlist-somente-leitura]] – única barreira contra escrita; não implementada.
+  Requisitos novos: nome exato ASCII, descrição própria.
 - [[chave-api-por-usuario]] – decisão de arquitetura e exceção atual (MAXADMIN).
-- [[automation-scripts-como-ferramentas]] – regras, parâmetros, perguntas abertas.
+- [[automation-scripts-como-ferramentas]] – regras, como registrar, lições do OAS,
+  estado do `QUERYWORKORDERS`.
 
 ## Fontes
 - [[doc-mcp-server]] – doc IBM do MCP Server: registro de ferramenta, flags, auth.

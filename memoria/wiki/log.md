@@ -48,3 +48,9 @@ cortadas em 100. Correção: permissão WOTRACK/READ checada no código
 (APPLICATIONAUTH), variáveis de segurança removidas, `changedate` fora de
 `date_field`, guia reescrito (remover e recriar, digitar nomes). 22 testes.
 Script atual no Maximo deve ficar inativo até reinstalar.
+
+## [2026-10-22] session | Fim de sessão
+Feito: ingest das docs, `QUERYWORKORDERS` (script, schema, README, guia, 22 testes),
+1ª instalação avaliada pelo OAS e corrigida. Commits `48a1eed`, `d5998cf` (sem push).
+Parado em: usuário vai reinstalar o script e enviar OAS, `check_connection` e
+respostas de teste. [[estado-do-projeto]] reescrito com "Onde paramos" e "Falta".
