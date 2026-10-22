@@ -32,6 +32,9 @@ select = ["E", "F", "I", "B", "UP", "S"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101"]
+# Jython 2.7 inside Maximo: no f-strings or py3-only syntax; SQL uses whitelisted
+# columns and bind placeholders only.
+"maximo_scripts/**" = ["UP", "B904", "S608"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

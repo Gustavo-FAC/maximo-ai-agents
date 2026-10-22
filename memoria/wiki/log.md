@@ -25,3 +25,26 @@ Lidos `docs/Maximo MCP Server — Documentação.docx` e
 [[automation-scripts-como-ferramentas]] (registro, parâmetros literais, Jython) e
 abertas 4 novas para testar no primeiro script. [[allowlist-somente-leitura]]:
 IBM define "Read only?" incluindo edições reversíveis.
+
+## [2026-10-22] code | Primeiro automation script: QUERYWORKORDERS
+Escrito em Jython 2.7 (pedido do usuário: scripts em Python) em
+`maximo_scripts/queryworkorders/` com response schema e README (descrição da
+ferramenta, variáveis, registro, checklist de validação). Lógica pura testada em
+CPython (19 testes). Ruff: ignores `UP`, `B904`, `S608` para `maximo_scripts/**`.
+Não instalado no Maximo. Páginas: [[automation-scripts-como-ferramentas]],
+[[estado-do-projeto]].
+
+## [2026-10-22] docs | Guia de instalação do QUERYWORKORDERS
+`maximo_scripts/queryworkorders/INSTALACAO.md`: passo a passo campo a campo
+(wizard, 16 variáveis literais, response schema, Add/Modify MCP Tool, validação).
+Script passou a ler parâmetros de variável literal, `requestBody` JSON ou query
+string (canal do MCP ainda não confirmado) e loga a origem. 21 testes.
+
+## [2026-10-22] test | 1ª instalação do QUERYWORKORDERS (OAS)
+Usuário criou o script e enviou `/api/oas?aitools=1`. Ferramenta registrada
+(`/script_queryworkorders`, readOnlyHint true), mas: U+200B no nome e em 13
+variáveis (colagem); `authapp`/`authsigoption` expostos como parâmetros; descrições
+cortadas em 100. Correção: permissão WOTRACK/READ checada no código
+(APPLICATIONAUTH), variáveis de segurança removidas, `changedate` fora de
+`date_field`, guia reescrito (remover e recriar, digitar nomes). 22 testes.
+Script atual no Maximo deve ficar inativo até reinstalar.

@@ -54,4 +54,23 @@ Ferramentas de dados são automation scripts no Maximo, publicados no
 
 ## Estado
 
-- Nenhum script criado ainda. Primeiro: consulta genérica de OS.
+- 2026-10-22: `QUERYWORKORDERS` escrito em `maximo_scripts/queryworkorders/` (Jython
+  2.7, testes da lógica pura em CPython). **Ainda não instalado no Maximo.** Checklist
+  de validação no README do script responde as perguntas abertas acima.
+- Variáveis `authapp`/`authsigoption` podem virar parâmetro da ferramenta no MCP:
+  conferir na instalação (risco de o chamador sobrescrever).
+- Jython 2.7: `str()` quebra com acento; usar `"%s" % (v,)`. Fonte só ASCII.
+
+## Aprendido no OAS da 1ª instalação (2026-10-22)
+
+`/api/oas?aitools=1` mostra a ferramenta como `/script_<nome>` (`toolType: AUTOSCRIPT`).
+
+- **Toda variável vira parâmetro** do `requestBody`, inclusive `authapp` e
+  `authsigoption`. Logo, segurança nunca em variável: checar permissão no código.
+- Nenhum parâmetro sai como obrigatório; todos `string` (ALN).
+- Descrição da ferramenta = campo **Description** do script (curto). Long
+  description não aparece. Descrição de variável cortada em **100 caracteres**.
+- Colagem no Maximo trouxe **U+200B** (espaço de largura zero) no nome do script e
+  de 13 variáveis. Digitar nomes à mão; conferir `u200b` no OAS.
+- Consequência para o nosso lado: a [[allowlist-somente-leitura]] deve guardar
+  descrição própria (rica) das ferramentas e rejeitar nomes com caractere não ASCII.

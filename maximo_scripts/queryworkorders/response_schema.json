@@ -1,0 +1,30 @@
+{
+  "title": "Work order query response",
+  "type": "object",
+  "properties": {
+    "total": {"type": "integer", "description": "Total work orders matching the filters (all pages)."},
+    "page": {"type": "integer", "description": "Current page, starting at 1."},
+    "page_size": {"type": "integer", "description": "Maximum items per page."},
+    "total_pages": {"type": "integer", "description": "Number of pages for this query."},
+    "returned": {"type": "integer", "description": "Items returned in this page."},
+    "has_more": {"type": "boolean", "description": "True if there are more pages after this one."},
+    "date_field": {"type": "string", "description": "Date attribute used for the date range."},
+    "date_from": {"type": "string", "description": "Start date applied (YYYY-MM-DD, inclusive)."},
+    "date_to": {"type": "string", "description": "End date applied (YYYY-MM-DD, inclusive)."},
+    "filters": {"type": "object", "description": "Normalized filters applied, by parameter name."},
+    "items": {
+      "type": "array",
+      "description": "Work orders in this page, ordered by date_field descending. Only the requested fields are present; dates are yyyy-MM-ddTHH:mm:ss in server time.",
+      "items": {"type": "object"}
+    },
+    "error": {
+      "type": "object",
+      "description": "Present only when the request is invalid. No other field is returned.",
+      "properties": {
+        "code": {"type": "string", "description": "Machine-readable error code."},
+        "parameter": {"type": ["string", "null"], "description": "Parameter that caused the error."},
+        "message": {"type": "string", "description": "Human-readable explanation."}
+      }
+    }
+  }
+}

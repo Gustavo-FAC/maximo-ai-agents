@@ -9,3 +9,18 @@ Regras:
 - Nomes, descrições e parâmetros em inglês, com response schema definido.
 - Somente consulta: nenhum script altera dados no Maximo.
 - Parâmetros obrigatórios de intervalo de datas, com paginação e limite de registros.
+
+Convenções:
+
+- Uma pasta por script (`maximo_scripts/<nome>/`) com o script, `response_schema.json`
+  e `README.md` (descrição da ferramenta, variáveis, registro, validação).
+- Linguagem **Jython 2.7**. O código precisa rodar também em CPython 3 para os testes
+  em `tests/unit/`: sem f-string, sem `super()` sem argumentos, sem `raise ... from`,
+  arquivo só em ASCII. Imports Java/Maximo apenas dentro de funções de runtime.
+- Texto com `"%s" % (valor,)`, nunca `str(valor)` (quebra com acento no Jython).
+- Filtros sempre por bind (`SqlFormat`); colunas só de listas fixas.
+- `MboSet`: `count()` uma vez, `cleanup()` em `finally`.
+
+Scripts:
+
+- [`queryworkorders/`](queryworkorders/README.md) – consulta genérica de OS.
