@@ -58,7 +58,9 @@ Cliente piloto: **Itambé Cimentos**.
   via MCP** (dados reais, filtros, paginação, busca por `wonums` sem datas).
 - Allowlist em `src/maximo_agents/mcp/allowlist.py`: nomes exatos, descrições
   próprias para o LLM, `input_schema` fechado e `clean_arguments`.
-- 59 testes unitários.
+- 2º script `QUERYASSETS` (ativos, hierarquia, busca por palavras) **funcionando via
+  MCP** desde 2026-10-29. Usuário da chave precisa estar com idioma EN (BMXAA10147E).
+- 92 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
