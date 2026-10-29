@@ -28,7 +28,7 @@ Ler no início de cada sessão. Atualizar no fim.
   datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].
 - **Allowlist pronta para o agente:** descrições próprias para o LLM,
   `input_schema` fechado e `clean_arguments` ([[allowlist-somente-leitura]]).
-- 92 testes, Ruff e pre-commit ok. `main` local à frente do `origin/main` (sem push).
+- 92 testes, Ruff e pre-commit ok. `main` com push.
 - **Gateway de LLM em espera:** usuário ainda analisando a abordagem. Não começar
   sem decisão dele. Por isso o 1º agente também espera.
 
@@ -36,9 +36,8 @@ Ler no início de cada sessão. Atualizar no fim.
 
 GitHub `Gustavo-FAC/maximo-ai-agents` (privado). `chore/esqueleto-inicial` foi
 integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
-`feat/queryassets` integrada na `main` por fast-forward em 2026-10-29; `main` local
-**à frente do `origin/main`, sem push**; branch ainda existe (só local). Push e
-remoção da branch aguardam o usuário. Trabalho novo: branch nova a partir da `main`.
+`feat/queryassets` integrada na `main` por fast-forward em 2026-10-29, com push
+(feito pelo usuário). Branch ainda existe (só local); remoção aguarda o usuário. Trabalho novo: branch nova a partir da `main`.
 
 ## Feito
 
@@ -76,7 +75,7 @@ remoção da branch aguardam o usuário. Trabalho novo: branch nova a partir da 
   `clean_arguments`; `apischema` só no Claude Code, fora dos agentes.
 - 2026-10-29: merge na `main`, push, branch antiga apagada.
 - 2026-10-29: `QUERYASSETS` escrito, instalado, validado via MCP; `ancestor` sem o
-  próprio ativo. `feat/queryassets` integrada na `main` (sem push).
+  próprio ativo. `feat/queryassets` integrada na `main`, com push.
 
 ## Falta (ordem sugerida)
 

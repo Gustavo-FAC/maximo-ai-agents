@@ -192,4 +192,5 @@ SQL corrigido (`aa.assetnum <> aa.ancestor`), falta reinstalar. [[mas-mcp-server
 
 ## [2026-10-29] git | feat/queryassets integrada na main
 Fast-forward da `main` até `feat/queryassets` (5 commits) e commit do estado no
-`CLAUDE.md`. Sem push; branch ainda existe localmente. [[estado-do-projeto]].
+`CLAUDE.md`. Push feito pelo usuário; branch ainda existe localmente.
+[[estado-do-projeto]].
