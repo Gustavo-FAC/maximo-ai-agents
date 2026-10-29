@@ -18,8 +18,9 @@ Ler no início de cada sessão. Atualizar no fim.
   validado via MCP** (14709 ativos, filtros, `text`, hierarquia, paginação, erros).
   Achado: `ancestor` trazia o próprio ativo (linha dele com ele mesmo em
   ASSETANCESTOR); corrigido no SQL, reinstalado e conferido (CCM2.1 → 21).
-  Próximos: `QUERYFAILUREREPORTS`, depois `text` no `QUERYWORKORDERS` (que então
-  recebe o bloco comum).
+  **Próximo passo (sessão de 2026-10-30):** `QUERYFAILUREREPORTS` (FAILUREREPORT +
+  WORKORDER, datas obrigatórias, WOTRACK/READ, bloco comum copiado), em branch nova;
+  depois `text` no `QUERYWORKORDERS` (que então recebe o bloco comum).
 - Teste sem reiniciar o Claude Code: cliente avulso no scratchpad chama ferramentas
   da allowlist (o Claude Code só vê ferramentas registradas antes do início da
   sessão). Item "CLI `call_tool`" de "Falta" ganha motivo.
@@ -37,7 +38,7 @@ Ler no início de cada sessão. Atualizar no fim.
 GitHub `Gustavo-FAC/maximo-ai-agents` (privado). `chore/esqueleto-inicial` foi
 integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 `feat/queryassets` integrada na `main` por fast-forward em 2026-10-29, com push
-(feito pelo usuário). Branch ainda existe (só local); remoção aguarda o usuário. Trabalho novo: branch nova a partir da `main`.
+(feito pelo usuário). Branch apagada. Só a `main`, sincronizada. Trabalho novo: branch nova a partir da `main`.
 
 ## Feito
 

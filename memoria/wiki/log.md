@@ -194,3 +194,7 @@ SQL corrigido (`aa.assetnum <> aa.ancestor`), falta reinstalar. [[mas-mcp-server
 Fast-forward da `main` até `feat/queryassets` (5 commits) e commit do estado no
 `CLAUDE.md`. Push feito pelo usuário; branch ainda existe localmente.
 [[estado-do-projeto]].
+
+## [2026-10-29] git | Push e fim de sessão
+Push da `main`; `feat/queryassets` apagada. Próxima sessão: `QUERYFAILUREREPORTS`.
+[[estado-do-projeto]].
