@@ -16,7 +16,7 @@ Ferramentas de dados são automation scripts no Maximo, publicados no
 
 - Somente consulta. Nomes, descrições e parâmetros em inglês, com response schema.
 - Parâmetros: intervalo de datas (obrigatório, com limite; **dispensado só com lista
-  de wonum**, decisão do usuário 2026-10-29: OS antiga sem data conhecida), campo de data, site,
+  de wonum**, decisão do usuário 2026-10-29: OS antiga sem data conhecida; **cadastro (ativos) não exige data**, decisão do usuário 2026-10-29), campo de data, site,
   lista de wonum (com limite), status, prioridade, ativo, local, equipe, tipo de
   trabalho, paginação com total de registros, seleção de campos.
 

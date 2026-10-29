@@ -13,6 +13,11 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-10-29, fim)
 
+- **Novas ferramentas antes do gateway** (decisão do usuário): plano em
+  [[ferramentas-maximo]]. `QUERYASSETS` escrito na branch `feat/queryassets`
+  (92 testes), commitado, **não instalado** (usuário vai instalar e avisar). Ativo
+  sem data obrigatória confirmado. Próximos: `QUERYFAILUREREPORTS`, depois `text` no
+  `QUERYWORKORDERS` (que então recebe o bloco comum).
 - **`QUERYWORKORDERS` funcionando via MCP** em homologação (Claude Code → MCP Server
   → script): dados reais, paginação, filtros, validações e busca por `wonums` sem
   datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].

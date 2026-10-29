@@ -155,3 +155,24 @@ Branch `chore/esqueleto-inicial` integrada na `main` por fast-forward, push da
 `main` e branch apagada (local e remoto). [[estado-do-projeto]] reescrito: histórico
 do dia condensado em "Feito", seção Git atualizada, "Falta" reordenada (gateway
 aguardando decisão do usuário).
+
+## [2026-10-29] analysis | Plano de ferramentas por automation script
+Tabela "Fase 2" (18 ferramentas) separada em dados (script), cálculo (`analysis/`) e
+texto (LLM). Usuário: focar nos scripts; ordem QUERYASSETS → QUERYFAILUREREPORTS →
+`text` no QUERYWORKORDERS; bloco comum copiado; "histórico" coberto combinando OS e
+ativos. `apischema` MXAPIASSET mostrou matriz de criticidade própria da Itambé
+(`cci_*`). [[ferramentas-maximo]].
+
+## [2026-10-29] code | QUERYASSETS escrito (não instalado)
+`maximo_scripts/queryassets/`: script com bloco comum, response schema, README,
+INSTALACAO. 13 parâmetros (filtros de lista, `ancestor` via ASSETANCESTOR, `text` por
+palavras), permissão ASSET/READ no código, sem data obrigatória (pendente confirmação).
+Allowlist com `script_queryassets`. `test_script_common.py` aplica a todos os scripts
+as regras de ASCII, imports, `globals()` e escrita. 92 testes. Branch
+`feat/queryassets`, sem commit. [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-10-29] decision | Cadastro sem intervalo de datas
+Usuário confirmou: `QUERYASSETS` sem data obrigatória; datas obrigatórias só em
+consultas de movimento. `CLAUDE.md`, `maximo_scripts/README.md`,
+[[automation-scripts-como-ferramentas]] e [[ferramentas-maximo]] atualizados. Commit
+na `feat/queryassets` autorizado; usuário vai instalar em homologação.

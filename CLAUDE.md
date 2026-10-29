@@ -17,7 +17,8 @@ Cliente piloto: **Itambé Cimentos**.
   header `apikey`, Streamable HTTP). Não há conector próprio via OSLC.
 - **Ferramentas de dados:** automation scripts no Maximo, versionados em
   `maximo_scripts/`, retornando dados gerais com parâmetros: intervalo de datas
-  (obrigatório, com limite; dispensado só com lista de wonum), campo de data, site,
+  (obrigatório, com limite, em consultas de movimento como OS; dispensado só com
+  lista de wonum; cadastro como ativos não exige data), campo de data, site,
   lista de wonum (com limite),
   status, prioridade, ativo, local, equipe, tipo de trabalho, paginação com total
   de registros e seleção de campos. Nomes, descrições e parâmetros em **inglês**.
