@@ -45,7 +45,7 @@ invisíveis, como na 1ª instalação):
 | Campo | Valor |
 |---|---|
 | Script | `QUERYWORKORDERS` (digitar) |
-| Description | `Read-only work order search: date range (YYYY-MM-DD), filters, paging, total count.` |
+| Description | `Read-only work order search: date range (YYYY-MM-DD) or wonums, filters, paging, total.` |
 | Script Language | `python` (se não houver, `jython`: é o mesmo engine) |
 | Log Level | `DEBUG` (só durante a validação; voltar para `ERROR` no passo 8) |
 | Active? | marcado |
@@ -70,11 +70,11 @@ resto).
 
 | Variable | Description |
 |---|---|
-| `date_from` | Start date, YYYY-MM-DD, inclusive. Required. |
-| `date_to` | End date, YYYY-MM-DD, inclusive. Required. Max 366 days after date_from. |
+| `date_from` | Start date, YYYY-MM-DD, inclusive. Required unless wonums is given. |
+| `date_to` | End date, YYYY-MM-DD, inclusive. Max 366 days after date_from. Required unless wonums is given. |
 | `date_field` | Range date: reportdate (default), statusdate, targstartdate, targcompdate, actstart, actfinish |
 | `siteid` | Site IDs, comma-separated (max 20). |
-| `wonums` | Work order numbers, comma-separated (max 50). |
+| `wonums` | Work order numbers, comma-separated (max 50). Dates optional when given. |
 | `status` | Status values, comma-separated (max 20), e.g. APPR,INPRG,COMP. |
 | `priority` | Priority integers, comma-separated (max 20). |
 | `assetnum` | Asset numbers, comma-separated (max 20). |
@@ -115,7 +115,7 @@ Com o script aberto: **More Actions → Add/Modify MCP Tool**.
 | Campo | Valor |
 |---|---|
 | Title | `Query work orders` |
-| Processing notes | `Always pass date_from and date_to. Use "*" for unused parameters. Read "total" for counts; never count items of a single page. If "has_more" is true, request the next page or narrow the filters.` |
+| Processing notes | `Always pass date_from and date_to, except when looking up specific wonums (dates then optional). Use "*" for unused parameters. Read "total" for counts; never count items of a single page. If "has_more" is true, request the next page or narrow the filters.` |
 | Read only? | marcado |
 | Destructive hint? | desmarcado |
 | Query API as a response? | desmarcado |

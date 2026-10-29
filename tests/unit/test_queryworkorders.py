@@ -91,6 +91,33 @@ def test_dates_required():
     assert error_code(date_to="2026-01-31") == "required"
     assert error_code(date_from="2026-01-01") == "required"
     assert error_code(date_from="*", date_to="2026-01-31") == "required"
+    assert error_code(status="CONCL") == "required"
+
+
+def test_wonums_without_dates():
+    # wonums is already capped at MAX_WONUMS, so the date range becomes optional.
+    q = qwo.build_query({"wonums": "1564759, 1564757", "date_from": "*"}, "GERENTE1")
+    assert q["date_from"] is None
+    assert q["date_to"] is None
+    assert q["filters"] == {"wonums": ["1564759", "1564757"]}
+    assert q["binds"][:2] == [
+        ("WORKORDER", "WONUM", "1564759"),
+        ("WORKORDER", "WONUM", "1564757"),
+    ]
+    assert "wonum in (:1, :2)" in q["where"]
+    assert "reportdate >=" not in q["where"]
+    assert q["where"].count(":") == len(q["binds"])
+
+
+def test_wonums_with_dates_still_filter_and_validate():
+    q = query(wonums="1564759")
+    assert q["date_from"] == "2026-01-01"
+    assert "reportdate >= :1 and reportdate < :2" in q["where"]
+    assert error_code(wonums="1564759", date_from="2026-01-01") == "required"
+    assert error_code(wonums=" , ") == "required"  # empty list must not unbound the query
+    assert error_code(wonums="1564759", date_from="2024-01-01", date_to="2026-01-31") == (
+        "range_too_large"
+    )
 
 
 @pytest.mark.parametrize(

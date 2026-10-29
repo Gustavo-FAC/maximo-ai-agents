@@ -17,6 +17,7 @@ dados do agente de Análise de OS. Publicada no MCP Server como automation scrip
 Read-only search of work orders (WORKORDER, including activities, excluding tasks).
 Returns work orders whose date_field falls between date_from and date_to (inclusive,
 YYYY-MM-DD, max 366 days), with optional filters, pagination and field selection.
+The date range may be omitted only when wonums is given (lookup by number).
 The response always includes "total" (all matching records) so counts never need to
 be estimated from a single page. Use it to list or retrieve work orders for analysis.
 Do not use it for aggregated indicators over long periods; split the period instead.
@@ -32,11 +33,11 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 
 | Variável | Obrigatória | Descrição (inglês, vai para o schema da ferramenta) |
 |---|---|---|
-| `date_from` | sim | Start date, YYYY-MM-DD, inclusive. |
-| `date_to` | sim | End date, YYYY-MM-DD, inclusive. Max 366 days after date_from. |
+| `date_from` | sim, exceto com `wonums` | Start date, YYYY-MM-DD, inclusive. Required unless wonums is given. |
+| `date_to` | sim, exceto com `wonums` | End date, YYYY-MM-DD, inclusive. Max 366 days after date_from. Required unless wonums is given. |
 | `date_field` | não | Date attribute for the range: reportdate (default), statusdate, targstartdate, targcompdate, schedstart, schedfinish, actstart, actfinish. |
 | `siteid` | não | Site IDs, comma-separated (max 20). |
-| `wonums` | não | Work order numbers, comma-separated (max 50). |
+| `wonums` | não | Work order numbers, comma-separated (max 50). Dates optional when given. |
 | `status` | não | Status values, comma-separated (max 20), e.g. APPR,INPRG,COMP. |
 | `priority` | não | Priority integers, comma-separated (max 20). |
 | `assetnum` | não | Asset numbers, comma-separated (max 20). |

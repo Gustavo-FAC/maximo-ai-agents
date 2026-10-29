@@ -262,17 +262,24 @@ def build_query(raw, userid):
 
     Returns a dict. "binds" is a list of (object, attribute, value) in placeholder
     order; values never go into the where text.
+
+    The date range is required, except when wonums is given and both dates are
+    omitted: wonums is capped at MAX_WONUMS, so the query stays bounded.
     """
-    date_from = parse_date("date_from", raw.get("date_from"))
-    date_to = parse_date("date_to", raw.get("date_to"))
-    if date_to.ordinal < date_from.ordinal:
-        raise ParamError("invalid_range", "date_to", "date_to must be on or after date_from.")
-    if date_to.ordinal - date_from.ordinal + 1 > MAX_DATE_RANGE_DAYS:
-        raise ParamError(
-            "range_too_large",
-            "date_to",
-            "Date range is limited to %d days." % MAX_DATE_RANGE_DAYS,
-        )
+    wonums = parse_list("wonums", raw.get("wonums"), "str", MAX_WONUMS)
+    if wonums and is_unset(raw.get("date_from")) and is_unset(raw.get("date_to")):
+        date_from = date_to = None
+    else:
+        date_from = parse_date("date_from", raw.get("date_from"))
+        date_to = parse_date("date_to", raw.get("date_to"))
+        if date_to.ordinal < date_from.ordinal:
+            raise ParamError("invalid_range", "date_to", "date_to must be on or after date_from.")
+        if date_to.ordinal - date_from.ordinal + 1 > MAX_DATE_RANGE_DAYS:
+            raise ParamError(
+                "range_too_large",
+                "date_to",
+                "Date range is limited to %d days." % MAX_DATE_RANGE_DAYS,
+            )
 
     date_field = raw.get("date_field")
     date_field = DEFAULT_DATE_FIELD if is_unset(date_field) else to_text(date_field).strip().lower()
@@ -287,12 +294,13 @@ def build_query(raw, userid):
     page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
     fields = parse_fields(raw.get("fields"))
 
-    # date_to is inclusive: compare with the start of the next day.
-    binds = [
-        ("WORKORDER", date_field.upper(), date_from),
-        ("WORKORDER", date_field.upper(), Day(date_to.ordinal + 1)),
-    ]
-    clauses = [BASE_WHERE, "%s >= :1 and %s < :2" % (date_field, date_field)]
+    binds = []
+    clauses = [BASE_WHERE]
+    if date_from is not None:
+        # date_to is inclusive: compare with the start of the next day.
+        binds.append(("WORKORDER", date_field.upper(), date_from))
+        binds.append(("WORKORDER", date_field.upper(), Day(date_to.ordinal + 1)))
+        clauses.append("%s >= :1 and %s < :2" % (date_field, date_field))
 
     filters = {}
     for name, attribute, kind, max_items in LIST_FILTERS:
@@ -315,8 +323,8 @@ def build_query(raw, userid):
         "binds": binds,
         "order_by": "%s desc, wonum" % date_field,
         "date_field": date_field,
-        "date_from": date_from.isoformat(),
-        "date_to": date_to.isoformat(),
+        "date_from": date_from.isoformat() if date_from is not None else None,
+        "date_to": date_to.isoformat() if date_to is not None else None,
         "filters": filters,
         "fields": fields,
         "page": page,
