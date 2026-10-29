@@ -189,3 +189,7 @@ SQL corrigido (`aa.assetnum <> aa.ancestor`), falta reinstalar. [[mas-mcp-server
 ## [2026-10-29] test | QUERYASSETS reinstalado com correção do ancestor
 `ancestor` conferido: CCM2.1 → 21, ACI0008 → 2, os dois → 23, ativo sem filhos → 0.
 `QUERYASSETS` funcionando via MCP. [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-10-29] git | feat/queryassets integrada na main
+Fast-forward da `main` até `feat/queryassets` (5 commits) e commit do estado no
+`CLAUDE.md`. Sem push; branch ainda existe localmente. [[estado-do-projeto]].

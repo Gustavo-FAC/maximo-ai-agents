@@ -14,7 +14,7 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Onde paramos (2026-10-29, fim)
 
 - **Novas ferramentas antes do gateway** (decisão do usuário): plano em
-  [[ferramentas-maximo]]. `QUERYASSETS` na branch `feat/queryassets`, **instalado e
+  [[ferramentas-maximo]]. `QUERYASSETS` na `main`, **instalado e
   validado via MCP** (14709 ativos, filtros, `text`, hierarquia, paginação, erros).
   Achado: `ancestor` trazia o próprio ativo (linha dele com ele mesmo em
   ASSETANCESTOR); corrigido no SQL, reinstalado e conferido (CCM2.1 → 21).
@@ -28,16 +28,17 @@ Ler no início de cada sessão. Atualizar no fim.
   datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].
 - **Allowlist pronta para o agente:** descrições próprias para o LLM,
   `input_schema` fechado e `clean_arguments` ([[allowlist-somente-leitura]]).
-- 59 testes, Ruff e pre-commit ok. Tudo na `main`, com push.
+- 92 testes, Ruff e pre-commit ok. `main` local à frente do `origin/main` (sem push).
 - **Gateway de LLM em espera:** usuário ainda analisando a abordagem. Não começar
   sem decisão dele. Por isso o 1º agente também espera.
 
 ## Git
 
-Só a branch `main`, sincronizada com `origin/main` (GitHub
-`Gustavo-FAC/maximo-ai-agents`, privado). `chore/esqueleto-inicial` foi integrada
-por fast-forward e apagada (local e remoto) em 2026-10-29. Trabalho novo: branch
-nova a partir da `main`.
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). `chore/esqueleto-inicial` foi
+integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
+`feat/queryassets` integrada na `main` por fast-forward em 2026-10-29; `main` local
+**à frente do `origin/main`, sem push**; branch ainda existe (só local). Push e
+remoção da branch aguardam o usuário. Trabalho novo: branch nova a partir da `main`.
 
 ## Feito
 
@@ -74,6 +75,8 @@ nova a partir da `main`.
 - 2026-10-29: allowlist com descrições próprias, `input_schema` e
   `clean_arguments`; `apischema` só no Claude Code, fora dos agentes.
 - 2026-10-29: merge na `main`, push, branch antiga apagada.
+- 2026-10-29: `QUERYASSETS` escrito, instalado, validado via MCP; `ancestor` sem o
+  próprio ativo. `feat/queryassets` integrada na `main` (sem push).
 
 ## Falta (ordem sugerida)
 
