@@ -53,6 +53,11 @@ Assim, considere modificar para um usuário com base em inglês
 - Teste no mesmo dia: usuário de homologação trocado para EN → o erro sumiu e o
   script passou a executar (mensagens do Maximo vieram em inglês). A troca de
   idioma resolve; segue em aberto se há alternativa sem mudar o usuário.
+- **Recorrência no mesmo dia:** após a troca da chave no `.env`, as duas ferramentas
+  customizadas (`script_queryworkorders` e `script_queryassets`) voltaram a falhar
+  com o mesmo erro (usuário de novo em PT). Usuário trocou para EN → ambas
+  funcionaram. Na prática, **idioma EN é pré-requisito** do usuário da chave;
+  conferir sempre que trocar chave ou usuário.
 
 ## Risco: MCP Server grava a `apikey` em log, 2026-10-29
 

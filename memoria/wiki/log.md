@@ -176,3 +176,12 @@ Usuário confirmou: `QUERYASSETS` sem data obrigatória; datas obrigatórias só
 consultas de movimento. `CLAUDE.md`, `maximo_scripts/README.md`,
 [[automation-scripts-como-ferramentas]] e [[ferramentas-maximo]] atualizados. Commit
 na `feat/queryassets` autorizado; usuário vai instalar em homologação.
+
+## [2026-10-29] test | QUERYASSETS validado em homologação
+Usuário instalou. 1ª chamada: BMXAA10147E nas duas ferramentas (usuário da chave em
+PT de novo); usuário trocou para EN e passou. Checklist do README conferido via
+cliente avulso (Claude Code não via a ferramenta nova sem reiniciar): total 14709,
+`assetnums`, `text` (acento precisa bater), hierarquia em vários níveis, campos
+bool/data/número, página 2, erros. Achado: `ancestor` incluía o próprio ativo;
+SQL corrigido (`aa.assetnum <> aa.ancestor`), falta reinstalar. [[mas-mcp-server]],
+[[estado-do-projeto]], [[ferramentas-maximo]].

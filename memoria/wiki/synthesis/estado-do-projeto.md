@@ -14,10 +14,15 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Onde paramos (2026-10-29, fim)
 
 - **Novas ferramentas antes do gateway** (decisão do usuário): plano em
-  [[ferramentas-maximo]]. `QUERYASSETS` escrito na branch `feat/queryassets`
-  (92 testes), commitado, **não instalado** (usuário vai instalar e avisar). Ativo
-  sem data obrigatória confirmado. Próximos: `QUERYFAILUREREPORTS`, depois `text` no
-  `QUERYWORKORDERS` (que então recebe o bloco comum).
+  [[ferramentas-maximo]]. `QUERYASSETS` na branch `feat/queryassets`, **instalado e
+  validado via MCP** (14709 ativos, filtros, `text`, hierarquia, paginação, erros).
+  Achado: `ancestor` trazia o próprio ativo (linha dele com ele mesmo em
+  ASSETANCESTOR); corrigido no SQL, **falta reinstalar e conferir** (CCM2.1 → 21).
+  Próximos: `QUERYFAILUREREPORTS`, depois `text` no `QUERYWORKORDERS` (que então
+  recebe o bloco comum).
+- Teste sem reiniciar o Claude Code: cliente avulso no scratchpad chama ferramentas
+  da allowlist (o Claude Code só vê ferramentas registradas antes do início da
+  sessão). Item "CLI `call_tool`" de "Falta" ganha motivo.
 - **`QUERYWORKORDERS` funcionando via MCP** em homologação (Claude Code → MCP Server
   → script): dados reais, paginação, filtros, validações e busca por `wonums` sem
   datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].
@@ -87,8 +92,9 @@ nova a partir da `main`.
 ## Riscos ativos
 
 - Chave MAXADMIN em homologação: ver [[chave-api-por-usuario]].
-- BMXAA10147E: se exigir usuário em EN, afeta a chave por gerente (observação, a
-  confirmar). Ver [[chave-api-por-usuario]].
+- BMXAA10147E: voltou em 2026-10-29 com usuário em PT e sumiu com EN (2ª vez).
+  Usuário da chave precisa estar em EN; afeta a chave por gerente. Ver
+  [[chave-api-por-usuario]] e [[mas-mcp-server]].
 - **MCP Server loga a `apikey` em texto puro (INFO).** Chave MAXADMIN de
   homologação exposta em 2026-10-29. Nova chave no `.env`; usuário **decidiu não
   revogar** a antiga (risco aceito: escrita total em homologação para quem lê os

@@ -10,7 +10,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 ## Entidades
 - [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária.
 - [[mas-mcp-server]] – servidor MCP do MAS 9.2, ferramentas expostas, notas do SDK.
-  Observações: BMXAA10147E (idioma PT do usuário), cliente sem descrição de parâmetro.
+  BMXAA10147E: usuário da chave precisa estar em EN (2 ocorrências). Cliente sem
+  descrição de parâmetro.
 
 ## Conceitos
 - [[allowlist-somente-leitura]] – única barreira contra escrita; nomes exatos,

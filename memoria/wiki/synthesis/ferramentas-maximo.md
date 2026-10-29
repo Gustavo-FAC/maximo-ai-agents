@@ -24,7 +24,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 
 | # | Script | Tabelas | Cobre (nomes da tabela) | Fase | Estado |
 |---|---|---|---|---|---|
-| 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | escrito, não instalado |
+| 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | validado; reinstalar com correção do `ancestor` |
 | 2 | `QUERYFAILUREREPORTS` | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | a fazer |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando; `text` a fazer |
 | 4 | histórico de status (opção) | WOSTATUS, ASSETSTATUS, ASSETTRANS | histórico de uma OS / paradas e movimentações do ativo | P0 | a definir |
