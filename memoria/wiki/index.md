@@ -11,8 +11,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   Observações: BMXAA10147E (idioma PT do usuário), cliente sem descrição de parâmetro.
 
 ## Conceitos
-- [[allowlist-somente-leitura]] – única barreira contra escrita; não implementada.
-  Requisitos novos: nome exato ASCII, descrição própria.
+- [[allowlist-somente-leitura]] – única barreira contra escrita; nomes exatos,
+  descrições próprias para o LLM e filtro de argumentos implementados.
 - [[chave-api-por-usuario]] – decisão de arquitetura e exceção atual (MAXADMIN).
   Observação sobre idioma do usuário.
 - [[automation-scripts-como-ferramentas]] – regras, como registrar, lições do OAS e

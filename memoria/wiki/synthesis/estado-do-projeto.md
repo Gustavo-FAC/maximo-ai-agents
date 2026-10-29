@@ -92,11 +92,10 @@ Branch `chore/esqueleto-inicial`, **sem push** (`git log` para a lista de commit
 
 1. ~~Testar execução do `QUERYWORKORDERS`~~ Feito 2026-10-29. Falta só a linha
    DEBUG `implicit vars` (origem dos parâmetros e da identidade).
-2. Completar [[allowlist-somente-leitura]] para o agente: nomes exatos já feitos
-   (`0cfe32a`); falta descrição própria e rica de cada ferramenta (o cliente MCP
-   não recebe descrição de parâmetro) e nunca repassar parâmetros fora do schema
-   nosso.
-3. Gateway de LLM em `llm/` com Ollama (não depende do Maximo; pode ir em paralelo).
+2. ~~Completar [[allowlist-somente-leitura]] para o agente~~ Feito 2026-10-29:
+   descrições próprias, `input_schema`, `clean_arguments` (59 testes).
+3. Gateway de LLM em `llm/`: **usuário ainda analisando a abordagem** (2026-10-29);
+   não começar sem decisão dele.
 4. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas.
 5. Pequeno CLI `call_tool` para testar ferramentas sem MCP Inspector (opcional).
 6. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.

@@ -141,3 +141,11 @@ Reinstalado (código, Description, variáveis). Via MCP: 2 wonums sem datas → 
 datas `null`; sem parâmetros → `required`; wonum + só `date_from` → `required`
 (`date_to`); wonum + fev/2026 → total 0 (filtro de data aplicado); `wonums=" , "` →
 `required`. [[estado-do-projeto]].
+
+## [2026-10-29] code | Allowlist com descrições próprias e filtro de argumentos
+`allowlist.py`: `ToolSpec` com descrição rica (inglês) da ferramenta e dos 14
+parâmetros; `AGENT_TOOLS` só com `script_queryworkorders` (`apischema` fica só no
+Claude Code); `input_schema` fechado; `clean_arguments` recusa parâmetro fora do
+schema, tipo inválido e texto longo. Testes amarram parâmetros/campos ao script.
+59 testes. Gateway de LLM: usuário ainda decidindo. [[allowlist-somente-leitura]],
+[[estado-do-projeto]].
