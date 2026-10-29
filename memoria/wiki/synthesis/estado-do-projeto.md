@@ -94,6 +94,10 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 
 ## Riscos ativos
 
+- Dependabot (2026-10-29, alta): `virtualenv` 21.14.9–21.14.12 no `uv.lock`
+  (vem do pre-commit; ativador Bash com `--prompt`). Correção:
+  `uv lock --upgrade-package virtualenv` (>= 21.14.13). Fazer no início da próxima sessão.
+
 - Chave MAXADMIN em homologação: ver [[chave-api-por-usuario]].
 - BMXAA10147E: voltou em 2026-10-29 com usuário em PT e sumiu com EN (2ª vez).
   Usuário da chave precisa estar em EN; afeta a chave por gerente. Ver
