@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "maximo": {
+      "type": "http",
+      "url": "${MAXIMO_MCP_URL}",
+      "headers": {
+        "apikey": "${MAXIMO_API_KEY}"
+      }
+    }
+  }
+}

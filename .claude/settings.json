@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "mcp__maximo__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-sync --project \"$CLAUDE_PROJECT_DIR\" python -m maximo_agents.mcp.claude_code_guard"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "mcp__maximo__changestatus",
+      "mcp__maximo__createfollowupworkorder",
+      "mcp__maximo__entermeterreading",
+      "mcp__maximo__moveasset",
+      "mcp__maximo__changelocation",
+      "mcp__maximo__reportdowntime",
+      "mcp__maximo__createsr"
+    ]
+  }
+}
