@@ -17,7 +17,7 @@ Ler no início de cada sessão. Atualizar no fim.
   [[ferramentas-maximo]]. `QUERYASSETS` na branch `feat/queryassets`, **instalado e
   validado via MCP** (14709 ativos, filtros, `text`, hierarquia, paginação, erros).
   Achado: `ancestor` trazia o próprio ativo (linha dele com ele mesmo em
-  ASSETANCESTOR); corrigido no SQL, **falta reinstalar e conferir** (CCM2.1 → 21).
+  ASSETANCESTOR); corrigido no SQL, reinstalado e conferido (CCM2.1 → 21).
   Próximos: `QUERYFAILUREREPORTS`, depois `text` no `QUERYWORKORDERS` (que então
   recebe o bloco comum).
 - Teste sem reiniciar o Claude Code: cliente avulso no scratchpad chama ferramentas

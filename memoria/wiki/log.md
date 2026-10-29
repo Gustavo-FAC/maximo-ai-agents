@@ -185,3 +185,7 @@ cliente avulso (Claude Code não via a ferramenta nova sem reiniciar): total 147
 bool/data/número, página 2, erros. Achado: `ancestor` incluía o próprio ativo;
 SQL corrigido (`aa.assetnum <> aa.ancestor`), falta reinstalar. [[mas-mcp-server]],
 [[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-10-29] test | QUERYASSETS reinstalado com correção do ancestor
+`ancestor` conferido: CCM2.1 → 21, ACI0008 → 2, os dois → 23, ativo sem filhos → 0.
+`QUERYASSETS` funcionando via MCP. [[ferramentas-maximo]], [[estado-do-projeto]].

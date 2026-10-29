@@ -81,8 +81,8 @@ Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
 - [x] `ancestor` devolve todos os níveis (ACI0008 → ACI0057 → PEL0007).
       ASSETANCESTOR tem linha do ativo com ele mesmo: na 1ª instalação o próprio
       ativo vinha junto (CCM2.1: 22 = 21 filhos + ele). Corrigido no SQL
-      (`aa.assetnum <> aa.ancestor`); **conferir após reinstalar**: CCM2.1 → 21,
-      ACI0008 → 2.
+      (`aa.assetnum <> aa.ancestor`) e conferido após reinstalar: CCM2.1 → 21,
+      ACI0008 → 2, os dois juntos → 23, ativo sem filhos → 0.
 - [x] `fields` com `children`, `installdate`, `statusdate`, `purchaseprice`
       devolve booleano, data ISO e número.
 - [x] Paginação (página 2), `unknown_field`, `invalid_integer` ok.
