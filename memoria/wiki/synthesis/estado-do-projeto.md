@@ -18,7 +18,8 @@ Ler no início de cada sessão. Atualizar no fim.
 levaram até aqui: sem `datetime`, `SqlFormat(user_info, ...)`, lógica em `_main`
 (sem `globals()` em variável de topo), sem `isLoggingEnabled`. 44 testes.
 Commits `92af7d1` (script) e `7aec3aa` (wiki). Detalhes em [[automation-scripts-como-ferramentas]].
-Próximo: item 2 de "Falta".
+Depois: datas opcionais quando `wonums` vem preenchido (46 testes), reinstalado e
+validado via MCP e commitado. Próximo: item 2 de "Falta".
 
 ## Histórico do dia (2026-10-29)
 
@@ -85,7 +86,7 @@ no Jython do Maximo).
 
 ## Git
 
-Branch `chore/esqueleto-inicial`, 7 commits, **sem push**.
+Branch `chore/esqueleto-inicial`, **sem push** (`git log` para a lista de commits).
 
 ## Falta (ordem sugerida)
 

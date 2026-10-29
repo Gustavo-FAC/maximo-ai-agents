@@ -128,3 +128,16 @@ paginação, filtros (status, worktype, wonums, siteid, date_field, fields) e er
 validação (required, range_too_large, out_of_range) corretos. Perguntas abertas do
 runtime respondidas em [[automation-scripts-como-ferramentas]]. Pendente: linha
 `implicit vars` e teste com usuário sem acesso a site. [[estado-do-projeto]].
+
+## [2026-10-29] decision | Datas opcionais com wonums
+Teste "status das OS X e Y" exigiu inventar intervalo de datas; OS com mais de 366
+dias ficaria inacessível. Usuário escolheu: com `wonums` (máx. 50) e sem as duas
+datas, sem filtro de data. Uma data só continua `required`; lista vazia não libera.
+`build_query`, README, `INSTALACAO.md` (descrições ≤100), response schema e
+`CLAUDE.md` atualizados. 46 testes. Falta reinstalar. [[automation-scripts-como-ferramentas]].
+
+## [2026-10-29] test | Datas opcionais com wonums validadas no Maximo
+Reinstalado (código, Description, variáveis). Via MCP: 2 wonums sem datas → total 2,
+datas `null`; sem parâmetros → `required`; wonum + só `date_from` → `required`
+(`date_to`); wonum + fev/2026 → total 0 (filtro de data aplicado); `wonums=" , "` →
+`required`. [[estado-do-projeto]].
