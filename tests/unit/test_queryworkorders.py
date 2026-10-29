@@ -1,3 +1,4 @@
+import ast
 import datetime
 import importlib.util
 from pathlib import Path
@@ -35,9 +36,55 @@ def test_defaults():
 
 def test_date_to_inclusive():
     q = query()
-    assert q["binds"][0] == ("WORKORDER", "REPORTDATE", datetime.date(2026, 1, 1))
-    assert q["binds"][1] == ("WORKORDER", "REPORTDATE", datetime.date(2026, 2, 1))
+    assert [(obj, attr, day.isoformat()) for obj, attr, day in q["binds"][:2]] == [
+        ("WORKORDER", "REPORTDATE", "2026-01-01"),
+        ("WORKORDER", "REPORTDATE", "2026-02-01"),
+    ]
     assert "reportdate >= :1 and reportdate < :2" in q["where"]
+
+
+def test_day_matches_calendar():
+    epoch = datetime.date(1970, 1, 1)
+    day = datetime.date(1900, 1, 1)
+    while day.year <= 2100:
+        ours = qwo.Day.from_ymd(day.year, day.month, day.day)
+        assert ours.ordinal == (day - epoch).days
+        assert ours.isoformat() == day.isoformat()
+        day += datetime.timedelta(days=1)
+
+
+def test_leap_day_and_year_end():
+    q = query(date_from="2024-02-29", date_to="2024-12-31")
+    assert q["date_from"] == "2024-02-29"
+    assert q["binds"][1][2].isoformat() == "2025-01-01"
+
+
+def test_script_imports_no_python_stdlib():
+    # Maximo's Jython has no standard library: only Java/Maximo imports.
+    lines = [line.strip() for line in SCRIPT.read_text(encoding="utf-8").splitlines()]
+    imports = [line.split()[1] for line in lines if line.startswith(("import ", "from "))]
+    assert imports
+    assert all(name.split(".")[0] in ("java", "psdi", "com") for name in imports)
+
+
+def test_script_keeps_globals_out_of_top_level_bindings():
+    # Maximo calls toString on every top-level binding after the script runs; one
+    # holding globals() recurses into itself (StackOverflowError -> BMXAA1649E).
+    def module_level(nodes):
+        for node in nodes:
+            if isinstance(node, ast.FunctionDef | ast.ClassDef):
+                continue
+            yield node
+            for field in ("body", "orelse", "handlers", "finalbody"):
+                yield from module_level(getattr(node, field, []))
+
+    tree = ast.parse(SCRIPT.read_text(encoding="utf-8"))
+    for node in module_level(tree.body):
+        if isinstance(node, ast.Assign | ast.AnnAssign | ast.AugAssign):
+            value = node.value
+            assert not (
+                isinstance(value, ast.Call) and getattr(value.func, "id", None) == "globals"
+            ), f"line {node.lineno}: top-level binding holds globals()"
 
 
 def test_dates_required():
@@ -46,7 +93,21 @@ def test_dates_required():
     assert error_code(date_from="*", date_to="2026-01-31") == "required"
 
 
-@pytest.mark.parametrize("value", ["2026-1-1", "01/01/2026", "2026-02-30", "hoje"])
+@pytest.mark.parametrize(
+    "value",
+    [
+        "2026-1-1",
+        "01/01/2026",
+        "2026-02-30",
+        "2025-02-29",
+        "2026-13-01",
+        "2026-00-10",
+        "2026-01-00",
+        "20260-1-01",
+        "2026+01-01",
+        "hoje",
+    ],
+)
 def test_invalid_date(value):
     assert error_code(date_from=value, date_to="2026-03-01") == "invalid_date"
 

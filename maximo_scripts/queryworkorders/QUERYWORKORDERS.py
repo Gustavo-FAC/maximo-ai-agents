@@ -5,9 +5,8 @@
 #
 # Code must run on Jython 2.7 and CPython 3: the pure functions below (parsing,
 # validation, where clause) are tested by tests/unit/test_queryworkorders.py.
-# Java/Maximo imports live only inside run().
-
-import datetime
+# Java/Maximo imports live only inside run(). No Python standard library imports:
+# Maximo's Jython does not ship it ("No module named datetime").
 
 MAX_DATE_RANGE_DAYS = 366
 MAX_WONUMS = 50
@@ -147,16 +146,59 @@ def is_unset(value):
     return value is None or to_text(value).strip() in UNSET_VALUES
 
 
+class Day(object):
+    """Calendar date as days since 1970-01-01 (Hinnant's civil calendar algorithms)."""
+
+    def __init__(self, ordinal):
+        self.ordinal = ordinal
+
+    @classmethod
+    def from_ymd(cls, year, month, day):
+        y = year - 1 if month <= 2 else year
+        era = y // 400
+        yoe = y - era * 400
+        doy = (153 * (month - 3 if month > 2 else month + 9) + 2) // 5 + day - 1
+        doe = yoe * 365 + yoe // 4 - yoe // 100 + doy
+        return cls(era * 146097 + doe - 719468)
+
+    def ymd(self):
+        z = self.ordinal + 719468
+        era = z // 146097
+        doe = z - era * 146097
+        yoe = (doe - doe // 1460 + doe // 36524 - doe // 146096) // 365
+        doy = doe - (365 * yoe + yoe // 4 - yoe // 100)
+        mp = (5 * doy + 2) // 153
+        day = doy - (153 * mp + 2) // 5 + 1
+        month = mp + 3 if mp < 10 else mp - 9
+        year = yoe + era * 400 + (1 if month <= 2 else 0)
+        return (year, month, day)
+
+    def isoformat(self):
+        return "%04d-%02d-%02d" % self.ymd()
+
+
+def parse_iso_day(text):
+    """Day from YYYY-MM-DD, or None if text is not a valid calendar date."""
+    parts = text.split("-")
+    if [len(part) for part in parts] != [4, 2, 2]:
+        return None
+    if not all(char in "0123456789" for char in "".join(parts)):
+        return None
+    year, month, day = [int(part) for part in parts]
+    if not 1 <= month <= 12:
+        return None
+    value = Day.from_ymd(year, month, day)
+    # Round trip rejects days that do not exist, e.g. 2026-02-30.
+    return value if value.ymd() == (year, month, day) else None
+
+
 def parse_date(name, raw):
     if is_unset(raw):
         raise ParamError("required", name, "%s is required (YYYY-MM-DD)." % name)
-    text = to_text(raw).strip()
-    try:
-        if len(text) != 10:
-            raise ValueError(text)
-        return datetime.datetime.strptime(text, "%Y-%m-%d").date()
-    except ValueError:
+    value = parse_iso_day(to_text(raw).strip())
+    if value is None:
         raise ParamError("invalid_date", name, "%s must be YYYY-MM-DD." % name)
+    return value
 
 
 def parse_int(name, raw, default, minimum, maximum):
@@ -223,9 +265,9 @@ def build_query(raw, userid):
     """
     date_from = parse_date("date_from", raw.get("date_from"))
     date_to = parse_date("date_to", raw.get("date_to"))
-    if date_to < date_from:
+    if date_to.ordinal < date_from.ordinal:
         raise ParamError("invalid_range", "date_to", "date_to must be on or after date_from.")
-    if (date_to - date_from).days + 1 > MAX_DATE_RANGE_DAYS:
+    if date_to.ordinal - date_from.ordinal + 1 > MAX_DATE_RANGE_DAYS:
         raise ParamError(
             "range_too_large",
             "date_to",
@@ -248,7 +290,7 @@ def build_query(raw, userid):
     # date_to is inclusive: compare with the start of the next day.
     binds = [
         ("WORKORDER", date_field.upper(), date_from),
-        ("WORKORDER", date_field.upper(), date_to + datetime.timedelta(days=1)),
+        ("WORKORDER", date_field.upper(), Day(date_to.ordinal + 1)),
     ]
     clauses = [BASE_WHERE, "%s >= :1 and %s < :2" % (date_field, date_field)]
 
@@ -393,12 +435,11 @@ def read_item(mbo, fields, date_format):
     return item
 
 
-def run(req, raw):
+def run(user_info, raw):
     from java.text import SimpleDateFormat
     from psdi.mbo import MboConstants, SqlFormat
     from psdi.server import MXServer
 
-    user_info = req.getUserInfo() if req is not None else None
     if user_info is None:
         # Fail closed: never query without the caller's identity.
         return error_response("no_user", None, "Caller identity not available.")
@@ -406,7 +447,8 @@ def run(req, raw):
     userid = user_info.getUserName()
     auth_set = MXServer.getMXServer().getMboSet("APPLICATIONAUTH", user_info)
     try:
-        auth_sqf = SqlFormat(PERMISSION_WHERE)
+        # UserInfo gives SqlFormat the locale/timezone setObject needs.
+        auth_sqf = SqlFormat(user_info, PERMISSION_WHERE)
         for index, (obj, attribute, value) in enumerate(permission_binds(userid)):
             auth_sqf.setObject(index + 1, obj, attribute, value)
         auth_set.setWhere(auth_sqf.format())
@@ -422,10 +464,10 @@ def run(req, raw):
 
     query = build_query(raw, userid)
 
-    sqf = SqlFormat(query["where"])
+    sqf = SqlFormat(user_info, query["where"])
     day_format = SimpleDateFormat("yyyy-MM-dd")
     for index, (obj, attribute, value) in enumerate(query["binds"]):
-        if isinstance(value, datetime.date):
+        if isinstance(value, Day):
             sqf.setTimestamp(index + 1, day_format.parse(value.isoformat()))
         else:
             sqf.setObject(index + 1, obj, attribute, to_text(value))
@@ -451,21 +493,52 @@ def run(req, raw):
         mboset.cleanup()
 
 
-if "request" in globals():
-    # request, requestBody and service are implicit variables injected by Maximo.
-    _req = request  # noqa: F821
+# Implicit variables Maximo may inject; logged by name to learn which exist on the
+# MCP path.
+IMPLICIT_NAMES = ("request", "requestBody", "userInfo", "service", "httpMethod")
+
+try:
+    from java.lang import System  # noqa: F401  (resolves only under Jython)
+
+    _IN_MAXIMO = True
+except ImportError:  # CPython: module imported by tests
+    _IN_MAXIMO = False
+
+
+def _main(scope, throwable):
+    """Run the tool against the script scope and return the response dict.
+
+    Everything lives in locals: after the script ends, Maximo calls toString on
+    every top-level binding, and a binding holding globals() recurses into
+    itself (StackOverflowError -> BMXAA1649E).
+    """
+    service = scope.get("service")
+    req = scope.get("request")
     try:
-        _raw, _sources = collect_params(
-            globals(),
-            read_body(globals().get("requestBody")),
-            _req.getQueryParam if _req is not None else None,
+        raw, sources = collect_params(
+            scope,
+            read_body(scope.get("requestBody")),
+            req.getQueryParam if req is not None else None,
         )
-        if service.isLoggingEnabled():  # noqa: F821
-            service.log_debug("QUERYWORKORDERS param sources: %s" % _sources)  # noqa: F821
-        _result = run(_req, _raw)
+        # No isLoggingEnabled() on ScriptService in MAS 9.2; log_debug filters by level.
+        if service is not None:
+            service.log_debug(
+                "QUERYWORKORDERS implicit vars: %s; param sources: %s"
+                % ([n for n in IMPLICIT_NAMES if scope.get(n) is not None], sources)
+            )
+        return run(req.getUserInfo() if req is not None else scope.get("userInfo"), raw)
     except ParamError as e:
-        _result = error_response(e.code, e.parameter, e.message)
-    except Exception as e:
-        service.log_error("QUERYWORKORDERS failed: %s" % e)  # noqa: F821
-        _result = error_response("internal_error", None, "Query failed. See Maximo log.")
-    responseBody = to_json(_result).serialize()
+        return error_response(e.code, e.parameter, e.message)
+    except (Exception, throwable) as e:
+        # Throwable: Java exceptions (e.g. NullPointerException) may bypass Exception.
+        if service is not None:
+            service.log_error("QUERYWORKORDERS failed: %s" % e)
+        return error_response("internal_error", None, "Query failed. See Maximo log.")
+
+
+if _IN_MAXIMO:
+    from com.ibm.tivoli.maximo.oslc import OslcUtils
+    from java.lang import Throwable
+
+    # No top-level variable may reference globals() (see _main).
+    responseBody = OslcUtils.jsonToBytes(to_json(_main(globals(), Throwable)))

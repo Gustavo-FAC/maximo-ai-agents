@@ -173,7 +173,8 @@ Esperado: `{"error": {"code": "required", "parameter": "date_to", ...}}`.
 Me enviar as duas respostas (pode cortar descrições de OS se tiverem dado sensível).
 
 Conferir também o log (logger `autoscript` / script em DEBUG): deve haver a linha
-`QUERYWORKORDERS param sources: {...}` mostrando se os parâmetros chegaram como
+`QUERYWORKORDERS implicit vars: [...]; param sources: {...}` mostrando quais
+variáveis implícitas o Maximo injetou e se os parâmetros chegaram como
 `variable`, `body` ou `query`. Me enviar essa linha.
 
 ## 8. Fechar
@@ -192,3 +193,10 @@ Conferir também o log (logger `autoscript` / script em DEBUG): deve haver a lin
 | `{"error": {"code": "not_authorized"}}` | Usuário da `apikey` sem READ em WOTRACK. |
 | `{"error": {"code": "internal_error"}}` | Pegar o erro no log do Manage (`QUERYWORKORDERS failed: ...`). |
 | `total` = 0 com certeza de haver OS | Me enviar a linha de log do SQL (autoscript em DEBUG). |
+
+**Observação (2026-10-29):** em homologação, a chamada via MCP voltou com
+`BMXAA10147E - O código de idioma do usuário PT é inválido para inferência` antes de
+executar o script, com o usuário da `apikey` em idioma PT. `apischema` funcionou com
+a mesma chave. Trocar o idioma do usuário para EN resolveu; não há confirmação de
+alternativa sem mudar o usuário. Detalhes em
+`memoria/wiki/entities/mas-mcp-server.md`.
