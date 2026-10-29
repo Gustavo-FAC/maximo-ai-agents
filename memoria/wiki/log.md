@@ -149,3 +149,9 @@ Claude Code); `input_schema` fechado; `clean_arguments` recusa parâmetro fora d
 schema, tipo inválido e texto longo. Testes amarram parâmetros/campos ao script.
 59 testes. Gateway de LLM: usuário ainda decidindo. [[allowlist-somente-leitura]],
 [[estado-do-projeto]].
+
+## [2026-10-29] session | Fim de sessão: merge na main
+Branch `chore/esqueleto-inicial` integrada na `main` por fast-forward, push da
+`main` e branch apagada (local e remoto). [[estado-do-projeto]] reescrito: histórico
+do dia condensado em "Feito", seção Git atualizada, "Falta" reordenada (gateway
+aguardando decisão do usuário).

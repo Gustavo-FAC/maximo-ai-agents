@@ -13,94 +13,71 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-10-29, fim)
 
-**`QUERYWORKORDERS` funcionando via MCP** em homologação (Claude Code → MCP Server
-→ script): dados reais, paginação, filtros e validações conferidos. Correções que
-levaram até aqui: sem `datetime`, `SqlFormat(user_info, ...)`, lógica em `_main`
-(sem `globals()` em variável de topo), sem `isLoggingEnabled`. 44 testes.
-Commits `92af7d1` (script) e `7aec3aa` (wiki). Detalhes em [[automation-scripts-como-ferramentas]].
-Depois: datas opcionais quando `wonums` vem preenchido (46 testes), reinstalado e
-validado via MCP e commitado. Próximo: item 2 de "Falta".
+- **`QUERYWORKORDERS` funcionando via MCP** em homologação (Claude Code → MCP Server
+  → script): dados reais, paginação, filtros, validações e busca por `wonums` sem
+  datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].
+- **Allowlist pronta para o agente:** descrições próprias para o LLM,
+  `input_schema` fechado e `clean_arguments` ([[allowlist-somente-leitura]]).
+- 59 testes, Ruff e pre-commit ok. Tudo na `main`, com push.
+- **Gateway de LLM em espera:** usuário ainda analisando a abordagem. Não começar
+  sem decisão dele. Por isso o 1º agente também espera.
 
-## Histórico do dia (2026-10-29)
+## Git
 
-`QUERYWORKORDERS` reinstalado em homologação. OAS confere com o repositório (14
-parâmetros, 12 chaves de resposta, sem `u200b`, sem `authapp`/`authsigoption`).
-Claude Code conectado ao MCP (`.mcp.json`, guard da allowlist, commit `0cfe32a`)
-enxerga `script_queryworkorders` após `/mcp` reconectar.
-
-1ª chamada voltou com BMXAA10147E (idioma PT do usuário da chave). Registrado como
-**observação**, não pré-requisito: ver [[mas-mcp-server]] e
-[[chave-api-por-usuario]]. Usuário trocado para EN → script passou a rodar e falhou
-em `No module named datetime` (Jython do Maximo sem biblioteca padrão). Corrigido
-(classe `Day`) e reinstalado: sem erro, mas resposta MCP toda `null` (MCP não
-recebe nosso JSON). 2ª correção no repo (detecção do runtime, `userInfo` como
-reserva, `OslcUtils.jsonToBytes`, log das variáveis implícitas), 43 testes,
-**ainda não commitada**. Erro seguinte (HTTP 500 BMXAA1649E): log do Manage mostrou
-`StackOverflowError` em `copyFromBindings` porque `_scope = globals()` ficava no
-topo do script. Corrigido no repo (lógica em `_main`, 44 testes); `SqlFormat` com
-`UserInfo` também mantido. Detalhes em [[automation-scripts-como-ferramentas]].
-Próximo: colar o código novo, repetir o passo 7 do `INSTALACAO.md` (Claude Code
-testa via `script_queryworkorders`) e pegar a linha de log `implicit vars`; se
-funcionar, commitar.
-
-## Onde paramos antes (2026-10-22)
-
-`QUERYWORKORDERS` (1ª ferramenta de dados) escrito, testado localmente e
-commitado (`d5998cf`). A 1ª instalação no Maximo de homologação mostrou problemas
-no OAS; o script e o guia foram corrigidos. **Falta o usuário reinstalar** seguindo
-`maximo_scripts/queryworkorders/INSTALACAO.md` e enviar:
-
-1. trecho do `/api/oas?aitools=1` (passo 5), sem `u200b`;
-2. saída do `check_connection` (passo 6);
-3. as duas respostas de teste e a linha de log `param sources` (passo 7).
-
-Com isso fechamos as perguntas abertas de [[automation-scripts-como-ferramentas]]
-(origem dos parâmetros, `getUserInfo` no caminho MCP, `setTimestamp`, `datetime`
-no Jython do Maximo).
+Só a branch `main`, sincronizada com `origin/main` (GitHub
+`Gustavo-FAC/maximo-ai-agents`, privado). `chore/esqueleto-inicial` foi integrada
+por fast-forward e apagada (local e remoto) em 2026-10-29. Trabalho novo: branch
+nova a partir da `main`.
 
 ## Feito
 
 - 2026-10-21: esqueleto do repo, `uv sync`, pre-commit (gitleaks + Ruff), testes.
 - 2026-10-21: `check_connection` corrigido (SDK mcp 2.3, UTF-8) e rodado contra
   homologação Itambé: conexão OK, só `apischema`.
-- 2026-10-21: memória do projeto em `memoria/` (este wiki). Commit `24775f5`.
-- 2026-10-22: ingest de [[doc-mcp-server]] e [[guia-automation-scripts]]
-  (`docs/Automation_Scripts_IBM_Maximo.docx` versionado). Commit `48a1eed`.
+- 2026-10-21: memória do projeto em `memoria/` (este wiki).
+- 2026-10-22: ingest de [[doc-mcp-server]] e [[guia-automation-scripts]].
 - 2026-10-22: `maximo_scripts/queryworkorders/`: script Jython 2.7, response schema,
-  README (especificação), `INSTALACAO.md` (passo a passo campo a campo) e 22 testes
-  da lógica pura em `tests/unit/test_queryworkorders.py`. Commit `d5998cf`.
+  README (especificação), `INSTALACAO.md` e testes da lógica pura.
   - Filtros só por bind; colunas de listas fixas; limites no script (366 dias,
     50 wonum, 20 por lista, 500 por página); `total` sempre devolvido.
   - Permissão WOTRACK/READ e sites autorizados checados no código.
-  - Lê parâmetros de variável literal, `requestBody` JSON ou query string.
-- 2026-10-22: 1ª instalação no Maximo → OAS revelou: U+200B colado em nomes,
+- 2026-10-22: 1ª instalação → OAS revelou U+200B colado em nomes,
   `authapp`/`authsigoption` expostos como parâmetros, descrições cortadas em 100.
-  Tudo corrigido no repositório.
+  Corrigido.
 - Ruff: `maximo_scripts/**` ignora `UP`, `B904`, `S608` (Jython 2.7).
 - 2026-10-29: Claude Code ligado ao MCP do Maximo: `.mcp.json` (URL e chave por
-  variável de ambiente), `scripts/claude-maximo.ps1`, `mcp/allowlist.py` (nomes
-  exatos ASCII) e hook `mcp/claude_code_guard.py` (fail-closed); settings negam as
-  7 ferramentas padrão de escrita. 12 testes. Commit `0cfe32a`.
-- 2026-10-29: `QUERYWORKORDERS` reinstalado; OAS validado; execução bloqueada por
-  BMXAA10147E (observação em [[mas-mcp-server]]).
-
-## Git
-
-Branch `chore/esqueleto-inicial`, **sem push** (`git log` para a lista de commits).
+  variável de ambiente), `scripts/claude-maximo.ps1`, allowlist de nomes exatos e
+  hook `claude_code_guard.py` (fail-closed); settings negam as 7 ferramentas padrão
+  de escrita.
+- 2026-10-29: `QUERYWORKORDERS` posto para rodar no Maximo. Sequência de erros e
+  correções (detalhes em [[automation-scripts-como-ferramentas]]):
+  1. BMXAA10147E com usuário da chave em PT → usuário em EN (observação em
+     [[mas-mcp-server]], não pré-requisito).
+  2. `No module named datetime` → classe `Day` própria (Jython sem biblioteca padrão).
+  3. Resposta toda `null` → `OslcUtils.jsonToBytes` e variáveis implícitas lidas do
+     escopo.
+  4. HTTP 500 BMXAA1649E → `StackOverflowError` por `_scope = globals()` no topo;
+     lógica movida para `_main`.
+  5. `internal_error` → `ScriptService` sem `isLoggingEnabled`; removido.
+- 2026-10-29: datas opcionais quando `wonums` vem preenchido (decisão do usuário),
+  reinstalado e validado.
+- 2026-10-29: allowlist com descrições próprias, `input_schema` e
+  `clean_arguments`; `apischema` só no Claude Code, fora dos agentes.
+- 2026-10-29: merge na `main`, push, branch antiga apagada.
 
 ## Falta (ordem sugerida)
 
-1. ~~Testar execução do `QUERYWORKORDERS`~~ Feito 2026-10-29. Falta só a linha
-   DEBUG `implicit vars` (origem dos parâmetros e da identidade).
-2. ~~Completar [[allowlist-somente-leitura]] para o agente~~ Feito 2026-10-29:
-   descrições próprias, `input_schema`, `clean_arguments` (59 testes).
-3. Gateway de LLM em `llm/`: **usuário ainda analisando a abordagem** (2026-10-29);
-   não começar sem decisão dele.
-4. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas.
-5. Pequeno CLI `call_tool` para testar ferramentas sem MCP Inspector (opcional).
-6. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
-7. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso
+1. Gateway de LLM em `llm/`: **aguardando decisão do usuário**.
+2. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas, usando
+   `AGENT_TOOLS`, `input_schema` e `clean_arguments`.
+3. Linha DEBUG `implicit vars` do log do Manage (origem dos parâmetros e da
+   identidade no caminho MCP). Só registro; não bloqueia nada.
+4. Pequeno CLI `call_tool` para testar ferramentas sem MCP Inspector (opcional).
+5. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
+6. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso
    a um site (checklist do README do script).
+7. Análises com conta (ex.: OS por ativo, tempo médio) vão para `analysis/` (a IA
+   não faz contas); hoje a ferramenta só dá totais por filtro e listas.
 
 ## Riscos ativos
 
@@ -112,7 +89,6 @@ Branch `chore/esqueleto-inicial`, **sem push** (`git log` para a lista de commit
   revogar** a antiga (risco aceito: escrita total em homologação para quem lê os
   logs do pod). Mitigação necessária antes de chave de gerente. Ver
   [[mas-mcp-server]].
-- Confirmado: Jython do Maximo **sem** `datetime` (sem biblioteca padrão); corrigido.
 - Confirmado em runtime (2026-10-29): `SqlFormat.setTimestamp`, identidade do
   chamador via MCP, paginação com `getMbo(i)` (página 2). Não testado: páginas
   profundas (ex.: 700+) e desempenho.
