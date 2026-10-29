@@ -71,12 +71,20 @@ todos; `tests/unit/test_script_common.py` falha se divergir.
 
 ## Validar em homologação (antes de usar com gerente)
 
-- [ ] Ferramenta aparece no MCP com 13 parâmetros, sem caracteres invisíveis.
-- [ ] Sem parâmetros: `total` = número de ativos dos sites do usuário, 100 itens.
-- [ ] `assetnums` com 2 ativos conhecidos → `total` 2.
-- [ ] `text` com palavra de descrição conhecida (com e sem acento) acha o ativo.
-- [ ] `ancestor` com um ativo pai: devolve os descendentes. Conferir se o próprio
-      ativo vem junto (depende das linhas em ASSETANCESTOR) e registrar.
-- [ ] `fields=isrunning,children,installdate` devolve booleano e data.
+Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
+
+- [x] Ferramenta aparece no MCP com 13 parâmetros, sem caracteres invisíveis.
+- [x] Sem parâmetros: `total` = número de ativos dos sites do usuário (14709).
+- [x] `assetnums` com 2 ativos conhecidos → `total` 2.
+- [x] `text` com palavras de descrição conhecidas acha o ativo; acento precisa
+      bater ("elétrico" acha, "eletrico" não); `%` e palavra de 1 letra recusados.
+- [x] `ancestor` devolve todos os níveis (ACI0008 → ACI0057 → PEL0007).
+      ASSETANCESTOR tem linha do ativo com ele mesmo: na 1ª instalação o próprio
+      ativo vinha junto (CCM2.1: 22 = 21 filhos + ele). Corrigido no SQL
+      (`aa.assetnum <> aa.ancestor`); **conferir após reinstalar**: CCM2.1 → 21,
+      ACI0008 → 2.
+- [x] `fields` com `children`, `installdate`, `statusdate`, `purchaseprice`
+      devolve booleano, data ISO e número.
+- [x] Paginação (página 2), `unknown_field`, `invalid_integer` ok.
 - [ ] Usuário sem READ no app ASSET recebe `not_authorized`.
 - [ ] Usuário **sem** acesso a um site não recebe ativos desse site.

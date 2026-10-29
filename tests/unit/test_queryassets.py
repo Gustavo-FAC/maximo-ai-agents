@@ -59,6 +59,7 @@ def test_ancestor_uses_hierarchy_subselect():
     q = query(ancestor="forno-1,moinho-2", siteid="ITB")
     assert q["filters"]["ancestor"] == ["FORNO-1", "MOINHO-2"]
     assert qa.ANCESTOR_WHERE % ":2, :3" in q["where"]
+    assert "aa.assetnum <> aa.ancestor" in qa.ANCESTOR_WHERE  # descendants only
     assert q["binds"][1:3] == [
         ("ASSETANCESTOR", "ANCESTOR", "FORNO-1"),
         ("ASSETANCESTOR", "ANCESTOR", "MOINHO-2"),

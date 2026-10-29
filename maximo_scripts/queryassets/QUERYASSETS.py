@@ -457,9 +457,12 @@ PARAM_NAMES = (
 )
 
 # Assets anywhere below the given assets in the hierarchy (ASSETANCESTOR).
+# ASSETANCESTOR also holds a row of each asset with itself; excluded so that
+# 'total' counts descendants only (seen in homologation, 2026-10-29).
 ANCESTOR_WHERE = (
     "assetnum in (select aa.assetnum from assetancestor aa"
-    " where aa.siteid = asset.siteid and aa.ancestor in (%s))"
+    " where aa.siteid = asset.siteid and aa.assetnum <> aa.ancestor"
+    " and aa.ancestor in (%s))"
 )
 TEXT_WHERE = "upper(description) like :%d"
 
