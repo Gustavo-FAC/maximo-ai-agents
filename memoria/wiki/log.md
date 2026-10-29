@@ -54,3 +54,77 @@ Feito: ingest das docs, `QUERYWORKORDERS` (script, schema, README, guia, 22 test
 1ª instalação avaliada pelo OAS e corrigida. Commits `48a1eed`, `d5998cf` (sem push).
 Parado em: usuário vai reinstalar o script e enviar OAS, `check_connection` e
 respostas de teste. [[estado-do-projeto]] reescrito com "Onde paramos" e "Falta".
+
+## [2026-10-29] code | Claude Code ligado ao MCP do Maximo
+`.mcp.json` com URL e chave por variável de ambiente, `scripts/claude-maximo.ps1`,
+allowlist de nomes exatos e hook fail-closed `claude_code_guard.py`; settings negam
+as 7 ferramentas padrão de escrita. 12 testes. Commit `0cfe32a`. Registrado agora
+(faltava no log).
+
+## [2026-10-29] test | QUERYWORKORDERS reinstalado: OAS ok, execução bloqueada
+OAS conferido contra o repositório (14 parâmetros, 12 chaves de resposta, sem
+`u200b`, sem variáveis de segurança). Só `apischema` e `script_queryworkorders`
+expostos, ambos readOnlyHint. Chamada via Claude Code voltou com BMXAA10147E
+(idioma PT do usuário da chave) antes de executar o script; `apischema` funcionou
+com a mesma chave. Registrado como **observação** (não pré-requisito) em
+[[mas-mcp-server]], [[chave-api-por-usuario]], [[automation-scripts-como-ferramentas]]
+e no `INSTALACAO.md`. Também observado: cliente MCP recebe parâmetros sem descrição.
+[[estado-do-projeto]] atualizado.
+
+## [2026-10-29] fix | Idioma EN resolveu BMXAA10147E; script sem datetime
+Usuário de homologação trocado para EN: BMXAA10147E sumiu, script executou e falhou
+em `ImportError: No module named datetime`. Jython do Maximo não tem biblioteca
+padrão. `QUERYWORKORDERS.py`: `datetime` trocado por classe `Day` (Hinnant) e
+`parse_iso_day`; testes novos (calendário 1900-2100 contra `datetime`, bissexto,
+virada de ano, datas inválidas, guarda de imports). 43 testes, Ruff ok. Falta
+reinstalar no Maximo. Páginas: [[mas-mcp-server]],
+[[automation-scripts-como-ferramentas]], [[estado-do-projeto]].
+
+## [2026-10-29] fix | Resposta MCP toda null
+Script reinstalado sem `datetime` rodou sem erro, mas o MCP devolveu todas as chaves
+do response schema em `null` (até no caso de erro). Hipóteses: `request` ausente no
+caminho MCP (bloco principal não rodava) e/ou `responseBody` String em vez de
+`OslcUtils.jsonToBytes`. Correção cobre as duas e loga variáveis implícitas
+presentes. 43 testes. Falta reinstalar. [[automation-scripts-como-ferramentas]].
+
+## [2026-10-29] test | Log do MCP: NPE e apikey em texto puro
+Log do pod do MCP: versão com `OslcUtils.jsonToBytes` deu HTTP 500 BMXAA1649E
+(NullPointerException) inclusive sem `date_to`. Confirmado que argumentos chegam
+como corpo JSON. **Risco:** o pod loga a `apikey` completa em INFO; chave MAXADMIN
+de homologação exposta, revogação pedida ao usuário. Páginas: [[mas-mcp-server]],
+[[automation-scripts-como-ferramentas]], [[estado-do-projeto]]. Falta stack trace do
+Manage.
+
+## [2026-10-29] decision | Chave MAXADMIN antiga não revogada
+Usuário gerou chave nova (no `.env`) e decidiu não revogar a antiga, exposta no
+log do pod do MCP. Registrado como risco aceito em [[mas-mcp-server]],
+[[chave-api-por-usuario]] e [[estado-do-projeto]].
+
+## [2026-10-29] fix | NPE: SqlFormat sem UserInfo
+Chave nova reconectada; `script_queryworkorders` ainda dá BMXAA1649E. Causa provável:
+`SqlFormat(where)` sem `UserInfo` na checagem APPLICATIONAUTH (roda antes da
+validação, por isso falha até sem `date_to`). Trocado por `SqlFormat(user_info, ...)`
+e captura de `java.lang.Throwable`. 43 testes, Ruff ok. Falta reinstalar.
+[[automation-scripts-como-ferramentas]].
+
+## [2026-10-29] fix | BMXAA1649E: StackOverflowError por globals() no topo
+Usuário reinstalou e colou o log do pod do Manage: script terminava; o erro vinha
+depois, em `JSR223ScriptDriver.copyFromBindings`, que converte toda variável de topo
+em texto. `_scope = globals()` recursava em `toString` → `StackOverflowError`. Lógica
+movida para `_main(scope, throwable)`; teste `ast` impede `globals()` em variável de
+topo. 44 testes, Ruff ok. Falta reinstalar. Log colado tinha IDs de usuários do
+Maximo; não registrados. [[automation-scripts-como-ferramentas]],
+[[estado-do-projeto]].
+
+## [2026-10-29] fix | ScriptService sem isLoggingEnabled
+Versão com `_main` reinstalada: HTTP 500 resolvido, MCP devolve nosso JSON. Ambas as
+chamadas deram `internal_error`; log do Manage: `ScriptService` sem
+`isLoggingEnabled` (recomendação errada do guia). Removido, `log_debug` direto.
+44 testes. [[guia-automation-scripts]] corrigido. Falta reinstalar.
+
+## [2026-10-29] test | QUERYWORKORDERS funcionando via MCP
+Reinstalado. Claude Code chamou `script_queryworkorders`: jan/2026 total 3900,
+paginação, filtros (status, worktype, wonums, siteid, date_field, fields) e erros de
+validação (required, range_too_large, out_of_range) corretos. Perguntas abertas do
+runtime respondidas em [[automation-scripts-como-ferramentas]]. Pendente: linha
+`implicit vars` e teste com usuário sem acesso a site. [[estado-do-projeto]].

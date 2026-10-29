@@ -37,4 +37,6 @@ seções 1.4, 2, 6 e 10.
 - Sets criados via `MXServer.getMboSet(...)`: **`cleanup()` em `finally`**
   (senão OutOfMemory).
 - Script roda na thread do Maximo: script lento pesa em todos.
-- `service.isLoggingEnabled()` antes de log caro.
+- ~~`service.isLoggingEnabled()` antes de log caro.~~ **Errado no MAS 9.2 da
+  Itambé** (2026-10-29): `ScriptService` não tem esse método (AttributeError). Usar
+  `service.log_debug(...)` direto; o nível do logger filtra.
