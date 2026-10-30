@@ -198,3 +198,12 @@ Fast-forward da `main` até `feat/queryassets` (5 commits) e commit do estado no
 ## [2026-10-29] git | Push e fim de sessão
 Push da `main`; `feat/queryassets` apagada. Próxima sessão: `QUERYFAILUREREPORTS`.
 [[estado-do-projeto]].
+
+## [2026-10-30] chore | virtualenv atualizado
+`uv lock --upgrade-package virtualenv`: 21.14.12 → 21.15.1 (alerta do Dependabot).
+92 testes e pre-commit ok. Commit na `main`. [[estado-do-projeto]].
+
+## [2026-10-30] decision | QUERYFAILUREREPORTS cancelado
+Consultor funcional: Itambé não usa classe de falha. Ferramenta não será feita;
+próximo passo vira `text` no `QUERYWORKORDERS`. Colunas da FAILUREREPORT
+registradas para uso futuro. [[ferramentas-maximo]], [[estado-do-projeto]].

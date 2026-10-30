@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[automation-scripts-como-ferramentas]], [[allowlist-somente-leitura]], [[estado-do-projeto]], [[itambe-cimentos]]
 created: 2026-10-29
-updated: 2026-10-29
+updated: 2026-10-30
 ---
 
 # Ferramentas de dados – plano
@@ -25,24 +25,34 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | # | Script | Tabelas | Cobre (nomes da tabela) | Fase | Estado |
 |---|---|---|---|---|---|
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | funcionando via MCP |
-| 2 | `QUERYFAILUREREPORTS` | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | a fazer |
+| 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando; `text` a fazer |
 | 4 | histórico de status (opção) | WOSTATUS, ASSETSTATUS, ASSETTRANS | histórico de uma OS / paradas e movimentações do ativo | P0 | a definir |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK | consultar_procedimentos | P1 | a fazer |
 | 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
 
-Ordem combinada: 1 → 2 → 3. `buscar_documentos` (conteúdo de anexos) não vira script:
+Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos` (conteúdo de anexos) não vira script:
 exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
 
 ## Decisões
+
+- **`QUERYFAILUREREPORTS` cancelado** (usuário, 2026-10-30): consultor funcional
+  confirmou que a Itambé não usa classe de falha (sem classe não há
+  problema/causa/solução). "Falhas" na Itambé ficam com `QUERYWORKORDERS` (tipo de
+  trabalho corretivo, `text`). Volta como extensão se outro cliente usar. Esboço
+  levantado antes do cancelamento: uma linha por OS; FAILUREREPORT tem `wonum`,
+  `siteid`, `assetnum`, `failurecode`, `type` (PROBLEM/CAUSE/REMEDY), `linenum`, sem
+  `location`; na OS: `failurecode`, `problemcode`, `faildate`, `remarkdesc`
+  (`apischema` MXAPIWODETAIL com `nested`; MXAPIFAILUREREPORT não existe, HTTP 500).
 
 - **"consultar_historico"** (usuário, 2026-10-29): vale para OS e ativos, um ou
   vários. Não é ferramenta própria: a IA combina `QUERYWORKORDERS` (OS do ativo ou
   por wonum) e `QUERYASSETS` (cadastro/situação) conforme o prompt. Lacuna: mudanças
   de status (WOSTATUS) e paradas/movimentações (ASSETSTATUS/ASSETTRANS); proposta é
   opção ligada sob pedido nas duas ferramentas, depois de conferir colunas
-  (`apischema` com subesquema deu HTTP 500).
+  (`apischema` com `nested` deu HTTP 500 uma vez; em 2026-10-30 funcionou com
+  MXAPIWODETAIL, resposta de ~290 mil caracteres).
 - **Bloco comum copiado** (usuário, 2026-10-29, opção "a"): sem script biblioteca.
   Trecho entre `# --- BEGIN COMMON` e `# --- END COMMON ---` igual em todos;
   `tests/unit/test_script_common.py` confere. `QUERYWORKORDERS` recebe o bloco no

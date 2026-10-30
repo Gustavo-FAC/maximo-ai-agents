@@ -4,14 +4,22 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-10-29
+updated: 2026-10-30
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-10-29, fim)
+## Onde paramos (2026-10-30)
+
+- `virtualenv` 21.15.1 no `uv.lock` (alerta do Dependabot); commit na `main`.
+- **`QUERYFAILUREREPORTS` cancelado:** Itambé não usa classe de falha (consultor
+  funcional). Ver [[ferramentas-maximo]].
+- **Próximo passo:** `text` no `QUERYWORKORDERS`, que recebe o bloco comum, em
+  branch nova.
+
+## Antes (2026-10-29, fim)
 
 - **Novas ferramentas antes do gateway** (decisão do usuário): plano em
   [[ferramentas-maximo]]. `QUERYASSETS` na `main`, **instalado e
@@ -77,6 +85,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 - 2026-10-29: merge na `main`, push, branch antiga apagada.
 - 2026-10-29: `QUERYASSETS` escrito, instalado, validado via MCP; `ancestor` sem o
   próprio ativo. `feat/queryassets` integrada na `main`, com push.
+- 2026-10-30: `virtualenv` 21.14.12 → 21.15.1 (Dependabot, alta); 92 testes e
+  pre-commit ok.
+- 2026-10-30: `QUERYFAILUREREPORTS` cancelado (Itambé não usa classe de falha).
 
 ## Falta (ordem sugerida)
 
@@ -93,10 +104,6 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
    não faz contas); hoje a ferramenta só dá totais por filtro e listas.
 
 ## Riscos ativos
-
-- Dependabot (2026-10-29, alta): `virtualenv` 21.14.9–21.14.12 no `uv.lock`
-  (vem do pre-commit; ativador Bash com `--prompt`). Correção:
-  `uv lock --upgrade-package virtualenv` (>= 21.14.13). Fazer no início da próxima sessão.
 
 - Chave MAXADMIN em homologação: ver [[chave-api-por-usuario]].
 - BMXAA10147E: voltou em 2026-10-29 com usuário em PT e sumiu com EN (2ª vez).
