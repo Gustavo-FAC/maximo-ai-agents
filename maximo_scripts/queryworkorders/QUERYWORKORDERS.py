@@ -5,116 +5,16 @@
 #
 # Code must run on Jython 2.7 and CPython 3: the pure functions below (parsing,
 # validation, where clause) are tested by tests/unit/test_queryworkorders.py.
-# Java/Maximo imports live only inside run(). No Python standard library imports:
-# Maximo's Jython does not ship it ("No module named datetime").
+# Java/Maximo imports live only inside runtime functions. No Python standard library
+# imports: Maximo's Jython does not ship it ("No module named datetime").
 
-MAX_DATE_RANGE_DAYS = 366
-MAX_WONUMS = 50
-MAX_LIST_VALUES = 20
-DEFAULT_PAGE_SIZE = 100
-MAX_PAGE_SIZE = 500
+# --- BEGIN COMMON (identical in every script; see tests/unit/test_script_common.py) ---
 
 # Values that mean "parameter not informed" (literal variables need a default).
 UNSET_VALUES = ("", "*")
 
-DATE_FIELDS = (
-    "reportdate",
-    "statusdate",
-    "targstartdate",
-    "targcompdate",
-    "schedstart",
-    "schedfinish",
-    "actstart",
-    "actfinish",
-)
-DEFAULT_DATE_FIELD = "reportdate"
-
-# Attribute -> output type. Only these attributes can be selected.
-FIELD_TYPES = {
-    "wonum": "str",
-    "siteid": "str",
-    "description": "str",
-    "status": "str",
-    "statusdate": "date",
-    "worktype": "str",
-    "wopriority": "int",
-    "assetnum": "str",
-    "location": "str",
-    "persongroup": "str",
-    "lead": "str",
-    "owner": "str",
-    "reportedby": "str",
-    "reportdate": "date",
-    "targstartdate": "date",
-    "targcompdate": "date",
-    "schedstart": "date",
-    "schedfinish": "date",
-    "actstart": "date",
-    "actfinish": "date",
-    "changedate": "date",
-    "estdur": "float",
-    "actlabhrs": "float",
-    "actlabcost": "float",
-    "actmatcost": "float",
-    "acttotalcost": "float",
-    "failurecode": "str",
-    "problemcode": "str",
-    "parent": "str",
-}
-DEFAULT_FIELDS = (
-    "wonum",
-    "siteid",
-    "description",
-    "status",
-    "worktype",
-    "wopriority",
-    "assetnum",
-    "location",
-    "persongroup",
-    "reportdate",
-    "actstart",
-    "actfinish",
-)
-
-# Parameter -> (WORKORDER attribute, value type, max values).
-LIST_FILTERS = (
-    ("siteid", "siteid", "str", MAX_LIST_VALUES),
-    ("wonums", "wonum", "str", MAX_WONUMS),
-    ("status", "status", "str", MAX_LIST_VALUES),
-    ("priority", "wopriority", "int", MAX_LIST_VALUES),
-    ("assetnum", "assetnum", "str", MAX_LIST_VALUES),
-    ("location", "location", "str", MAX_LIST_VALUES),
-    ("persongroup", "persongroup", "str", MAX_LIST_VALUES),
-    ("worktype", "worktype", "str", MAX_LIST_VALUES),
-)
-
-PARAM_NAMES = (
-    "date_from",
-    "date_to",
-    "date_field",
-    "siteid",
-    "wonums",
-    "status",
-    "priority",
-    "assetnum",
-    "location",
-    "persongroup",
-    "worktype",
-    "fields",
-    "page",
-    "page_size",
-)
-
-# Work orders and activities only (no tasks, changes or releases).
-BASE_WHERE = (
-    "woclass in (select value from synonymdomain where domainid = 'WOCLASS'"
-    " and maxvalue in ('WORKORDER', 'ACTIVITY')) and istask = 0"
-)
-
 # Required permission, checked in code. Not script variables: every variable becomes
 # a tool parameter, so the caller could override authapp/authsigoption.
-PERMISSION_APP = "WOTRACK"
-PERMISSION_OPTION = "READ"
 PERMISSION_WHERE = (
     "app = :1 and optionname = :2"
     " and groupname in (select groupname from groupuser where userid = :3)"
@@ -127,6 +27,16 @@ SITE_AUTH_WHERE = (
     " or siteid in (select sa.siteid from siteauth sa, groupuser gu"
     " where sa.groupname = gu.groupname and gu.userid = :%d))"
 )
+
+# Implicit variables Maximo may inject; logged by name to learn which exist on the
+# MCP path.
+IMPLICIT_NAMES = ("request", "requestBody", "userInfo", "service", "httpMethod")
+
+# Parameter "text": words that must all appear in the description.
+MAX_TEXT_WORDS = 5
+MIN_WORD_LENGTH = 2
+MAX_TEXT_LENGTH = 100
+TEXT_WHERE = "upper(description) like :%d"
 
 
 class ParamError(Exception):
@@ -238,124 +148,93 @@ def parse_list(name, raw, kind, max_items):
     return values
 
 
-def parse_fields(raw):
+def parse_fields(raw, field_types, default_fields, key_fields):
+    """Requested fields, validated against field_types; key fields always first."""
     if is_unset(raw):
-        return list(DEFAULT_FIELDS)
+        return list(default_fields)
     fields = []
     for item in to_text(raw).split(","):
         item = item.strip().lower()
         if not item:
             continue
-        if item not in FIELD_TYPES:
+        if item not in field_types:
             raise ParamError("unknown_field", "fields", "Unknown field: %s." % item)
         if item not in fields:
             fields.append(item)
-    if "wonum" not in fields:
-        fields.insert(0, "wonum")
-    if "siteid" not in fields:
-        fields.insert(1, "siteid")
+    for index, key in enumerate(key_fields):
+        if key not in fields:
+            fields.insert(index, key)
     return fields
 
 
-def build_query(raw, userid):
-    """Validate raw parameters and build the where clause with bind values.
+def add_in_filter(clauses, binds, obj, attribute, values):
+    """Append "attribute in (:n, ...)" with one bind per value."""
+    placeholders = []
+    for value in values:
+        binds.append((obj, attribute.upper(), value))
+        placeholders.append(":%d" % len(binds))
+    clauses.append("%s in (%s)" % (attribute, ", ".join(placeholders)))
 
-    Returns a dict. "binds" is a list of (object, attribute, value) in placeholder
-    order; values never go into the where text.
 
-    The date range is required, except when wonums is given and both dates are
-    omitted: wonums is capped at MAX_WONUMS, so the query stays bounded.
-    """
-    wonums = parse_list("wonums", raw.get("wonums"), "str", MAX_WONUMS)
-    if wonums and is_unset(raw.get("date_from")) and is_unset(raw.get("date_to")):
-        date_from = date_to = None
-    else:
-        date_from = parse_date("date_from", raw.get("date_from"))
-        date_to = parse_date("date_to", raw.get("date_to"))
-        if date_to.ordinal < date_from.ordinal:
-            raise ParamError("invalid_range", "date_to", "date_to must be on or after date_from.")
-        if date_to.ordinal - date_from.ordinal + 1 > MAX_DATE_RANGE_DAYS:
-            raise ParamError(
-                "range_too_large",
-                "date_to",
-                "Date range is limited to %d days." % MAX_DATE_RANGE_DAYS,
-            )
-
-    date_field = raw.get("date_field")
-    date_field = DEFAULT_DATE_FIELD if is_unset(date_field) else to_text(date_field).strip().lower()
-    if date_field not in DATE_FIELDS:
+def parse_text(raw):
+    """Search words (upper case), each must appear in the description; [] if unset."""
+    if is_unset(raw):
+        return []
+    text = to_text(raw).strip()
+    if len(text) > MAX_TEXT_LENGTH:
         raise ParamError(
-            "invalid_date_field",
-            "date_field",
-            "date_field must be one of: %s." % ", ".join(DATE_FIELDS),
+            "out_of_range", "text", "text accepts at most %d characters." % MAX_TEXT_LENGTH
         )
+    if "%" in text or "_" in text:
+        # Would act as LIKE wildcards; escape syntax differs between databases.
+        raise ParamError("invalid_text", "text", "text must not contain % or _.")
+    words = []
+    for word in text.upper().split():
+        if len(word) < MIN_WORD_LENGTH:
+            raise ParamError(
+                "invalid_text",
+                "text",
+                "Each word in text needs at least %d characters." % MIN_WORD_LENGTH,
+            )
+        if word not in words:
+            words.append(word)
+    if len(words) > MAX_TEXT_WORDS:
+        raise ParamError(
+            "too_many_values", "text", "text accepts at most %d words." % MAX_TEXT_WORDS
+        )
+    return words
 
-    page = parse_int("page", raw.get("page"), 1, 1, 100000)
-    page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
-    fields = parse_fields(raw.get("fields"))
 
-    binds = []
-    clauses = [BASE_WHERE]
-    if date_from is not None:
-        # date_to is inclusive: compare with the start of the next day.
-        binds.append(("WORKORDER", date_field.upper(), date_from))
-        binds.append(("WORKORDER", date_field.upper(), Day(date_to.ordinal + 1)))
-        clauses.append("%s >= :1 and %s < :2" % (date_field, date_field))
+def add_text_filter(clauses, binds, obj, words):
+    """Append one "upper(description) like :n" per word, wildcards in the bind."""
+    for word in words:
+        binds.append((obj, "DESCRIPTION", "%" + word + "%"))
+        clauses.append(TEXT_WHERE % len(binds))
 
-    filters = {}
-    for name, attribute, kind, max_items in LIST_FILTERS:
-        values = parse_list(name, raw.get(name), kind, max_items)
-        if not values:
-            continue
-        filters[name] = values
-        placeholders = []
-        for value in values:
-            binds.append(("WORKORDER", attribute.upper(), value))
-            placeholders.append(":%d" % len(binds))
-        clauses.append("%s in (%s)" % (attribute, ", ".join(placeholders)))
 
+def add_site_auth(clauses, binds, userid):
     binds.append(("GROUPUSER", "USERID", userid))
     binds.append(("GROUPUSER", "USERID", userid))
     clauses.append(SITE_AUTH_WHERE % (len(binds) - 1, len(binds)))
 
-    return {
-        "where": " and ".join(clauses),
-        "binds": binds,
-        "order_by": "%s desc, wonum" % date_field,
-        "date_field": date_field,
-        "date_from": date_from.isoformat() if date_from is not None else None,
-        "date_to": date_to.isoformat() if date_to is not None else None,
-        "filters": filters,
-        "fields": fields,
-        "page": page,
-        "page_size": page_size,
-        "offset": (page - 1) * page_size,
-    }
 
-
-def permission_binds(userid):
+def permission_binds(app, option, userid):
     return [
-        ("APPLICATIONAUTH", "APP", PERMISSION_APP),
-        ("APPLICATIONAUTH", "OPTIONNAME", PERMISSION_OPTION),
+        ("APPLICATIONAUTH", "APP", app),
+        ("APPLICATIONAUTH", "OPTIONNAME", option),
         ("GROUPUSER", "USERID", userid),
     ]
 
 
-def build_response(query, total, items):
-    page_size = query["page_size"]
+def paging(page, page_size, total, returned):
     total_pages = (total + page_size - 1) // page_size
     return {
         "total": total,
-        "page": query["page"],
+        "page": page,
         "page_size": page_size,
         "total_pages": total_pages,
-        "returned": len(items),
-        "has_more": query["page"] < total_pages,
-        "date_field": query["date_field"],
-        "date_from": query["date_from"],
-        "date_to": query["date_to"],
-        "filters": query["filters"],
-        "items": items,
+        "returned": returned,
+        "has_more": page < total_pages,
     }
 
 
@@ -363,7 +242,7 @@ def error_response(code, parameter, message):
     return {"error": {"code": code, "parameter": parameter, "message": message}}
 
 
-def collect_params(variables, body, query_param):
+def collect_params(param_names, variables, body, query_param):
     """Read each parameter from literal variable, JSON body or query string.
 
     How the MCP Server delivers arguments is not confirmed yet, so the first source
@@ -371,7 +250,7 @@ def collect_params(variables, body, query_param):
     """
     raw = {}
     sources = {}
-    for name in PARAM_NAMES:
+    for name in param_names:
         value = variables.get(name)
         source = "variable"
         if is_unset(value) and body:
@@ -386,9 +265,7 @@ def collect_params(variables, body, query_param):
     return raw, sources
 
 
-# ---------------------------------------------------------------------------
-# Maximo runtime (Jython only)
-# ---------------------------------------------------------------------------
+# Maximo runtime (Jython only) ------------------------------------------------
 
 
 def to_json(value):
@@ -426,10 +303,10 @@ def read_body(body):
         return None
 
 
-def read_item(mbo, fields, date_format):
+def read_item(mbo, fields, field_types, date_format):
     item = {}
     for field in fields:
-        kind = FIELD_TYPES[field]
+        kind = field_types[field]
         if mbo.isNull(field):
             item[field] = None
         elif kind == "date":
@@ -438,52 +315,51 @@ def read_item(mbo, fields, date_format):
             item[field] = mbo.getInt(field)
         elif kind == "float":
             item[field] = mbo.getDouble(field)
+        elif kind == "bool":
+            item[field] = mbo.getBoolean(field)
         else:
             item[field] = mbo.getString(field)
     return item
 
 
-def run(user_info, raw):
+def format_where(user_info, where, binds):
+    """Where clause with bind values set by SqlFormat (never concatenated)."""
     from java.text import SimpleDateFormat
-    from psdi.mbo import MboConstants, SqlFormat
-    from psdi.server import MXServer
+    from psdi.mbo import SqlFormat
 
-    if user_info is None:
-        # Fail closed: never query without the caller's identity.
-        return error_response("no_user", None, "Caller identity not available.")
-
-    userid = user_info.getUserName()
-    auth_set = MXServer.getMXServer().getMboSet("APPLICATIONAUTH", user_info)
-    try:
-        # UserInfo gives SqlFormat the locale/timezone setObject needs.
-        auth_sqf = SqlFormat(user_info, PERMISSION_WHERE)
-        for index, (obj, attribute, value) in enumerate(permission_binds(userid)):
-            auth_sqf.setObject(index + 1, obj, attribute, value)
-        auth_set.setWhere(auth_sqf.format())
-        allowed = not auth_set.isEmpty()
-    finally:
-        auth_set.cleanup()
-    if not allowed:
-        return error_response(
-            "not_authorized",
-            None,
-            "User needs %s access to %s." % (PERMISSION_OPTION, PERMISSION_APP),
-        )
-
-    query = build_query(raw, userid)
-
-    sqf = SqlFormat(user_info, query["where"])
+    # UserInfo gives SqlFormat the locale/timezone setObject needs.
+    sqf = SqlFormat(user_info, where)
     day_format = SimpleDateFormat("yyyy-MM-dd")
-    for index, (obj, attribute, value) in enumerate(query["binds"]):
+    for index, (obj, attribute, value) in enumerate(binds):
         if isinstance(value, Day):
             sqf.setTimestamp(index + 1, day_format.parse(value.isoformat()))
         else:
             sqf.setObject(index + 1, obj, attribute, to_text(value))
+    return sqf.format()
 
-    mboset = MXServer.getMXServer().getMboSet("WORKORDER", user_info)
+
+def has_permission(user_info, app, option):
+    from psdi.server import MXServer
+
+    binds = permission_binds(app, option, user_info.getUserName())
+    auth_set = MXServer.getMXServer().getMboSet("APPLICATIONAUTH", user_info)
+    try:
+        auth_set.setWhere(format_where(user_info, PERMISSION_WHERE, binds))
+        return not auth_set.isEmpty()
+    finally:
+        auth_set.cleanup()
+
+
+def query_page(user_info, object_name, query, field_types):
+    """Run query (where, binds, order_by, fields, offset, page_size): (total, items)."""
+    from java.text import SimpleDateFormat
+    from psdi.mbo import MboConstants
+    from psdi.server import MXServer
+
+    mboset = MXServer.getMXServer().getMboSet(object_name, user_info)
     try:
         mboset.setFlag(MboConstants.DISCARDABLE, True)
-        mboset.setWhere(sqf.format())
+        mboset.setWhere(format_where(user_info, query["where"], query["binds"]))
         mboset.setOrderBy(query["order_by"])
         total = mboset.count()  # one SQL count; never call count() again
         items = []
@@ -494,26 +370,14 @@ def run(user_info, raw):
             mbo = mboset.getMbo(index)
             if mbo is None:
                 break
-            items.append(read_item(mbo, query["fields"], output_format))
+            items.append(read_item(mbo, query["fields"], field_types, output_format))
             index += 1
-        return build_response(query, total, items)
+        return total, items
     finally:
         mboset.cleanup()
 
 
-# Implicit variables Maximo may inject; logged by name to learn which exist on the
-# MCP path.
-IMPLICIT_NAMES = ("request", "requestBody", "userInfo", "service", "httpMethod")
-
-try:
-    from java.lang import System  # noqa: F401  (resolves only under Jython)
-
-    _IN_MAXIMO = True
-except ImportError:  # CPython: module imported by tests
-    _IN_MAXIMO = False
-
-
-def _main(scope, throwable):
+def main(scope, throwable, script_name, param_names, run):
     """Run the tool against the script scope and return the response dict.
 
     Everything lives in locals: after the script ends, Maximo calls toString on
@@ -524,6 +388,7 @@ def _main(scope, throwable):
     req = scope.get("request")
     try:
         raw, sources = collect_params(
+            param_names,
             scope,
             read_body(scope.get("requestBody")),
             req.getQueryParam if req is not None else None,
@@ -531,22 +396,243 @@ def _main(scope, throwable):
         # No isLoggingEnabled() on ScriptService in MAS 9.2; log_debug filters by level.
         if service is not None:
             service.log_debug(
-                "QUERYWORKORDERS implicit vars: %s; param sources: %s"
-                % ([n for n in IMPLICIT_NAMES if scope.get(n) is not None], sources)
+                "%s implicit vars: %s; param sources: %s"
+                % (script_name, [n for n in IMPLICIT_NAMES if scope.get(n) is not None], sources)
             )
-        return run(req.getUserInfo() if req is not None else scope.get("userInfo"), raw)
+        user_info = req.getUserInfo() if req is not None else scope.get("userInfo")
+        if user_info is None:
+            # Fail closed: never query without the caller's identity.
+            return error_response("no_user", None, "Caller identity not available.")
+        return run(user_info, raw)
     except ParamError as e:
         return error_response(e.code, e.parameter, e.message)
     except (Exception, throwable) as e:
         # Throwable: Java exceptions (e.g. NullPointerException) may bypass Exception.
         if service is not None:
-            service.log_error("QUERYWORKORDERS failed: %s" % e)
+            service.log_error("%s failed: %s" % (script_name, e))
         return error_response("internal_error", None, "Query failed. See Maximo log.")
+
+
+# --- END COMMON ---
+
+
+SCRIPT_NAME = "QUERYWORKORDERS"
+OBJECT_NAME = "WORKORDER"
+PERMISSION_APP = "WOTRACK"
+PERMISSION_OPTION = "READ"
+
+MAX_DATE_RANGE_DAYS = 366
+MAX_WONUMS = 50
+MAX_LIST_VALUES = 20
+DEFAULT_PAGE_SIZE = 100
+MAX_PAGE_SIZE = 500
+
+DATE_FIELDS = (
+    "reportdate",
+    "statusdate",
+    "targstartdate",
+    "targcompdate",
+    "schedstart",
+    "schedfinish",
+    "actstart",
+    "actfinish",
+)
+DEFAULT_DATE_FIELD = "reportdate"
+
+# Attribute -> output type. Only these attributes can be selected.
+FIELD_TYPES = {
+    "wonum": "str",
+    "siteid": "str",
+    "description": "str",
+    "status": "str",
+    "statusdate": "date",
+    "worktype": "str",
+    "wopriority": "int",
+    "assetnum": "str",
+    "location": "str",
+    "persongroup": "str",
+    "lead": "str",
+    "owner": "str",
+    "reportedby": "str",
+    "reportdate": "date",
+    "targstartdate": "date",
+    "targcompdate": "date",
+    "schedstart": "date",
+    "schedfinish": "date",
+    "actstart": "date",
+    "actfinish": "date",
+    "changedate": "date",
+    "estdur": "float",
+    "actlabhrs": "float",
+    "actlabcost": "float",
+    "actmatcost": "float",
+    "acttotalcost": "float",
+    "failurecode": "str",
+    "problemcode": "str",
+    "parent": "str",
+}
+DEFAULT_FIELDS = (
+    "wonum",
+    "siteid",
+    "description",
+    "status",
+    "worktype",
+    "wopriority",
+    "assetnum",
+    "location",
+    "persongroup",
+    "reportdate",
+    "actstart",
+    "actfinish",
+)
+KEY_FIELDS = ("wonum", "siteid")
+
+# Parameter -> (WORKORDER attribute, value type, max values).
+LIST_FILTERS = (
+    ("siteid", "siteid", "str", MAX_LIST_VALUES),
+    ("wonums", "wonum", "str", MAX_WONUMS),
+    ("status", "status", "str", MAX_LIST_VALUES),
+    ("priority", "wopriority", "int", MAX_LIST_VALUES),
+    ("assetnum", "assetnum", "str", MAX_LIST_VALUES),
+    ("location", "location", "str", MAX_LIST_VALUES),
+    ("persongroup", "persongroup", "str", MAX_LIST_VALUES),
+    ("worktype", "worktype", "str", MAX_LIST_VALUES),
+)
+
+PARAM_NAMES = (
+    "date_from",
+    "date_to",
+    "date_field",
+    "siteid",
+    "wonums",
+    "status",
+    "priority",
+    "assetnum",
+    "location",
+    "persongroup",
+    "worktype",
+    "text",
+    "fields",
+    "page",
+    "page_size",
+)
+
+# Work orders and activities only (no tasks, changes or releases).
+BASE_WHERE = (
+    "woclass in (select value from synonymdomain where domainid = 'WOCLASS'"
+    " and maxvalue in ('WORKORDER', 'ACTIVITY')) and istask = 0"
+)
+
+
+def build_query(raw, userid):
+    """Validate raw parameters and build the where clause with bind values.
+
+    Returns a dict. "binds" is a list of (object, attribute, value) in placeholder
+    order; values never go into the where text.
+
+    The date range is required, except when wonums is given and both dates are
+    omitted: wonums is capped at MAX_WONUMS, so the query stays bounded.
+    """
+    wonums = parse_list("wonums", raw.get("wonums"), "str", MAX_WONUMS)
+    if wonums and is_unset(raw.get("date_from")) and is_unset(raw.get("date_to")):
+        date_from = date_to = None
+    else:
+        date_from = parse_date("date_from", raw.get("date_from"))
+        date_to = parse_date("date_to", raw.get("date_to"))
+        if date_to.ordinal < date_from.ordinal:
+            raise ParamError("invalid_range", "date_to", "date_to must be on or after date_from.")
+        if date_to.ordinal - date_from.ordinal + 1 > MAX_DATE_RANGE_DAYS:
+            raise ParamError(
+                "range_too_large",
+                "date_to",
+                "Date range is limited to %d days." % MAX_DATE_RANGE_DAYS,
+            )
+
+    date_field = raw.get("date_field")
+    date_field = DEFAULT_DATE_FIELD if is_unset(date_field) else to_text(date_field).strip().lower()
+    if date_field not in DATE_FIELDS:
+        raise ParamError(
+            "invalid_date_field",
+            "date_field",
+            "date_field must be one of: %s." % ", ".join(DATE_FIELDS),
+        )
+
+    page = parse_int("page", raw.get("page"), 1, 1, 100000)
+    page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
+    fields = parse_fields(raw.get("fields"), FIELD_TYPES, DEFAULT_FIELDS, KEY_FIELDS)
+
+    binds = []
+    clauses = [BASE_WHERE]
+    if date_from is not None:
+        # date_to is inclusive: compare with the start of the next day.
+        binds.append((OBJECT_NAME, date_field.upper(), date_from))
+        binds.append((OBJECT_NAME, date_field.upper(), Day(date_to.ordinal + 1)))
+        clauses.append("%s >= :1 and %s < :2" % (date_field, date_field))
+
+    filters = {}
+    for name, attribute, kind, max_items in LIST_FILTERS:
+        values = parse_list(name, raw.get(name), kind, max_items)
+        if values:
+            filters[name] = values
+            add_in_filter(clauses, binds, OBJECT_NAME, attribute, values)
+
+    words = parse_text(raw.get("text"))
+    if words:
+        filters["text"] = words
+        add_text_filter(clauses, binds, OBJECT_NAME, words)
+
+    add_site_auth(clauses, binds, userid)
+
+    return {
+        "where": " and ".join(clauses),
+        "binds": binds,
+        "order_by": "%s desc, wonum" % date_field,
+        "date_field": date_field,
+        "date_from": date_from.isoformat() if date_from is not None else None,
+        "date_to": date_to.isoformat() if date_to is not None else None,
+        "filters": filters,
+        "fields": fields,
+        "page": page,
+        "page_size": page_size,
+        "offset": (page - 1) * page_size,
+    }
+
+
+def build_response(query, total, items):
+    response = paging(query["page"], query["page_size"], total, len(items))
+    response["date_field"] = query["date_field"]
+    response["date_from"] = query["date_from"]
+    response["date_to"] = query["date_to"]
+    response["filters"] = query["filters"]
+    response["items"] = items
+    return response
+
+
+def run(user_info, raw):
+    if not has_permission(user_info, PERMISSION_APP, PERMISSION_OPTION):
+        return error_response(
+            "not_authorized",
+            None,
+            "User needs %s access to %s." % (PERMISSION_OPTION, PERMISSION_APP),
+        )
+    query = build_query(raw, user_info.getUserName())
+    total, items = query_page(user_info, OBJECT_NAME, query, FIELD_TYPES)
+    return build_response(query, total, items)
+
+
+try:
+    from java.lang import System  # noqa: F401  (resolves only under Jython)
+
+    _IN_MAXIMO = True
+except ImportError:  # CPython: module imported by tests
+    _IN_MAXIMO = False
 
 
 if _IN_MAXIMO:
     from com.ibm.tivoli.maximo.oslc import OslcUtils
     from java.lang import Throwable
 
-    # No top-level variable may reference globals() (see _main).
-    responseBody = OslcUtils.jsonToBytes(to_json(_main(globals(), Throwable)))
+    # No top-level variable may reference globals() (see main).
+    responseBody = OslcUtils.jsonToBytes(
+        to_json(main(globals(), Throwable, SCRIPT_NAME, PARAM_NAMES, run))
+    )

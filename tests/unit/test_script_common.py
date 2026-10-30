@@ -10,10 +10,6 @@ SCRIPTS = sorted(SCRIPTS_DIR.glob("*/*.py"))
 BEGIN = "# --- BEGIN COMMON"
 END = "# --- END COMMON ---"
 
-# Scripts written before the common block; they get it on their next change
-# (QUERYWORKORDERS: when the `text` parameter is added).
-WITHOUT_COMMON = {"QUERYWORKORDERS.py"}
-
 # Mbo calls that change Maximo data. JSONArray.add (response building) is allowed.
 WRITE_CALLS = {"setValue", "save", "changeStatus", "delete", "deleteAll", "addAtEnd"}
 
@@ -30,7 +26,7 @@ def test_scripts_found():
 
 def test_common_block_identical():
     # Decision 2026-10-29: copy the shared code into each script, no library script.
-    blocks = {path.name: common_block(path) for path in SCRIPTS if path.name not in WITHOUT_COMMON}
+    blocks = {path.name: common_block(path) for path in SCRIPTS}
     reference = blocks["QUERYASSETS.py"]
     for name, block in blocks.items():
         assert block == reference, f"{name}: common block differs from QUERYASSETS.py"

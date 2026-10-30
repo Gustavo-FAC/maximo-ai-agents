@@ -159,6 +159,54 @@ def test_accented_values():
     assert q["filters"]["persongroup"] == ["MECÂNICA", "ELÉTRICA"]
 
 
+def test_text_words_each_bound_with_wildcards():
+    q = query(text="  Vazamento   redutor vazamento ")
+    assert q["filters"]["text"] == ["VAZAMENTO", "REDUTOR"]
+    assert "upper(description) like :3 and upper(description) like :4" in q["where"]
+    assert q["binds"][2:4] == [
+        ("WORKORDER", "DESCRIPTION", "%VAZAMENTO%"),
+        ("WORKORDER", "DESCRIPTION", "%REDUTOR%"),
+    ]
+    assert "VAZAMENTO" not in q["where"]
+    assert q["where"].count(":") == len(q["binds"])
+
+
+def test_text_after_list_filters():
+    q = query(worktype="CM", text="rolamento")
+    assert "worktype in (:3)" in q["where"]
+    assert "upper(description) like :4" in q["where"]
+    assert q["filters"] == {"worktype": ["CM"], "text": ["ROLAMENTO"]}
+
+
+def test_text_does_not_lift_date_requirement():
+    # Only wonums bounds the query enough to drop the date range.
+    assert error_code(text="vazamento") == "required"
+    q = qwo.build_query({"wonums": "1564759", "text": "bomba"}, "GERENTE1")
+    assert q["date_from"] is None
+    assert "upper(description) like :2" in q["where"]
+
+
+@pytest.mark.parametrize(
+    ("text", "code"),
+    [
+        ("a", "invalid_text"),
+        ("100%", "invalid_text"),
+        ("bomba_1", "invalid_text"),
+        ("aa bb cc dd ee ff", "too_many_values"),
+        ("m" * (qwo.MAX_TEXT_LENGTH + 1), "out_of_range"),
+    ],
+)
+def test_text_rejected(text, code):
+    assert error_code(**BASE, text=text) == code
+
+
+def test_text_injection_and_accents():
+    q = query(text="elétrica' or 1=1 --")
+    assert q["filters"]["text"] == ["ELÉTRICA'", "OR", "1=1", "--"]
+    assert "OR 1=1" not in q["where"].upper()
+    assert query(text="*")["filters"] == {}
+
+
 def test_list_limits():
     wonums = ",".join(str(n) for n in range(qwo.MAX_WONUMS))
     assert len(query(wonums=wonums)["filters"]["wonums"]) == qwo.MAX_WONUMS
@@ -176,7 +224,8 @@ def test_site_authorization_always_applied():
 
 
 def test_permission_is_fixed_in_code():
-    assert qwo.permission_binds("GERENTE1") == [
+    assert (qwo.PERMISSION_APP, qwo.PERMISSION_OPTION) == ("WOTRACK", "READ")
+    assert qwo.permission_binds(qwo.PERMISSION_APP, qwo.PERMISSION_OPTION, "GERENTE1") == [
         ("APPLICATIONAUTH", "APP", "WOTRACK"),
         ("APPLICATIONAUTH", "OPTIONNAME", "READ"),
         ("GROUPUSER", "USERID", "GERENTE1"),
@@ -205,7 +254,7 @@ def test_collect_params_precedence():
     variables = {"date_from": "2026-01-01", "date_to": "*", "siteid": "*"}
     body = {"date_to": "2026-01-31", "siteid": "BEDFORD"}
     query_params = {"siteid": "TEXAS", "page": "2"}
-    raw, sources = qwo.collect_params(variables, body, query_params.get)
+    raw, sources = qwo.collect_params(qwo.PARAM_NAMES, variables, body, query_params.get)
     assert raw["date_from"] == "2026-01-01"
     assert raw["date_to"] == "2026-01-31"
     assert raw["siteid"] == "BEDFORD"
@@ -220,7 +269,7 @@ def test_collect_params_precedence():
 
 
 def test_collect_params_without_body_or_query():
-    raw, sources = qwo.collect_params({"date_from": "2026-01-01"}, None, None)
+    raw, sources = qwo.collect_params(qwo.PARAM_NAMES, {"date_from": "2026-01-01"}, None, None)
     assert raw["date_from"] == "2026-01-01"
     assert raw["date_to"] is None
     assert sources == {"date_from": "variable"}
@@ -232,4 +281,10 @@ def test_response_metadata():
     assert resp["total_pages"] == 3
     assert resp["has_more"] is True
     assert resp["returned"] == 1
+    assert (resp["date_field"], resp["date_from"], resp["date_to"]) == (
+        "reportdate",
+        "2026-01-01",
+        "2026-01-31",
+    )
+    assert resp["items"] == [{"wonum": "1"}]
     assert qwo.build_response(q, 0, [])["total_pages"] == 0

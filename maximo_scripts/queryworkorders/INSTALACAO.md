@@ -25,6 +25,22 @@ mas é outro para o código.
   - `maximo_scripts/queryworkorders/response_schema.json`
 - Anotar o commit do repositório que está sendo instalado (`git log -1 --oneline`).
 
+## Atualizar instalação existente (2026-10-30: parâmetro `text` e bloco comum)
+
+Se o `QUERYWORKORDERS` já está instalado e funcionando, não precisa apagar e
+recriar:
+
+1. Abrir o script `QUERYWORKORDERS`.
+2. Aba **Variables → New Row**, com os mesmos valores das outras (IN, LITERAL,
+   ALN, `*`). Variable `text` (digitar), Description:
+   `Words that must all appear in the description (max 5 words, 100 chars).`
+3. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYWORKORDERS.py`
+   novo. **Save**.
+4. Seguir os passos 5 a 8 (agora são **15** parâmetros). Testes do `text` no passo 7.
+
+Se aparecer `u200b` no OAS depois do passo 2, apagar só a variável e recriar
+digitando o nome.
+
 ## 1. Remover a instalação anterior (se existir)
 
 Menu → **System Configuration → Platform Configuration → Automation Scripts**.
@@ -58,7 +74,7 @@ Clicar **Next**.
 
 ### Passo 2 do wizard – variáveis
 
-Criar **14 linhas** (New Row). Em todas:
+Criar **15 linhas** (New Row). Em todas:
 
 - **Variable Type:** `IN`
 - **Binding Type:** `LITERAL`
@@ -81,6 +97,7 @@ resto).
 | `location` | Location codes, comma-separated (max 20). |
 | `persongroup` | Crew/person group codes, comma-separated (max 20). |
 | `worktype` | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
+| `text` | Words that must all appear in the description (max 5 words, 100 chars). |
 | `fields` | Fields to return, comma-separated. wonum and siteid always included. |
 | `page` | Page number, starting at 1 (default 1). |
 | `page_size` | Items per page, 1 to 500 (default 100). |
@@ -136,7 +153,7 @@ Na resposta, com Ctrl+F:
 - [ ] `script_queryworkorders` aparece.
 - [ ] **`u200b` não aparece em lugar nenhum.** Se aparecer, voltar ao passo 1.
 - [ ] `authapp` e `authsigoption` **não** aparecem.
-- [ ] 14 parâmetros no `requestBody`.
+- [ ] 15 parâmetros no `requestBody` (com `text`).
 
 Me enviar o trecho de `/script_queryworkorders` se algo estiver diferente.
 
@@ -170,7 +187,17 @@ Depois, sem `date_to`:
 
 Esperado: `{"error": {"code": "required", "parameter": "date_to", ...}}`.
 
-Me enviar as duas respostas (pode cortar descrições de OS se tiverem dado sensível).
+Busca por palavras na descrição (trocar pelas de uma OS conhecida):
+
+```json
+{"date_from": "2026-09-01", "date_to": "2026-09-30", "text": "vazamento", "page_size": "5"}
+```
+
+Esperado: só OS com a palavra na descrição; `filters.text` = `["VAZAMENTO"]`.
+Depois `{"date_from": "2026-09-01", "date_to": "2026-09-30", "text": "a"}` →
+`{"error": {"code": "invalid_text", ...}}`.
+
+Me enviar as respostas (pode cortar descrições de OS se tiverem dado sensível).
 
 Conferir também o log (logger `autoscript` / script em DEBUG): deve haver a linha
 `QUERYWORKORDERS implicit vars: [...]; param sources: {...}` mostrando quais

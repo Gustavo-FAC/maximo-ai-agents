@@ -28,6 +28,5 @@ Convenções:
 
 Scripts:
 
-- [`queryworkorders/`](queryworkorders/README.md) – consulta genérica de OS
-  (ainda sem o bloco comum; entra junto com o parâmetro `text`).
+- [`queryworkorders/`](queryworkorders/README.md) – consulta genérica de OS.
 - [`queryassets/`](queryassets/README.md) – consulta genérica de ativos.

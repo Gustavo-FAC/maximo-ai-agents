@@ -32,6 +32,12 @@ SITE_AUTH_WHERE = (
 # MCP path.
 IMPLICIT_NAMES = ("request", "requestBody", "userInfo", "service", "httpMethod")
 
+# Parameter "text": words that must all appear in the description.
+MAX_TEXT_WORDS = 5
+MIN_WORD_LENGTH = 2
+MAX_TEXT_LENGTH = 100
+TEXT_WHERE = "upper(description) like :%d"
+
 
 class ParamError(Exception):
     def __init__(self, code, parameter, message):
@@ -168,6 +174,42 @@ def add_in_filter(clauses, binds, obj, attribute, values):
         binds.append((obj, attribute.upper(), value))
         placeholders.append(":%d" % len(binds))
     clauses.append("%s in (%s)" % (attribute, ", ".join(placeholders)))
+
+
+def parse_text(raw):
+    """Search words (upper case), each must appear in the description; [] if unset."""
+    if is_unset(raw):
+        return []
+    text = to_text(raw).strip()
+    if len(text) > MAX_TEXT_LENGTH:
+        raise ParamError(
+            "out_of_range", "text", "text accepts at most %d characters." % MAX_TEXT_LENGTH
+        )
+    if "%" in text or "_" in text:
+        # Would act as LIKE wildcards; escape syntax differs between databases.
+        raise ParamError("invalid_text", "text", "text must not contain % or _.")
+    words = []
+    for word in text.upper().split():
+        if len(word) < MIN_WORD_LENGTH:
+            raise ParamError(
+                "invalid_text",
+                "text",
+                "Each word in text needs at least %d characters." % MIN_WORD_LENGTH,
+            )
+        if word not in words:
+            words.append(word)
+    if len(words) > MAX_TEXT_WORDS:
+        raise ParamError(
+            "too_many_values", "text", "text accepts at most %d words." % MAX_TEXT_WORDS
+        )
+    return words
+
+
+def add_text_filter(clauses, binds, obj, words):
+    """Append one "upper(description) like :n" per word, wildcards in the bind."""
+    for word in words:
+        binds.append((obj, "DESCRIPTION", "%" + word + "%"))
+        clauses.append(TEXT_WHERE % len(binds))
 
 
 def add_site_auth(clauses, binds, userid):
@@ -382,9 +424,6 @@ MAX_ASSETNUMS = 50
 MAX_LIST_VALUES = 20
 DEFAULT_PAGE_SIZE = 100
 MAX_PAGE_SIZE = 500
-MAX_TEXT_WORDS = 5
-MIN_WORD_LENGTH = 2
-MAX_TEXT_LENGTH = 100
 
 # Attribute -> output type. Only these attributes can be selected. Standard ASSET
 # attributes only: client-specific ones (e.g. Itambe's cci_*) break other clients.
@@ -464,36 +503,6 @@ ANCESTOR_WHERE = (
     " where aa.siteid = asset.siteid and aa.assetnum <> aa.ancestor"
     " and aa.ancestor in (%s))"
 )
-TEXT_WHERE = "upper(description) like :%d"
-
-
-def parse_text(raw):
-    """Search words (upper case), each must appear in the description; [] if unset."""
-    if is_unset(raw):
-        return []
-    text = to_text(raw).strip()
-    if len(text) > MAX_TEXT_LENGTH:
-        raise ParamError(
-            "out_of_range", "text", "text accepts at most %d characters." % MAX_TEXT_LENGTH
-        )
-    if "%" in text or "_" in text:
-        # Would act as LIKE wildcards; escape syntax differs between databases.
-        raise ParamError("invalid_text", "text", "text must not contain % or _.")
-    words = []
-    for word in text.upper().split():
-        if len(word) < MIN_WORD_LENGTH:
-            raise ParamError(
-                "invalid_text",
-                "text",
-                "Each word in text needs at least %d characters." % MIN_WORD_LENGTH,
-            )
-        if word not in words:
-            words.append(word)
-    if len(words) > MAX_TEXT_WORDS:
-        raise ParamError(
-            "too_many_values", "text", "text accepts at most %d words." % MAX_TEXT_WORDS
-        )
-    return words
 
 
 def build_query(raw, userid):
@@ -528,9 +537,7 @@ def build_query(raw, userid):
     words = parse_text(raw.get("text"))
     if words:
         filters["text"] = words
-        for word in words:
-            binds.append((OBJECT_NAME, "DESCRIPTION", "%" + word + "%"))
-            clauses.append(TEXT_WHERE % len(binds))
+        add_text_filter(clauses, binds, OBJECT_NAME, words)
 
     add_site_auth(clauses, binds, userid)
 

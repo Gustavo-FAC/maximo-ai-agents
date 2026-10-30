@@ -27,9 +27,11 @@ QUERY_WORK_ORDERS = ToolSpec(
         "excluded). Filters by a date range on date_field: date_from and date_to, "
         "YYYY-MM-DD, both inclusive, at most 366 days apart. The date range may be "
         "omitted only when wonums is given (lookup by number). Optional filters accept "
-        "comma-separated values. Results are sorted by date_field, newest first, and "
-        "paged. The response field 'total' is the exact number of matching work orders "
-        "across all pages: use it for counts and never count the items of one page. If "
+        "comma-separated values; use text to find work orders whose description "
+        "contains all the given words (e.g. a symptom or component). Results are "
+        "sorted by date_field, newest first, and paged. The response field 'total' is "
+        "the exact number of matching work orders across all pages: use it for counts "
+        "and never count the items of one page. If "
         "'has_more' is true, request the next page or narrow the filters. Only sites the "
         "user is authorized for are returned. Code values (status, worktype, siteid...) "
         "are those configured in this Maximo; do not guess them. On invalid input the "
@@ -60,6 +62,11 @@ QUERY_WORK_ORDERS = ToolSpec(
         "location": "Location codes, comma-separated, max 20.",
         "persongroup": "Crew/person group codes, comma-separated, max 20.",
         "worktype": "Work type codes, comma-separated, max 20.",
+        "text": (
+            "Words that must all appear in the work order description (case-insensitive, "
+            "accents must match), separated by spaces, max 5 words of 2+ characters. "
+            "No % or _. Does not replace the date range."
+        ),
         "fields": (
             "Fields to return, comma-separated. Default: wonum, siteid, description, "
             "status, worktype, wopriority, assetnum, location, persongroup, reportdate, "

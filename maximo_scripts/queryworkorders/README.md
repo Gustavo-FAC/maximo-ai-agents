@@ -9,7 +9,7 @@ dados do agente de Análise de OS. Publicada no MCP Server como automation scrip
 | Linguagem | Jython 2.7 (`python`) |
 | Objeto | `WORKORDER` (woclass WORKORDER e ACTIVITY, `istask = 0`) |
 | Arquivos | `QUERYWORKORDERS.py`, `response_schema.json`, `INSTALACAO.md` |
-| Testes | `tests/unit/test_queryworkorders.py` (lógica pura, CPython) |
+| Testes | `tests/unit/test_queryworkorders.py` (lógica pura, CPython) e `tests/unit/test_script_common.py` (bloco comum) |
 
 ## Descrição da ferramenta (colar no campo Description)
 
@@ -18,6 +18,7 @@ Read-only search of work orders (WORKORDER, including activities, excluding task
 Returns work orders whose date_field falls between date_from and date_to (inclusive,
 YYYY-MM-DD, max 366 days), with optional filters, pagination and field selection.
 The date range may be omitted only when wonums is given (lookup by number).
+Use text to find work orders whose description contains all the given words.
 The response always includes "total" (all matching records) so counts never need to
 be estimated from a single page. Use it to list or retrieve work orders for analysis.
 Do not use it for aggregated indicators over long periods; split the period instead.
@@ -44,6 +45,7 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `location` | não | Location codes, comma-separated (max 20). |
 | `persongroup` | não | Crew/person group codes, comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
+| `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
 | `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, reportdate, actstart, actfinish. wonum and siteid are always included. |
 | `page` | não | Page number, starting at 1 (default 1). |
 | `page_size` | não | Items per page, 1 to 500 (default 100). |
@@ -60,8 +62,11 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
   `MboSet` com flag `DISCARDABLE` e `cleanup()` em `finally`.
 - Valores dos filtros só entram por bind (`SqlFormat.setObject`/`setTimestamp`).
   Colunas vêm de listas fixas (`DATE_FIELDS`, `LIST_FILTERS`, `FIELD_TYPES`).
-- Limites validados no script: 366 dias, 50 wonum, 20 valores por lista, 500 por
-  página.
+- `text`: cada palavra vira `upper(description) like :n` com `%palavra%` no bind.
+  `%` e `_` recusados (seriam curinga e o escape muda entre bancos). Não dispensa
+  o intervalo de datas (só `wonums` dispensa).
+- Limites validados no script: 366 dias, 50 wonum, 20 valores por lista, 5 palavras,
+  500 por página.
 - Identidade obrigatória (`request.getUserInfo()`); sem ela, erro `no_user`.
 - Permissão READ em WOTRACK checada no código (APPLICATIONAUTH); sem ela, erro
   `not_authorized`. **Não usar variáveis `authapp`/`authsigoption`**: toda variável
@@ -70,6 +75,12 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
 - Filtro de sites autorizados ao usuário (`SITEAUTH`/`MAXGROUP.authallsites`)
   sempre aplicado, além da segurança do próprio Maximo.
 - `count()` chamado uma vez para o `total`.
+
+## Bloco comum
+
+Desde 2026-10-30 o script usa o trecho entre `# --- BEGIN COMMON` e
+`# --- END COMMON ---`, igual ao do `QUERYASSETS` (decisão 2026-10-29: copiar, sem
+script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
 
 ## Validar em homologação (antes de usar com gerente)
 
@@ -85,3 +96,5 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
 - [ ] Usuário sem permissão READ em WOTRACK recebe `not_authorized`.
 - [ ] Página profunda (ex.: página 50 de 100) com tempo aceitável.
 - [ ] Valores com acento (ex.: equipe) funcionam.
+- [ ] `text` com palavra de descrição conhecida acha a OS; `text` = `a` dá
+      `invalid_text`; `text` sem datas dá `required`.
