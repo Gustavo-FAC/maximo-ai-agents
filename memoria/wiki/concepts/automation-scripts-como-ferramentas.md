@@ -4,7 +4,7 @@ type: concept
 sources: [docs/Maximo MCP Server — Documentação.docx, docs/Automation_Scripts_IBM_Maximo.docx]
 related: [[mas-mcp-server]], [[itambe-cimentos]], [[allowlist-somente-leitura]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-10-29
+updated: 2026-10-30
 ---
 
 # Automation scripts como ferramentas
@@ -99,7 +99,8 @@ Ferramentas de dados são automation scripts no Maximo, publicados no
   no topo guardava o próprio escopo → `PyScriptEngineScope.toString` ↔
   `PyDictionary.toString` recursivo → `java.lang.StackOverflowError`. A hipótese do
   `SqlFormat` não era a causa do 500 (correção mantida). Correção: lógica em
-  `_main(scope, throwable)`; no topo só `responseBody`.
+  `_main(scope, throwable)`; no topo só `responseBody`. (Hoje: `main(...)` no bloco
+  comum, mesma regra.)
   **Regra:** nenhuma variável de topo pode referenciar `globals()`/escopo; preferir
   locais de função (cada variável de topo é copiada e convertida em texto). Teste
   com `ast` barra `x = globals()` no topo. 44 testes. Falta reinstalar.

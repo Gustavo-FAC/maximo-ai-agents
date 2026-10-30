@@ -207,3 +207,19 @@ Push da `main`; `feat/queryassets` apagada. Próxima sessão: `QUERYFAILUREREPOR
 Consultor funcional: Itambé não usa classe de falha. Ferramenta não será feita;
 próximo passo vira `text` no `QUERYWORKORDERS`. Colunas da FAILUREREPORT
 registradas para uso futuro. [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-10-30] code | text no QUERYWORKORDERS e bloco comum
+`QUERYWORKORDERS` reescrito sobre o bloco comum; `parse_text` e `add_text_filter`
+movidos para o bloco (`QUERYASSETS` sem mudança de comportamento). Allowlist com
+`text`. Versão antiga e nova comparadas com as mesmas entradas: mesmo SQL, binds,
+erros e resposta. 101 testes. [[ferramentas-maximo]].
+
+## [2026-10-30] test | text validado em homologação
+Usuário adicionou a variável e colou os dois scripts. MCP Server levou ~4 min para
+ver o parâmetro. `text` publicado sem `u200b`, 15 parâmetros. "vazamento" → 92,
+"vazamento oleo" → 3, `a`/`100%` → `invalid_text`, sem datas → `required`, sem
+`text` → 18337 (igual). `QUERYASSETS`: 14709, CCM2.1 → 21. Achados: corretiva `CO`,
+OS sem tipo, OS de checklist. [[itambe-cimentos]], [[estado-do-projeto]].
+
+## [2026-10-30] git | feat/queryworkorders-text integrada na main
+Commit e fast-forward na `main`; push pendente. [[estado-do-projeto]].

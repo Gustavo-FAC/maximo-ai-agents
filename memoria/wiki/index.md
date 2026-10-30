@@ -8,7 +8,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`).
 
 ## Entidades
-- [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária.
+- [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária;
+  dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist.
 - [[mas-mcp-server]] – servidor MCP do MAS 9.2, ferramentas expostas, notas do SDK.
   BMXAA10147E: usuário da chave precisa estar em EN (2 ocorrências). Cliente sem
   descrição de parâmetro.

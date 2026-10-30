@@ -26,7 +26,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 |---|---|---|---|---|---|
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | funcionando via MCP |
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
-| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando; `text` a fazer |
+| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30) |
 | 4 | histórico de status (opção) | WOSTATUS, ASSETSTATUS, ASSETTRANS | histórico de uma OS / paradas e movimentações do ativo | P0 | a definir |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK | consultar_procedimentos | P1 | a fazer |
 | 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
@@ -55,8 +55,8 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
   MXAPIWODETAIL, resposta de ~290 mil caracteres).
 - **Bloco comum copiado** (usuário, 2026-10-29, opção "a"): sem script biblioteca.
   Trecho entre `# --- BEGIN COMMON` e `# --- END COMMON ---` igual em todos;
-  `tests/unit/test_script_common.py` confere. `QUERYWORKORDERS` recebe o bloco no
-  passo 3.
+  `tests/unit/test_script_common.py` confere. Desde 2026-10-30 os dois scripts usam
+  o bloco, que inclui `parse_text`/`add_text_filter`.
 - **`QUERYASSETS` sem data obrigatória:** ativo é cadastro; `page_size` limita e
   `total` é exato. Exceção à regra "intervalo de datas obrigatório" **confirmada
   pelo usuário** (2026-10-29): datas obrigatórias só em consultas de movimento;
@@ -65,6 +65,10 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
   ASSET (`cci_critic`, `cci_pontos`, `cci_prod`, `cci_custo`, `cci_qual`, `cci_ssma`,
   `cci_clas`, `cci_calif`, `cci_dt_crit`, visto no `apischema` MXAPIASSET). Útil para
   risco/FMEA; entra como extensão por cliente quando o guia explicar os campos.
+- **Tipo de trabalho na Itambé** (2026-10-30, dados de homologação): corretiva é
+  `CO`; há OS sem `worktype` e OS geradas por checklist ("NÃO CONFORME: ..."). O
+  agente não deve presumir CM/PM nem filtrar só por `worktype`; perguntar ao
+  consultor o significado dos códigos.
 - **Busca por texto:** cada palavra vira `upper(description) like :n` com `%palavra%`
   no bind; `%` e `_` recusados (escape muda entre bancos). Sem busca por semelhança
   (embeddings exigiriam guardar dados do cliente).

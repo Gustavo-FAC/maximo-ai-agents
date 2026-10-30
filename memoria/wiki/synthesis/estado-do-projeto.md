@@ -16,8 +16,20 @@ Ler no início de cada sessão. Atualizar no fim.
 - `virtualenv` 21.15.1 no `uv.lock` (alerta do Dependabot); commit na `main`.
 - **`QUERYFAILUREREPORTS` cancelado:** Itambé não usa classe de falha (consultor
   funcional). Ver [[ferramentas-maximo]].
-- **Próximo passo:** `text` no `QUERYWORKORDERS`, que recebe o bloco comum, em
-  branch nova.
+- **`text` no `QUERYWORKORDERS` funcionando via MCP** (bloco comum, 15 parâmetros,
+  sem `u200b`). "vazamento" → 92 OS em 12 meses; "vazamento oleo" → 3; erros ok;
+  sem `text` igual a antes (18337). `QUERYASSETS` reinstalado com o bloco novo,
+  mesmo resultado de 2026-10-29. Branch `feat/queryworkorders-text` integrada na
+  `main` (sem push).
+- **Achados nos dados (perguntar ao consultor):** tipo de trabalho corretivo é
+  **CO** (não CM); 34 de 92 OS com "vazamento" **sem `worktype`**; muitas OS são
+  itens de checklist ("NÃO CONFORME: HÁ VAZAMENTO NA TUBULAÇÃO?"). Contagem de
+  falhas por palavra mistura inspeção com falha real. Ver [[itambe-cimentos]].
+- **Pendente do usuário no Maximo:** Log Level do `QUERYWORKORDERS` de volta para
+  ERROR; Description do script difere do `INSTALACAO.md` (antiga, sem "or wonums";
+  não afeta o agente).
+- **Próximo passo:** usuário decide ao retomar (gateway de LLM segue em espera;
+  opções de script: histórico de status, `QUERYJOBPLANS`).
 
 ## Antes (2026-10-29, fim)
 
@@ -37,13 +49,15 @@ Ler no início de cada sessão. Atualizar no fim.
   datas conferidos. Detalhes em [[automation-scripts-como-ferramentas]].
 - **Allowlist pronta para o agente:** descrições próprias para o LLM,
   `input_schema` fechado e `clean_arguments` ([[allowlist-somente-leitura]]).
-- 92 testes, Ruff e pre-commit ok. `main` com push.
+- 101 testes, Ruff e pre-commit ok.
 - **Gateway de LLM em espera:** usuário ainda analisando a abordagem. Não começar
   sem decisão dele. Por isso o 1º agente também espera.
 
 ## Git
 
-GitHub `Gustavo-FAC/maximo-ai-agents` (privado). `chore/esqueleto-inicial` foi
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-10-30:
+`feat/queryworkorders-text` integrada na `main` por fast-forward; push pendente
+(usuário). Branch ainda existe localmente. `chore/esqueleto-inicial` foi
 integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 `feat/queryassets` integrada na `main` por fast-forward em 2026-10-29, com push
 (feito pelo usuário). Branch apagada. Só a `main`, sincronizada. Trabalho novo: branch nova a partir da `main`.
@@ -88,6 +102,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 - 2026-10-30: `virtualenv` 21.14.12 → 21.15.1 (Dependabot, alta); 92 testes e
   pre-commit ok.
 - 2026-10-30: `QUERYFAILUREREPORTS` cancelado (Itambé não usa classe de falha).
+- 2026-10-30: `text` no `QUERYWORKORDERS`; `QUERYWORKORDERS` no bloco comum
+  (`parse_text`/`add_text_filter` passaram para o bloco). Antigo e novo comparados
+  com as mesmas entradas: mesmo SQL, binds e erros. 101 testes. Validado via MCP.
 
 ## Falta (ordem sugerida)
 
