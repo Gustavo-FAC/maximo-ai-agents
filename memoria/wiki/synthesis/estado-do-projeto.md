@@ -13,6 +13,14 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-10-30)
 
+- **Roteiro de testes:** 32 prompts de OS e ativos em [[prompts-de-teste]] para o
+  usuário testar no Claude Code; semente de `tests/evals/`.
+- **`.mcp.json` não conectou** nesta sessão (`'url' is not a valid URL`): Claude
+  Code aberto sem `MAXIMO_MCP_URL`/`MAXIMO_API_KEY` no ambiente. Abrir por
+  `scripts/claude-maximo.ps1`. Conector `maximo` do claude.ai seguiu ativo
+  (`script_queryworkorders`, `script_queryassets`).
+- Push da `main` feito (sincronizada com `origin/main`). `feat/queryworkorders-text`
+  ainda existe localmente (pode apagar).
 - `virtualenv` 21.15.1 no `uv.lock` (alerta do Dependabot); commit na `main`.
 - **`QUERYFAILUREREPORTS` cancelado:** Itambé não usa classe de falha (consultor
   funcional). Ver [[ferramentas-maximo]].
@@ -56,8 +64,8 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Git
 
 GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-10-30:
-`feat/queryworkorders-text` integrada na `main` por fast-forward; push pendente
-(usuário). Branch ainda existe localmente. `chore/esqueleto-inicial` foi
+`feat/queryworkorders-text` integrada na `main` por fast-forward, com push
+(`main` sincronizada). Branch ainda existe localmente. `chore/esqueleto-inicial` foi
 integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 `feat/queryassets` integrada na `main` por fast-forward em 2026-10-29, com push
 (feito pelo usuário). Branch apagada. Só a `main`, sincronizada. Trabalho novo: branch nova a partir da `main`.

@@ -223,3 +223,9 @@ OS sem tipo, OS de checklist. [[itambe-cimentos]], [[estado-do-projeto]].
 
 ## [2026-10-30] git | feat/queryworkorders-text integrada na main
 Commit e fast-forward na `main`; push pendente. [[estado-do-projeto]].
+
+## [2026-10-30] synthesis | Prompts de teste de OS e ativos
+32 prompts (OS, ativos, combinados, limites e segurança) para o usuário testar no
+Claude Code; nova página [[prompts-de-teste]]. `.mcp.json` não conectou (Claude Code
+aberto sem as variáveis; usar `scripts/claude-maximo.ps1`); conector do claude.ai
+ativo. Push da `main` confirmado. [[estado-do-projeto]].
