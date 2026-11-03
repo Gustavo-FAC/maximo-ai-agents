@@ -244,3 +244,7 @@ NullPointerException (JOBTASK sem JOBPLAN dono); corrigido com relação tempor�
 `$QJPTASKS`, reinstalado e ok. `assetnum` não conclusivo. Title das MCP Tools com
 `u200b`. [[automation-scripts-como-ferramentas]], [[itambe-cimentos]],
 [[estado-do-projeto]].
+
+## [2026-11-03] git | feat/queryjobplans integrada na main
+Dois commits (script + docs) e fast-forward na `main`; push pendente.
+[[estado-do-projeto]].

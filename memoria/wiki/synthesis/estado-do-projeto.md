@@ -13,8 +13,8 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-03)
 
-- **`QUERYJOBPLANS` funcionando via MCP** em homologação (branch
-  `feat/queryjobplans`, sem commit até o usuário pedir). 2025 planos ACTIVE (Itambé
+- **`QUERYJOBPLANS` funcionando via MCP** em homologação (`feat/queryjobplans`
+  integrada na `main` por fast-forward; push pendente). 2025 planos ACTIVE (Itambé
   grava o sinônimo ATIVO), 2102 com `status=ALL`, 203 sem site (nível sistema),
   tarefas, texto longo, filtros e erros ok. 1ª instalação: `include_tasks` dava
   NullPointerException (JOBTASK sem JOBPLAN dono); corrigido lendo as tarefas por
@@ -79,7 +79,9 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Git
 
-GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-10-30:
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-03:
+`feat/queryjobplans` integrada na `main` por fast-forward (2 commits), sem push.
+2026-10-30:
 `feat/queryworkorders-text` integrada na `main` por fast-forward, com push
 (`main` sincronizada). Branch ainda existe localmente. `chore/esqueleto-inicial` foi
 integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
