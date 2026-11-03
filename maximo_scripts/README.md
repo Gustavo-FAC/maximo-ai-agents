@@ -9,8 +9,8 @@ Regras:
 - Nomes, descrições e parâmetros em inglês, com response schema definido.
 - Somente consulta: nenhum script altera dados no Maximo.
 - Intervalo de datas obrigatório em consultas de movimento (OS, falhas, medições),
-  com paginação e limite de registros. Cadastro (ativos) não exige data (decisão
-  2026-10-29); a página limita a resposta.
+  com paginação e limite de registros. Cadastro (ativos, planos de trabalho) não exige
+  data (decisão 2026-10-29); a página limita a resposta.
 
 Convenções:
 
@@ -30,3 +30,5 @@ Scripts:
 
 - [`queryworkorders/`](queryworkorders/README.md) – consulta genérica de OS.
 - [`queryassets/`](queryassets/README.md) – consulta genérica de ativos.
+- [`queryjobplans/`](queryjobplans/README.md) – consulta genérica de planos de trabalho
+  (tarefas e texto do procedimento sob pedido).

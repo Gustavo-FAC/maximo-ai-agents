@@ -21,7 +21,11 @@ def common_block(path):
 
 
 def test_scripts_found():
-    assert {path.name for path in SCRIPTS} >= {"QUERYWORKORDERS.py", "QUERYASSETS.py"}
+    assert {path.name for path in SCRIPTS} >= {
+        "QUERYWORKORDERS.py",
+        "QUERYASSETS.py",
+        "QUERYJOBPLANS.py",
+    }
 
 
 def test_common_block_identical():

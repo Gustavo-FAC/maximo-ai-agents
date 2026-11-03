@@ -8,6 +8,7 @@ from maximo_agents.mcp.allowlist import (
     AGENT_TOOLS,
     MAX_ARGUMENT_LENGTH,
     QUERY_ASSETS,
+    QUERY_JOB_PLANS,
     QUERY_WORK_ORDERS,
     ToolArgumentError,
     clean_arguments,
@@ -29,13 +30,17 @@ def load_script(folder, filename):
 
 qwo = load_script("queryworkorders", "QUERYWORKORDERS.py")
 qa = load_script("queryassets", "QUERYASSETS.py")
+qjp = load_script("queryjobplans", "QUERYJOBPLANS.py")
 
 # Descrição própria (allowlist) -> script que ela descreve.
-SPEC_SCRIPTS = [(QUERY_WORK_ORDERS, qwo), (QUERY_ASSETS, qa)]
+SPEC_SCRIPTS = [(QUERY_WORK_ORDERS, qwo), (QUERY_ASSETS, qa), (QUERY_JOB_PLANS, qjp)]
 SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
 
 
-@pytest.mark.parametrize("name", ["apischema", "script_queryworkorders", "script_queryassets"])
+@pytest.mark.parametrize(
+    "name",
+    ["apischema", "script_queryworkorders", "script_queryassets", "script_queryjobplans"],
+)
 def test_ferramentas_de_leitura_permitidas(name):
     assert is_allowed(name)
 
@@ -85,11 +90,11 @@ def test_parametros_iguais_ao_script(spec, script):
 @pytest.mark.parametrize(("spec", "script"), SPEC_SCRIPTS, ids=SPEC_IDS)
 def test_campos_da_descricao_iguais_ao_script(spec, script):
     text = spec.parameters["fields"].split("Default:")[1]
-    named = set(re.findall(r"[a-z]+", text)) & set(script.FIELD_TYPES)
+    named = set(re.findall(r"[a-z_]+", text)) & set(script.FIELD_TYPES)
     assert named == set(script.FIELD_TYPES)
     # Nenhum campo citado na descrição que o script não aceite.
-    listed = re.findall(r"[a-z]+", text.split(". Also accepted:")[1].split(".")[0])
-    default = re.findall(r"[a-z]+", text.split(". Also accepted:")[0])
+    listed = re.findall(r"[a-z_]+", text.split(". Also accepted:")[1].split(".")[0])
+    default = re.findall(r"[a-z_]+", text.split(". Also accepted:")[0])
     assert set(listed) | set(default) <= set(script.FIELD_TYPES)
     assert default == list(script.DEFAULT_FIELDS)
 
