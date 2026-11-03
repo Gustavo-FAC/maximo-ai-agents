@@ -91,6 +91,7 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 7. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.
+   Scripts prontos: `QUERYWORKORDERS`, `QUERYASSETS`, `QUERYJOBPLANS` (2026-11-03).
 
 ## Referências
 

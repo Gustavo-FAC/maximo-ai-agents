@@ -24,8 +24,15 @@ Ler no início de cada sessão. Atualizar no fim.
   confirmar se a Itambé liga plano a ativo só pela PM; Title das MCP Tools
   `QUERYASSETS` e `QUERYJOBPLANS` com `u200b` (cosmético, redigitar); Log Level do
   `QUERYJOBPLANS` e do `QUERYWORKORDERS` de volta para ERROR.
-- Cliente avulso de teste no scratchpad (`call_tool.py`: lista ferramentas e chama
-  as da allowlist via `clean_arguments`); vale virar o CLI `call_tool` de "Falta".
+- **Perguntar ao consultor:** o que são os códigos na descrição longa dos planos
+  (ex.: `PS1486`; talvez procedimento de segurança) e se plano é ligado a ativo
+  pela aba Job Plan do ativo ou só pela PM.
+- Cliente avulso de teste ficou no scratchpad da sessão (`call_tool.py`: lista
+  ferramentas, confere `u200b` e chama as da allowlist via `clean_arguments`);
+  **some com a sessão**. Vale virar o CLI `call_tool` de "Falta" (item 4).
+- **Próximo passo:** usuário decide ao retomar. Opções: CLI `call_tool` no repo;
+  histórico de status (WOSTATUS/ASSETSTATUS); `QUERYWOMATERIALS` (ler filhos pelo
+  dono, lição do JOBTASK); gateway de LLM segue em espera.
 
 ## Antes (2026-10-30)
 
@@ -139,7 +146,8 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 
 1. Gateway de LLM em `llm/`: **aguardando decisão do usuário**.
 2. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas, usando
-   `AGENT_TOOLS`, `input_schema` e `clean_arguments`.
+   `AGENT_TOOLS` (hoje 3 ferramentas: OS, ativos, planos), `input_schema` e
+   `clean_arguments`.
 3. Linha DEBUG `implicit vars` do log do Manage (origem dos parâmetros e da
    identidade no caminho MCP). Só registro; não bloqueia nada.
 4. Pequeno CLI `call_tool` para testar ferramentas sem MCP Inspector (opcional).

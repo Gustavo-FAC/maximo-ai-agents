@@ -252,3 +252,9 @@ Dois commits (script + docs) e fast-forward na `main`; push pendente.
 ## [2026-11-03] git | Push e limpeza de branches
 Push da `main`; `feat/queryjobplans` e `feat/queryworkorders-text` apagadas (locais).
 Só a `main`, sincronizada. [[estado-do-projeto]].
+
+## [2026-11-03] synthesis | Fim de sessão
+Estado com próximo passo (decisão do usuário: CLI `call_tool`, histórico de status,
+`QUERYWOMATERIALS` ou gateway), perguntas ao consultor (códigos `PS1486`, ligação
+plano–ativo) e aviso de que o cliente avulso de teste ficou só no scratchpad.
+[[estado-do-projeto]].
