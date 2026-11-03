@@ -248,3 +248,7 @@ NullPointerException (JOBTASK sem JOBPLAN dono); corrigido com relação tempor�
 ## [2026-11-03] git | feat/queryjobplans integrada na main
 Dois commits (script + docs) e fast-forward na `main`; push pendente.
 [[estado-do-projeto]].
+
+## [2026-11-03] git | Push e limpeza de branches
+Push da `main`; `feat/queryjobplans` e `feat/queryworkorders-text` apagadas (locais).
+Só a `main`, sincronizada. [[estado-do-projeto]].

@@ -14,7 +14,7 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Onde paramos (2026-11-03)
 
 - **`QUERYJOBPLANS` funcionando via MCP** em homologação (`feat/queryjobplans`
-  integrada na `main` por fast-forward; push pendente). 2025 planos ACTIVE (Itambé
+  integrada na `main`, com push; branch apagada). 2025 planos ACTIVE (Itambé
   grava o sinônimo ATIVO), 2102 com `status=ALL`, 203 sem site (nível sistema),
   tarefas, texto longo, filtros e erros ok. 1ª instalação: `include_tasks` dava
   NullPointerException (JOBTASK sem JOBPLAN dono); corrigido lendo as tarefas por
@@ -35,8 +35,7 @@ Ler no início de cada sessão. Atualizar no fim.
   Code aberto sem `MAXIMO_MCP_URL`/`MAXIMO_API_KEY` no ambiente. Abrir por
   `scripts/claude-maximo.ps1`. Conector `maximo` do claude.ai seguiu ativo
   (`script_queryworkorders`, `script_queryassets`).
-- Push da `main` feito (sincronizada com `origin/main`). `feat/queryworkorders-text`
-  ainda existe localmente (pode apagar).
+- Push da `main` feito (sincronizada com `origin/main`).
 - `virtualenv` 21.15.1 no `uv.lock` (alerta do Dependabot); commit na `main`.
 - **`QUERYFAILUREREPORTS` cancelado:** Itambé não usa classe de falha (consultor
   funcional). Ver [[ferramentas-maximo]].
@@ -80,7 +79,8 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Git
 
 GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-03:
-`feat/queryjobplans` integrada na `main` por fast-forward (2 commits), sem push.
+`feat/queryjobplans` integrada na `main` por fast-forward, com push. Branches locais
+`feat/queryjobplans` e `feat/queryworkorders-text` apagadas. Só a `main`, sincronizada.
 2026-10-30:
 `feat/queryworkorders-text` integrada na `main` por fast-forward, com push
 (`main` sincronizada). Branch ainda existe localmente. `chore/esqueleto-inicial` foi
