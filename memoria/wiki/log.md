@@ -229,3 +229,18 @@ Commit e fast-forward na `main`; push pendente. [[estado-do-projeto]].
 Claude Code; nova página [[prompts-de-teste]]. `.mcp.json` não conectou (Claude Code
 aberto sem as variáveis; usar `scripts/claude-maximo.ps1`); conector do claude.ai
 ativo. Push da `main` confirmado. [[estado-do-projeto]].
+
+## [2026-11-03] code | QUERYJOBPLANS escrito
+Decisões do usuário: `include_tasks`, filtros `assetnum`/`location` (JPASSETSPLINK),
+`description_longdescription`, status padrão ACTIVE. Colunas conferidas no `apischema`
+MXAPIJOBPLAN. Script com bloco comum, schema, README, `INSTALACAO.md`, allowlist e
+testes (133). Branch `feat/queryjobplans`, sem commit. Falta instalar.
+[[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-11-03] test | QUERYJOBPLANS validado em homologação
+Usuário instalou. Cliente avulso: 12 parâmetros; 2025 ACTIVE (sinônimo ATIVO), 2102
+com ALL, 203 planos sem site; texto longo, filtros e erros ok. `include_tasks` deu
+NullPointerException (JOBTASK sem JOBPLAN dono); corrigido com relação temporária
+`$QJPTASKS`, reinstalado e ok. `assetnum` não conclusivo. Title das MCP Tools com
+`u200b`. [[automation-scripts-como-ferramentas]], [[itambe-cimentos]],
+[[estado-do-projeto]].

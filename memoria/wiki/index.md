@@ -5,13 +5,15 @@ Catálogo de páginas. Atualizar a cada alteração.
 ## Síntese
 - [[estado-do-projeto]] – feito, pendente, próximo passo, riscos. **Ler primeiro.**
 - [[ferramentas-maximo]] – plano dos automation scripts (7), o que fica em
-  `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`).
+  `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
+  `QUERYJOBPLANS`).
 - [[prompts-de-teste]] – 32 perguntas para testar OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança); base para `tests/evals/`.
 
 ## Entidades
 - [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária;
-  dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist.
+  dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist; planos
+  com status ATIVO (sinônimo) e 203 planos de nível sistema.
 - [[mas-mcp-server]] – servidor MCP do MAS 9.2, ferramentas expostas, notas do SDK.
   BMXAA10147E: usuário da chave precisa estar em EN (2 ocorrências). Cliente sem
   descrição de parâmetro.
@@ -22,7 +24,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[chave-api-por-usuario]] – decisão de arquitetura e exceção atual (MAXADMIN).
   Observação sobre idioma do usuário.
 - [[automation-scripts-como-ferramentas]] – regras, como registrar, lições do OAS e
-  do runtime Jython; `QUERYWORKORDERS` **funcionando via MCP** (2026-10-29).
+  do runtime Jython; `QUERYWORKORDERS` **funcionando via MCP** (2026-10-29); objeto
+  filho (JOBTASK) só pelo dono.
 
 ## Fontes
 - [[doc-mcp-server]] – doc IBM do MCP Server: registro de ferramenta, flags, auth.

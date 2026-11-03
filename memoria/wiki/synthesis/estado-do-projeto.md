@@ -4,14 +4,30 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-10-30
+updated: 2026-11-03
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-10-30)
+## Onde paramos (2026-11-03)
+
+- **`QUERYJOBPLANS` funcionando via MCP** em homologação (branch
+  `feat/queryjobplans`, sem commit até o usuário pedir). 2025 planos ACTIVE (Itambé
+  grava o sinônimo ATIVO), 2102 com `status=ALL`, 203 sem site (nível sistema),
+  tarefas, texto longo, filtros e erros ok. 1ª instalação: `include_tasks` dava
+  NullPointerException (JOBTASK sem JOBPLAN dono); corrigido lendo as tarefas por
+  relação temporária do plano. 134 testes. Detalhes em
+  `maximo_scripts/queryjobplans/README.md` e [[ferramentas-maximo]].
+- **Pendente:** ativo com plano ligado (JPASSETSPLINK) para validar `assetnum`, ou
+  confirmar se a Itambé liga plano a ativo só pela PM; Title das MCP Tools
+  `QUERYASSETS` e `QUERYJOBPLANS` com `u200b` (cosmético, redigitar); Log Level do
+  `QUERYJOBPLANS` e do `QUERYWORKORDERS` de volta para ERROR.
+- Cliente avulso de teste no scratchpad (`call_tool.py`: lista ferramentas e chama
+  as da allowlist via `clean_arguments`); vale virar o CLI `call_tool` de "Falta".
+
+## Antes (2026-10-30)
 
 - **Roteiro de testes:** 32 prompts de OS e ativos em [[prompts-de-teste]] para o
   usuário testar no Claude Code; semente de `tests/evals/`.
@@ -113,6 +129,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 - 2026-10-30: `text` no `QUERYWORKORDERS`; `QUERYWORKORDERS` no bloco comum
   (`parse_text`/`add_text_filter` passaram para o bloco). Antigo e novo comparados
   com as mesmas entradas: mesmo SQL, binds e erros. 101 testes. Validado via MCP.
+- 2026-11-03: `QUERYJOBPLANS` escrito (JOBPLAN + JOBTASK + JPASSETSPLINK), allowlist
+  e testes. Instalado e validado via MCP; tarefas corrigidas (JOBTASK pelo dono).
+  134 testes.
 
 ## Falta (ordem sugerida)
 

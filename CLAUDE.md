@@ -63,7 +63,10 @@ Cliente piloto: **Itambé Cimentos**.
 - `QUERYWORKORDERS` com busca por palavras (`text`) e bloco comum, **funcionando via
   MCP** desde 2026-10-30. `QUERYFAILUREREPORTS` cancelado (Itambé não usa classe de
   falha). Corretiva na Itambé é `CO`; há OS sem tipo e OS de checklist.
-- 101 testes unitários.
+- 3º script `QUERYJOBPLANS` (planos, tarefas sob pedido, ligação com ativo/local)
+  **funcionando via MCP** desde 2026-11-03 (branch `feat/queryjobplans`); falta validar
+  `assetnum` (JPASSETSPLINK) com um ativo que tenha plano ligado.
+- 134 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

@@ -4,7 +4,7 @@ type: concept
 sources: [docs/Maximo MCP Server — Documentação.docx, docs/Automation_Scripts_IBM_Maximo.docx]
 related: [[mas-mcp-server]], [[itambe-cimentos]], [[allowlist-somente-leitura]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-10-30
+updated: 2026-11-03
 ---
 
 # Automation scripts como ferramentas
@@ -125,6 +125,13 @@ Ferramentas de dados são automation scripts no Maximo, publicados no
   toda variável de topo é convertida em texto após a execução (nada de `globals()`
   em variável de topo; lógica em função).
 - Teste da segurança de site com usuário sem acesso: pendente (chave de gerente).
+- **Objeto filho precisa do dono** (2026-11-03, `QUERYJOBPLANS`): `getMboSet("JOBTASK")`
+  avulso conta, mas ler o Mbo dá NullPointerException (`"parent" is null`). Ler pelo
+  dono: `plano.getMboSet("$NOME", "JOBTASK", "jobplanid = :jobplanid")`
+  (relação temporária, sem depender do nome da relação no cliente). Vale para
+  outros filhos (ex.: WPMATERIAL no `QUERYWOMATERIALS`).
+- Descrição longa: atributo `description_longdescription` lido como texto normal;
+  vem com `<!-- RICH TEXT -->`.
 
 ## Aprendido no OAS da 1ª instalação (2026-10-22)
 
