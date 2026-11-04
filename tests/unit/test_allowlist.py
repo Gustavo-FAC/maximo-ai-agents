@@ -7,6 +7,7 @@ import pytest
 from maximo_agents.mcp.allowlist import (
     AGENT_TOOLS,
     MAX_ARGUMENT_LENGTH,
+    QUERY_ASSET_DOWNTIME,
     QUERY_ASSETS,
     QUERY_JOB_PLANS,
     QUERY_WO_STATUS,
@@ -33,6 +34,7 @@ qwo = load_script("queryworkorders", "QUERYWORKORDERS.py")
 qa = load_script("queryassets", "QUERYASSETS.py")
 qjp = load_script("queryjobplans", "QUERYJOBPLANS.py")
 qws = load_script("querywostatus", "QUERYWOSTATUS.py")
+qad = load_script("queryassetdowntime", "QUERYASSETDOWNTIME.py")
 
 # Descrição própria (allowlist) -> script que ela descreve.
 SPEC_SCRIPTS = [
@@ -40,6 +42,7 @@ SPEC_SCRIPTS = [
     (QUERY_ASSETS, qa),
     (QUERY_JOB_PLANS, qjp),
     (QUERY_WO_STATUS, qws),
+    (QUERY_ASSET_DOWNTIME, qad),
 ]
 SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
 
@@ -52,6 +55,7 @@ SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
         "script_queryassets",
         "script_queryjobplans",
         "script_querywostatus",
+        "script_queryassetdowntime",
     ],
 )
 def test_ferramentas_de_leitura_permitidas(name):

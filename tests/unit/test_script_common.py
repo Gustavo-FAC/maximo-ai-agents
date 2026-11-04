@@ -26,6 +26,7 @@ def test_scripts_found():
         "QUERYASSETS.py",
         "QUERYJOBPLANS.py",
         "QUERYWOSTATUS.py",
+        "QUERYASSETDOWNTIME.py",
     }
 
 

@@ -33,3 +33,4 @@ Scripts:
 - [`queryjobplans/`](queryjobplans/README.md) – consulta genérica de planos de trabalho
   (tarefas e texto do procedimento sob pedido).
 - [`querywostatus/`](querywostatus/README.md) – histórico de mudanças de status de OS.
+- [`queryassetdowntime/`](queryassetdowntime/README.md) – histórico de paradas de ativo (ASSETSTATUS).
