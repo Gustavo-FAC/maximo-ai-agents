@@ -274,3 +274,9 @@ site explícito → 4 s (366 dias, 50204 mudanças, 4 s). 163 testes. Branch
 `feat/querywostatus`. [[ferramentas-maximo]], [[automation-scripts-como-ferramentas]],
 [[estado-do-projeto]].
 
+## [2026-11-04] test | Descrição da MCP Tool vem da Description do script
+`u200b` da Description do `QUERYWOSTATUS` sumiu após redigitar e esperar o polling.
+Texto redigitado ficou com erros ("statushistor:", sem espaços; cosmético, corrigir
+no Maximo). `feat/querywostatus` integrada na `main` (fast-forward), branch apagada,
+push pendente. [[automation-scripts-como-ferramentas]], [[estado-do-projeto]].
+

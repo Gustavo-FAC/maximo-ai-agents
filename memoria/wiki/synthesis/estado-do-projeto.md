@@ -13,8 +13,8 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-04)
 
-- **`QUERYWOSTATUS` funcionando via MCP** (branch `feat/querywostatus`, commit na
-  branch, sem merge). Decisão do usuário: histórico de status em 2 scripts novos
+- **`QUERYWOSTATUS` funcionando via MCP** (`feat/querywostatus` integrada na `main`
+  por fast-forward, branch apagada; push pendente). Decisão do usuário: histórico de status em 2 scripts novos
   (`QUERYWOSTATUS` agora, `QUERYASSETDOWNTIME` depois), não opção das atuais.
   Uma linha por mudança (WOSTATUS); datas em `changedate` (máx 366 dias) ou
   `wonums`; filtros da OS por subconsulta. 163 testes. Detalhes em
@@ -28,13 +28,12 @@ Ler no início de cada sessão. Atualizar no fim.
   confirmadas na 1ª chamada. ASSETSTATUS tem (MXAPIASSETSTATUS).
 - Cliente de teste avulso refeito no scratchpad (`call_tool.py`); some com a sessão.
   Reforça o item "CLI `call_tool`" de "Falta".
-- **Pendente do usuário no Maximo:** Description do `QUERYWOSTATUS` com `u200b`
-  (redigitar, se ainda não fez); Log Level de `QUERYWOSTATUS`, `QUERYJOBPLANS` e
+- **Pendente do usuário no Maximo:** Description do `QUERYWOSTATUS` sem `u200b`,
+  mas redigitada com erros ("statushistor:", espaços; cosmético); Log Level de `QUERYWOSTATUS`, `QUERYJOBPLANS` e
   `QUERYWORKORDERS` para ERROR.
 - Achado: `QUERYWORKORDERS` dá 0 OS em 1 a 5/set/2026 (homologação); conferir se é
   buraco de dados.
-- **Próximo passo:** merge da `feat/querywostatus` (decisão do usuário) e depois
-  `QUERYASSETDOWNTIME` (ASSETSTATUS: conferir índices primeiro).
+- **Próximo passo:** `QUERYASSETDOWNTIME` (ASSETSTATUS: conferir índices primeiro).
 
 ### Antes, no mesmo dia
 

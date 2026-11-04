@@ -157,3 +157,13 @@ tabela SITE (mesma regra) e pôr `siteid in (...)` explícito, mantendo o filtro
 Ver os índices em Database Configuration antes de escrever script de movimento. O
 log do Manage mostra SQL acima de 1 s como `BMXAA6720W` (texto e tempo). Os outros
 scripts ainda usam só o filtro comum; medir se ficarem lentos.
+
+## Descrição da ferramenta no MCP (2026-11-04)
+
+A descrição que o MCP Server mostra é a **Description do script** (confirmado pelo
+usuário: redigitada no script, chegou ao MCP). Muda só depois do polling do pod (até
+10 min); antes disso o MCP segue com a antiga. Por isso o `QUERYWORKORDERS` ainda
+mostra a Description antiga (sem "or wonums"): é a que está gravada no script. O
+agente não usa esse texto (descrição própria na allowlist), então é só cosmético.
+Para tirar `u200b` do início do campo: Ctrl+A, Delete e digitar.
+
