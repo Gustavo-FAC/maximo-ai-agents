@@ -161,7 +161,9 @@ QUERY_JOB_PLANS = ToolSpec(
         ),
         "assetnum": (
             "Asset numbers, comma-separated, max 20. Job plans linked to these assets "
-            "(job plan asset links; job plans used only by PMs are not linked)."
+            "(job plan asset links; job plans used only by PMs are not linked). Many "
+            "sites link job plans to the location, not the asset: if this returns none, "
+            "get the asset's location with script_queryassets and search by location."
         ),
         "location": "Location codes, comma-separated, max 20. Job plans linked to these locations.",
         "persongroup": "Work group codes, comma-separated, max 20.",
