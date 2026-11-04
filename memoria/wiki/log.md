@@ -311,3 +311,9 @@ Decisão do usuário: tirar dos agentes, manter no repo. Allowlist ganha `DORMAN
 ## [2026-11-04] git | feat/querywomaterials integrada na main
 Usuário desativou a MCP Tool do `QUERYWOMATERIALS` no Maximo da Itambé. Commit e
 fast-forward da `main`; push pendente. [[estado-do-projeto]].
+
+## [2026-11-04] decision | Gateway de LLM = LangChain; gateway escrito
+Usuário decidiu: interface de modelos do LangChain como gateway. Chave do Claude a
+confirmar. `llm/gateway.py` com `anthropic` e `ollama`, configuração `LLM_*`, testes
+sem chave (268). Branch `feat/llm-gateway`. Próximo: 1º agente com LangGraph.
+[[estado-do-projeto]].

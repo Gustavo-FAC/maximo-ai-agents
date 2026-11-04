@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Agentes de IA para análise de ordens de serviço no IBM Maximo (MAS 9.2), somente leitura"
 requires-python = ">=3.12"
 dependencies = [
+    "langchain-anthropic>=1.7.10",
+    "langchain-core>=1.7.5",
+    "langchain-ollama>=1.1.0",
     "mcp>=2.3,<3",
     "pydantic-settings>=2.4",
 ]

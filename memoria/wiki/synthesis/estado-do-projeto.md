@@ -13,6 +13,16 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-04, fim)
 
+- **Gateway de LLM decidido e feito** (usuário: LangChain como gateway). Branch
+  `feat/llm-gateway`, sem commit: `llm/gateway.py` (`create_chat_model`, provedores
+  `anthropic`/`ollama` por `LLM_PROVIDER`/`LLM_MODEL`, erro sem segredo), campos `llm_*`
+  no `Settings`, `.env.example`. Dependências `langchain-core`, `langchain-anthropic`,
+  `langchain-ollama`. 268 testes.
+- **Chave do Claude:** usuário vai confirmar. Máquina de dev sem Ollama e sem GPU
+  (Ollama em CPU só para montar código, não para avaliar qualidade).
+- **Próximo passo:** 1º agente (Análise de OS) com LangGraph, cliente MCP + allowlist,
+  5 voltas, testes com `GenericFakeChatModel`; depois evals com [[prompts-de-teste]].
+
 - **Material em 2 scripts** (branch `feat/querywomaterials`, sem commit ainda):
   - `QUERYMATUSAGE` (MATUSETRANS) **funcionando via MCP**: 5241 transações em 366
     dias, 0,4 s; `issuetype`, `wonums` (ligação por `wogroup`), `worktype`, todos os

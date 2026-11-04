@@ -30,8 +30,10 @@ Cliente piloto: **Itambé Cimentos**.
 - **A IA não faz contas.** Contagens, médias e indicadores são calculados por
   código (pandas/SQL) em `analysis/`. O LLM escolhe a análise e interpreta.
 - **LLM intercambiável** via gateway (`llm/`): Claude ou LLM do cliente
-  (Azure OpenAI, Bedrock, Vertex, watsonx). Por enquanto **sem chave do Claude**:
-  desenvolver com **Ollama** local (modelo com suporte a ferramentas).
+  (Azure OpenAI, Bedrock, Vertex, watsonx). Gateway = **interface de modelos do
+  LangChain** (`BaseChatModel`) com fábrica fina lendo `LLM_PROVIDER`/`LLM_MODEL`
+  (decisão do usuário, 2026-11-04). Chave do Claude **a confirmar pelo usuário**;
+  máquina de dev sem Ollama e sem GPU. Testes com modelo falso do LangChain.
 - **Agentes:** "receitas" (prompt + ferramentas + regras) sobre o mesmo código.
   Assistente Geral (roteador) e Análise de OS. Orquestração com LangGraph.
 
@@ -93,9 +95,10 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
    ainda não criados).
 4. ~~Definir a allowlist de leitura em `mcp/`.~~ Feito em 2026-10-29 (nomes,
    descrições próprias e filtro de argumentos).
-5. Criar o gateway de LLM em `llm/`. **Aguardando decisão do usuário** sobre a
-   abordagem (2026-10-29); não começar sem ela.
-6. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas.
+5. ~~Criar o gateway de LLM em `llm/`.~~ Feito em 2026-11-04 (`llm/gateway.py`,
+   provedores `anthropic` e `ollama`; branch `feat/llm-gateway`).
+6. Primeiro agente (Análise de OS): LangGraph, cliente MCP com `AGENT_TOOLS` e
+   `clean_arguments`, limite de 5 voltas; testes com modelo falso.
 7. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.
