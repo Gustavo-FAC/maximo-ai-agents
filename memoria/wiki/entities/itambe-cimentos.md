@@ -37,3 +37,11 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
 - Descrições em maiúsculas, em geral sem acento ("OLEO").
 - Perguntas ao consultor: significado dos tipos de trabalho; por que OS sem tipo;
   como separar OS de checklist das de falha.
+
+## Paradas de ativo (2026-11-04)
+
+- Homologação quase não usa ASSETSTATUS: ~120 linhas no total, 4 em 2025, 0 em 2026,
+  site `FABRICA`, código de parada `PCE` na maioria.
+- `downtime` gravado nem sempre é a diferença entre queda e retorno (MCC2213: 08:00 →
+  10:56, `downtime` 2.0). ACI1020 tem 5 pares idênticos (mesma OS 979093).
+- A confirmar com o consultor: se produção registra paradas no Maximo.

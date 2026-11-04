@@ -280,3 +280,11 @@ Texto redigitado ficou com erros ("statushistor:", sem espaços; cosmético, cor
 no Maximo). `feat/querywostatus` integrada na `main` (fast-forward), branch apagada,
 push pendente. [[automation-scripts-como-ferramentas]], [[estado-do-projeto]].
 
+## [2026-11-04] code | QUERYASSETDOWNTIME escrito, instalado e validado
+ASSETSTATUS (colunas do `apischema` `MXAPIASSETSTATUS`, sem esperar índices). 12
+parâmetros, `event=down|up`, `assetnums`/`wonums` sem datas, site explícito, READ em
+ASSET. Validado via MCP: filtros, paginação, erros, ~2 s em 366 dias. Regra do
+`downtime` no retorno confirmada; `downtime` nem sempre bate com as datas; pares
+repetidos; pouquíssimos dados na homologação. Description com `YYYY-NN-DD`
+(corrigir). 194 testes. Commit `34fe200` na `main`. [[ferramentas-maximo]],
+[[itambe-cimentos]], [[estado-do-projeto]].

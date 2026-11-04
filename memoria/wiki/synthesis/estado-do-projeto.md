@@ -13,8 +13,27 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-04)
 
+- **`QUERYASSETDOWNTIME` funcionando via MCP** (commit `34fe200` na `main`, push
+  pendente). ASSETSTATUS: uma linha por queda/retorno do ativo; datas em
+  `changedate` (máx 366 dias) ou `assetnums`/`wonums`; `event=down|up` (SQL fixo);
+  READ em ASSET; site explícito. 194 testes. Colunas do `apischema`
+  (`MXAPIASSETSTATUS`). Regra confirmada: queda `isrunning` falso e `downtime` 0;
+  retorno `isrunning` verdadeiro com as horas. Cerca de 2 s em 366 dias.
+- **Dados de parada na Itambé (homologação):** quase nada (~120 linhas; 4 em 2025,
+  0 em 2026). `downtime` gravado nem sempre bate com as datas (MCC2213: 2h56 → 2.0);
+  pares repetidos (ACI1020, 5 iguais); linha de cadastro sem queda. Deduplicar no
+  `analysis/`. **Perguntar ao consultor** se registram paradas em produção antes de
+  prometer MTTR/disponibilidade.
+- **Pendente do usuário no Maximo:** Description do `QUERYASSETDOWNTIME` com
+  `YYYY-NN-DD` (corrigir para `YYYY-MM-DD`); Log Level ERROR nos scripts.
+- **Próximo passo:** usuário decide. Opções: `QUERYWOMATERIALS`, CLI `call_tool` no
+  repo, primeiras análises em `analysis/` (tempo em status, horas paradas), gateway
+  de LLM (aguarda decisão).
+
+### Antes, no mesmo dia: QUERYWOSTATUS
+
 - **`QUERYWOSTATUS` funcionando via MCP** (`feat/querywostatus` integrada na `main`
-  por fast-forward, branch apagada; push pendente). Decisão do usuário: histórico de status em 2 scripts novos
+  por fast-forward, branch apagada; push feito, `2a9dd24`). Decisão do usuário: histórico de status em 2 scripts novos
   (`QUERYWOSTATUS` agora, `QUERYASSETDOWNTIME` depois), não opção das atuais.
   Uma linha por mudança (WOSTATUS); datas em `changedate` (máx 366 dias) ou
   `wonums`; filtros da OS por subconsulta. 163 testes. Detalhes em
@@ -28,12 +47,9 @@ Ler no início de cada sessão. Atualizar no fim.
   confirmadas na 1ª chamada. ASSETSTATUS tem (MXAPIASSETSTATUS).
 - Cliente de teste avulso refeito no scratchpad (`call_tool.py`); some com a sessão.
   Reforça o item "CLI `call_tool`" de "Falta".
-- **Pendente do usuário no Maximo:** Description do `QUERYWOSTATUS` sem `u200b`,
-  mas redigitada com erros ("statushistor:", espaços; cosmético); Log Level de `QUERYWOSTATUS`, `QUERYJOBPLANS` e
-  `QUERYWORKORDERS` para ERROR.
 - Achado: `QUERYWORKORDERS` dá 0 OS em 1 a 5/set/2026 (homologação); conferir se é
   buraco de dados.
-- **Próximo passo:** `QUERYASSETDOWNTIME` (ASSETSTATUS: conferir índices primeiro).
+- Description do `QUERYWOSTATUS` corrigida depois (MCP mostra o texto certo).
 
 ### Antes, no mesmo dia
 

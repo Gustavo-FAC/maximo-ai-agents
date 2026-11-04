@@ -6,14 +6,16 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[estado-do-projeto]] – feito, pendente, próximo passo, riscos. **Ler primeiro.**
 - [[ferramentas-maximo]] – plano dos automation scripts (7), o que fica em
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
-  `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito).
+  `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
+  `QUERYASSETDOWNTIME`).
 - [[prompts-de-teste]] – 32 perguntas para testar OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança); base para `tests/evals/`.
 
 ## Entidades
 - [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária;
   dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist; planos
-  com status ATIVO (sinônimo) e 203 planos de nível sistema.
+  com status ATIVO (sinônimo) e 203 planos de nível sistema; quase sem registro de
+  paradas (ASSETSTATUS) na homologação.
 - [[mas-mcp-server]] – servidor MCP do MAS 9.2, ferramentas expostas, notas do SDK.
   BMXAA10147E: usuário da chave precisa estar em EN (2 ocorrências). Cliente sem
   descrição de parâmetro.

@@ -28,7 +28,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30) |
 | 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
-| 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS) | P0 | a fazer |
+| 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); horas/MTTR em `analysis/` | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
 | 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
@@ -92,3 +92,9 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
 - **Busca por texto:** cada palavra vira `upper(description) like :n` com `%palavra%`
   no bind; `%` e `_` recusados (escape muda entre bancos). Sem busca por semelhança
   (embeddings exigiriam guardar dados do cliente).
+- **`QUERYASSETDOWNTIME` (2026-11-04):** parâmetro `assetnums` (como no
+  `QUERYASSETS`), não `assetnum`; `event` em vez de `isrunning` (mais claro para o
+  LLM); `operational` só como campo, sem filtro. Permissão READ em ASSET. Site
+  explícito copiado do `QUERYWOSTATUS` fora do bloco comum (não reinstalar os
+  outros scripts). `downtime` é o valor gravado: a análise deve deduplicar pares
+  repetidos e decidir entre `downtime` e diferença de datas.

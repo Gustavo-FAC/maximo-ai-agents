@@ -68,8 +68,10 @@ Cliente piloto: **Itambé Cimentos**.
   ao ativo (filtro `location` validado em 2026-11-04).
 - 4º script `QUERYWOSTATUS` (histórico de status de OS) **funcionando via MCP**
   desde 2026-11-04; sem `siteid`, usa os sites autorizados explícitos (índice
-  `SITEID, CHANGEDATE, WONUM`). Próximo: `QUERYASSETDOWNTIME` (ASSETSTATUS).
-- 163 testes unitários.
+  `SITEID, CHANGEDATE, WONUM`).
+- 5º script `QUERYASSETDOWNTIME` (paradas de ativo, ASSETSTATUS) **funcionando via
+  MCP** desde 2026-11-04; homologação quase sem dados de parada.
+- 194 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
@@ -94,7 +96,8 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 7. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.
-   Scripts prontos: `QUERYWORKORDERS`, `QUERYASSETS`, `QUERYJOBPLANS` (2026-11-03).
+   Scripts prontos: `QUERYWORKORDERS`, `QUERYASSETS`, `QUERYJOBPLANS` (2026-11-03),
+   `QUERYWOSTATUS` e `QUERYASSETDOWNTIME` (2026-11-04).
 
 ## Referências
 
