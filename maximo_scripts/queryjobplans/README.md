@@ -58,7 +58,9 @@ Nenhum filtro obrigatório: plano é cadastro, a resposta é limitada por `page_
 - **Ligação com ativo/local:** `assetnum` e `location` filtram pelos planos ligados em
   JPASSETSPLINK (por `jobplanid`, sem site na ligação). Plano usado só por PM (PM →
   `jpnum`) não aparece; se a Itambé ligar plano a ativo só pela PM, isso vira
-  extensão.
+  extensão. Na Itambé a ligação é pela **location** (2026-11-04): para planos de um
+  ativo, o agente busca a location do ativo (`QUERYASSETS`) e filtra por ela (dica na
+  descrição do `assetnum` na allowlist).
 - **Texto do procedimento:** campo `description_longdescription` (até 32 mil
   caracteres, pode vir em rich text). Só vem quando pedido; com ele, `page_size` máx 50.
 
@@ -102,10 +104,12 @@ Validado em 2026-11-03 (Itambé, chave MAXADMIN): marcados com [x].
 - [x] `description_longdescription`: cerca de metade dos planos tem texto; vem com
       `<!-- RICH TEXT -->` e, nos vistos, só um código (ex.: `PS1486`). `page_size=100`
       com ele dá `out_of_range`.
-- [ ] `assetnum` de um ativo com plano ligado (aba Job Plan do ativo, ou aba
-      Assets/Locations do plano) acha o plano. Se a Itambé não usar JPASSETSPLINK,
-      anotar e decidir sobre PM. Testado só com CCM2.1, ACI0008, ACI0057, PEL0007:
-      0 planos (não conclusivo).
+- [x] `location` com plano ligado: `L3T05M1` → 8 planos (ex.: PTLUB80, PTMCA1,
+      PTINV02) com `status=ALL` (2026-11-04).
+- [ ] `assetnum` com plano ligado: a Itambé liga plano à **location**, não ao
+      ativo. Os 3 ativos de `L3T05M1` (ACI0343, MCA5853, PEL0151) e CCM2.1,
+      ACI0008, ACI0057, PEL0007 dão 0 planos. Mesma subconsulta do `location`
+      (só muda a coluna); testar se aparecer ativo com ligação direta.
 - [x] `text` ("motor" → 596), `unknown_field`, `invalid_flag`, `invalid_status`
       (`ALL,ACTIVE`), `invalid_text`, paginação (página 2) ok.
 - [ ] Usuário sem READ no app JOBPLAN recebe `not_authorized`.

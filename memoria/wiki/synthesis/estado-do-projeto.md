@@ -4,14 +4,30 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-03
+updated: 2026-11-04
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-03)
+## Onde paramos (2026-11-04)
+
+- **Ligação plano–ativo respondida:** Itambé liga plano à **location**, não ao
+  ativo (usuário). `QUERYJOBPLANS` com `location=L3T05M1` → 8 planos; `assetnum` dos
+  3 ativos dela → 0. Filtro `location` validado; `assetnum` usa a mesma subconsulta
+  (só muda a coluna), sem caso positivo na Itambé. Descrição do `assetnum` na
+  allowlist ganhou dica: se vier vazio, buscar a location do ativo com
+  `script_queryassets` e filtrar por location. 134 testes. Commit na `main`.
+- **Pendente:** Title das MCP Tools `QUERYASSETS` e `QUERYJOBPLANS` com `u200b`
+  (cosmético); Log Level do `QUERYJOBPLANS` e do `QUERYWORKORDERS` para ERROR.
+- **Perguntar ao consultor:** códigos na descrição longa dos planos (ex.: `PS1486`).
+- **Próximo passo:** usuário decide. Opções: CLI `call_tool` no repo; histórico de
+  status (WOSTATUS/ASSETSTATUS); `QUERYWOMATERIALS`; gateway de LLM em espera.
+- MCP do `.mcp.json` não conectou de novo (Claude Code aberto sem as variáveis);
+  testes pelo conector `maximo` do claude.ai.
+
+## Antes (2026-11-03)
 
 - **`QUERYJOBPLANS` funcionando via MCP** em homologação (`feat/queryjobplans`
   integrada na `main`, com push; branch apagada). 2025 planos ACTIVE (Itambé
@@ -141,6 +157,8 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 - 2026-11-03: `QUERYJOBPLANS` escrito (JOBPLAN + JOBTASK + JPASSETSPLINK), allowlist
   e testes. Instalado e validado via MCP; tarefas corrigidas (JOBTASK pelo dono).
   134 testes.
+- 2026-11-04: filtro `location` do `QUERYJOBPLANS` validado (`L3T05M1` → 8);
+  Itambé liga plano à location; dica na descrição do `assetnum` (allowlist).
 
 ## Falta (ordem sugerida)
 

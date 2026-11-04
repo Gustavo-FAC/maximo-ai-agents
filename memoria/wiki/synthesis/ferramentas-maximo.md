@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[automation-scripts-como-ferramentas]], [[allowlist-somente-leitura]], [[estado-do-projeto]], [[itambe-cimentos]]
 created: 2026-10-29
-updated: 2026-11-03
+updated: 2026-11-04
 ---
 
 # Ferramentas de dados – plano
@@ -28,7 +28,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30) |
 | 4 | histórico de status (opção) | WOSTATUS, ASSETSTATUS, ASSETTRANS | histórico de uma OS / paradas e movimentações do ativo | P0 | a definir |
-| 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); `assetnum` a confirmar |
+| 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
 | 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
 
@@ -44,7 +44,8 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
   padrão ACTIVE pelo valor interno (`synonymdomain`), `status=ALL` desliga. Plano
   sem site (organização) entra na autorização pela org dos sites autorizados e no
   filtro `siteid`. Sem data (cadastro). Plano ligado ao ativo só pela PM não
-  aparece: conferir na Itambé. Detalhes em `maximo_scripts/queryjobplans/README.md`.
+  aparece. Itambé liga plano à **location** (`L3T05M1` → 8 planos; ativos dela → 0):
+  agente busca a location do ativo e filtra por ela (2026-11-04). Detalhes em `maximo_scripts/queryjobplans/README.md`.
 - **`QUERYFAILUREREPORTS` cancelado** (usuário, 2026-10-30): consultor funcional
   confirmou que a Itambé não usa classe de falha (sem classe não há
   problema/causa/solução). "Falhas" na Itambé ficam com `QUERYWORKORDERS` (tipo de

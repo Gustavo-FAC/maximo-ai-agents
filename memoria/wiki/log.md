@@ -258,3 +258,9 @@ Estado com próximo passo (decisão do usuário: CLI `call_tool`, histórico de 
 `QUERYWOMATERIALS` ou gateway), perguntas ao consultor (códigos `PS1486`, ligação
 plano–ativo) e aviso de que o cliente avulso de teste ficou só no scratchpad.
 [[estado-do-projeto]].
+
+## [2026-11-04] test | QUERYJOBPLANS: plano ligado à location
+Usuário: Itambé liga plano à location. `location=L3T05M1` → 8 planos; `assetnum` dos
+3 ativos dela (ACI0343, MCA5853, PEL0151) → 0. Descrição do `assetnum` na allowlist
+manda buscar a location do ativo quando vier vazio. README do script, [[ferramentas-maximo]],
+[[itambe-cimentos]], [[estado-do-projeto]] e CLAUDE.md atualizados.
