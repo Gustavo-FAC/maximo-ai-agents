@@ -325,3 +325,7 @@ worktype `MS` dominante, 4598 sem tipo. Ler 1 ano pelo MCP: 202 s (37 páginas).
 Pendente: classificação dos status (aberta/fechada/cancelada) e significado de `MS`;
 investigar índice/site explícito no `QUERYWORKORDERS`. Push da `main` pendente (2
 commits). [[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-04] git | Push da main
+Push de `4bc978a`, `0cc4b0f` e `936399c` (`a5ca255..936399c`); `main` sincronizada.
+[[estado-do-projeto]].

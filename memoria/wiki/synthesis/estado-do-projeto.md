@@ -194,10 +194,10 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Git
 
-GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-04 (fim): `main` local com
-`4bc978a` (materiais) e `0cc4b0f` (gateway), **2 commits à frente, push pendente**;
-branches `feat/querywomaterials` e `feat/llm-gateway` apagadas. Atualização da wiki do
-fim do dia **sem commit**. 2026-11-03:
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-04 (fim): `4bc978a`
+(materiais), `0cc4b0f` (gateway) e `936399c` (wiki do fim do dia) na `main`, **com
+push**; `main` sincronizada com `origin/main`. Branches `feat/querywomaterials` e
+`feat/llm-gateway` apagadas. Só a `main`. 2026-11-03:
 `feat/queryjobplans` integrada na `main` por fast-forward, com push. Branches locais
 `feat/queryjobplans` e `feat/queryworkorders-text` apagadas. Só a `main`, sincronizada.
 2026-10-30:
@@ -271,7 +271,7 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
    `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
 6. Pendências do usuário no Maximo: recolar `QUERYMATUSAGE.py` e schema; Description
-   do `QUERYASSETDOWNTIME` (`YYYY-NN-DD`); Log Level ERROR nos scripts; push da `main`.
+   do `QUERYASSETDOWNTIME` (`YYYY-NN-DD`); Log Level ERROR nos scripts.
 7. Linha DEBUG `implicit vars` do log do Manage. Só registro; não bloqueia nada.
 8. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
 9. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso
