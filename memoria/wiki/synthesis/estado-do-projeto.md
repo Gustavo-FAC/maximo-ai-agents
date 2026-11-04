@@ -11,19 +11,45 @@ updated: 2026-11-04
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-04, fim)
+## Onde paramos (2026-11-04, fim do dia)
 
-- **Gateway de LLM decidido e feito** (usuário: LangChain como gateway). Branch
-  `feat/llm-gateway`, sem commit: `llm/gateway.py` (`create_chat_model`, provedores
+- **Decisão do usuário: antes dos agentes, scripts de análise (`analysis/`).** Primeira
+  análise escolhida: **backlog de OS** (abertas por idade, status, tipo, prioridade,
+  equipe, ativo/location). Outras opções oferecidas e não escolhidas ainda: tempo em
+  status, reincidência de corretivas, consumo/custo de material.
+- **Arquitetura proposta para `analysis/`** (sem objeção do usuário): dados pelo MCP
+  com as ferramentas atuais (todas as páginas, com limite), contas em pandas
+  (funções puras, testadas com dados sintéticos), CLI
+  `uv run python -m maximo_agents.analysis ...` para o usuário conferir números contra
+  o Maximo; depois o agente chama as mesmas funções. Nada escrito ainda.
+- **Sondagem (18152 OS, `reportdate` 2025-11-05 a 2026-11-04):** status próprios da
+  Itambé (ver [[itambe-cimentos]]). Script devolve o valor externo, então
+  "aberta/fechada/cancelada" vira **configuração por cliente** no repo.
+  **Pendente do usuário/consultor:** classificar os status (em especial POSEXEC,
+  FECHAR, PREVCAN e os pequenos) e dizer o que é worktype `MS`. Opção oferecida:
+  começar com a classificação provisória do Claude marcada "a confirmar".
+- **Lentidão:** ler 1 ano pelo MCP levou **202 s** (37 páginas de 500, ~5,5 s cada).
+  Backlog deve buscar só status abertos, por janelas de 366 dias para trás, poucos
+  campos. **Investigar** se `QUERYWORKORDERS` tem o problema de índice do
+  `QUERYWOSTATUS` (sem `siteid` explícito); pode ser ganho grande.
+- Sondas no scratchpad (`call_tool.py`, `probe_status.py`) somem com a sessão; reforça
+  o CLI `call_tool` no repo.
+
+### Antes, no mesmo dia: gateway de LLM
+
+- **Gateway de LLM decidido e feito** (usuário: LangChain como gateway). Commit
+  `0cc4b0f` na `main`: `llm/gateway.py` (`create_chat_model`, provedores
   `anthropic`/`ollama` por `LLM_PROVIDER`/`LLM_MODEL`, erro sem segredo), campos `llm_*`
   no `Settings`, `.env.example`. Dependências `langchain-core`, `langchain-anthropic`,
   `langchain-ollama`. 268 testes.
 - **Chave do Claude:** usuário vai confirmar. Máquina de dev sem Ollama e sem GPU
   (Ollama em CPU só para montar código, não para avaliar qualidade).
-- **Próximo passo:** 1º agente (Análise de OS) com LangGraph, cliente MCP + allowlist,
-  5 voltas, testes com `GenericFakeChatModel`; depois evals com [[prompts-de-teste]].
+- Agente (LangGraph, cliente MCP + allowlist, 5 voltas, testes com
+  `GenericFakeChatModel`) fica **depois** das análises (decisão do usuário).
 
-- **Material em 2 scripts** (branch `feat/querywomaterials`, sem commit ainda):
+### Antes, no mesmo dia: material
+
+- **Material em 2 scripts** (commit `4bc978a` na `main`):
   - `QUERYMATUSAGE` (MATUSETRANS) **funcionando via MCP**: 5241 transações em 366
     dias, 0,4 s; `issuetype`, `wonums` (ligação por `wogroup`), `worktype`, todos os
     campos e erros conferidos. Achado: `linecost` tem sinal oposto ao de `quantity`
@@ -37,9 +63,6 @@ Ler no início de cada sessão. Atualizar no fim.
 - **Itambé não planeja material no Maximo** (usuário): `QUERYWOMATERIALS` fora dos
   agentes (`DORMANT_TOOLS`; decisão do usuário), fica no repo para outros clientes.
   MCP Tool desativada no Maximo da Itambé pelo usuário. 256 testes.
-- **Próximo passo:** branch integrada na `main` (push pendente); depois o
-  usuário decide (CLI `call_tool` no repo, `analysis/`, `QUERYMETERREADINGS`, gateway
-  de LLM aguarda decisão).
 
 ### Antes, no mesmo dia: QUERYASSETDOWNTIME
 
@@ -171,7 +194,10 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Git
 
-GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-03:
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-04 (fim): `main` local com
+`4bc978a` (materiais) e `0cc4b0f` (gateway), **2 commits à frente, push pendente**;
+branches `feat/querywomaterials` e `feat/llm-gateway` apagadas. Atualização da wiki do
+fim do dia **sem commit**. 2026-11-03:
 `feat/queryjobplans` integrada na `main` por fast-forward, com push. Branches locais
 `feat/queryjobplans` e `feat/queryworkorders-text` apagadas. Só a `main`, sincronizada.
 2026-10-30:
@@ -234,18 +260,22 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 
 ## Falta (ordem sugerida)
 
-1. Gateway de LLM em `llm/`: **aguardando decisão do usuário**.
-2. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas, usando
-   `AGENT_TOOLS` (hoje 4 ferramentas: OS, ativos, planos, histórico de status), `input_schema` e
-   `clean_arguments`.
-3. Linha DEBUG `implicit vars` do log do Manage (origem dos parâmetros e da
-   identidade no caminho MCP). Só registro; não bloqueia nada.
-4. Pequeno CLI `call_tool` para testar ferramentas sem MCP Inspector (opcional).
-5. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
-6. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso
+1. **Backlog de OS em `analysis/`** (próximo): aguardando classificação dos status da
+   Itambé (aberta/fechada/cancelada) e significado de `MS`. Busca pelo MCP, pandas,
+   CLI, configuração de status por cliente.
+2. Investigar lentidão do `QUERYWORKORDERS` (~5,5 s por página de 500): índice e
+   `siteid` explícito como no `QUERYWOSTATUS`.
+3. Demais análises: tempo em status, reincidência de corretivas, consumo/custo de
+   material (MTTR/paradas: pouco dado).
+4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),
+   `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
+5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
+6. Pendências do usuário no Maximo: recolar `QUERYMATUSAGE.py` e schema; Description
+   do `QUERYASSETDOWNTIME` (`YYYY-NN-DD`); Log Level ERROR nos scripts; push da `main`.
+7. Linha DEBUG `implicit vars` do log do Manage. Só registro; não bloqueia nada.
+8. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
+9. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso
    a um site (checklist do README do script).
-7. Análises com conta (ex.: OS por ativo, tempo médio) vão para `analysis/` (a IA
-   não faz contas); hoje a ferramenta só dá totais por filtro e listas.
 
 ## Riscos ativos
 

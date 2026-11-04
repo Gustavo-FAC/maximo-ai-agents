@@ -76,7 +76,8 @@ Cliente piloto: **Itambé Cimentos**.
 - Material em 2 scripts (2026-11-04): `QUERYMATUSAGE` (consumo, MATUSETRANS)
   **funcionando via MCP**; `QUERYWOMATERIALS` (planejado + saldo) instalado, erros
   ok, mas **fora dos agentes** (`DORMANT_TOOLS`): Itambé não planeja material no Maximo.
-- 256 testes unitários.
+- Gateway de LLM (LangChain) em `llm/gateway.py` desde 2026-11-04.
+- 268 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
@@ -96,10 +97,13 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 4. ~~Definir a allowlist de leitura em `mcp/`.~~ Feito em 2026-10-29 (nomes,
    descrições próprias e filtro de argumentos).
 5. ~~Criar o gateway de LLM em `llm/`.~~ Feito em 2026-11-04 (`llm/gateway.py`,
-   provedores `anthropic` e `ollama`; branch `feat/llm-gateway`).
-6. Primeiro agente (Análise de OS): LangGraph, cliente MCP com `AGENT_TOOLS` e
-   `clean_arguments`, limite de 5 voltas; testes com modelo falso.
-7. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
+   provedores `anthropic` e `ollama`; commit `0cc4b0f`).
+6. **Análises em `analysis/` antes dos agentes** (decisão do usuário, 2026-11-04).
+   Primeira: backlog de OS; aguarda classificação dos status da Itambé (configuração
+   por cliente). Ver `memoria/wiki/synthesis/estado-do-projeto.md`.
+7. Primeiro agente (Análise de OS), depois das análises: LangGraph, cliente MCP com
+   `AGENT_TOOLS` e `clean_arguments`, limite de 5 voltas; testes com modelo falso.
+8. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.
    Scripts prontos: `QUERYWORKORDERS`, `QUERYASSETS`, `QUERYJOBPLANS` (2026-11-03),

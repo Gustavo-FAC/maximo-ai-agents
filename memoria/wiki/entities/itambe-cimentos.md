@@ -46,6 +46,29 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
   10:56, `downtime` 2.0). ACI1020 tem 5 pares idênticos (mesma OS 979093).
 - A confirmar com o consultor: se produção registra paradas no Maximo.
 
+## Status e tipos de OS (sondagem 2026-11-04)
+
+18152 OS com `reportdate` de 2025-11-05 a 2026-11-04 (homologação). Status são
+**próprios** (valor externo):
+
+| Status | OS | Leitura do Claude (a confirmar) |
+|---|---|---|
+| CONCL | 8456 | fechada |
+| APROG | 4153 | aberta (a programar) |
+| POSEXEC | 2557 | ? (pós-execução) |
+| EMAND | 1727 | aberta (em andamento) |
+| CANCEL | 341 | cancelada |
+| FECHAR | 293 | ? (a fechar) |
+| AAPROV | 202 | aberta (aguardando aprovação) |
+| COMP | 126 | fechada |
+| PREVCAN | 109 | ? |
+| AGENV 77, AGINSP 30, APRV 27, DEVPCM 16, AGEXECFIL 14, INPRG 12, AGEXEC 7, OSFILENC 4, ACONDF 1 | | provavelmente abertas |
+
+Worktype: `MS` 11193 (significado a perguntar), sem tipo 4598, `CO` 951, `MPV` 404,
+`INSP` 321, `MP` 317, `MPR` 109, `CPG` 105, `IL` 85, `EM` 33, outros < 20.
+**Pendente (usuário/consultor):** classificar status em aberta/fechada/cancelada para
+o backlog; significado de `MS`.
+
 ## Materiais (2026-11-04)
 
 - **Itambé não planeja material no Maximo** (usuário, 2026-11-04): WPMATERIAL vazio,

@@ -317,3 +317,11 @@ Usuário decidiu: interface de modelos do LangChain como gateway. Chave do Claud
 confirmar. `llm/gateway.py` com `anthropic` e `ollama`, configuração `LLM_*`, testes
 sem chave (268). Branch `feat/llm-gateway`. Próximo: 1º agente com LangGraph.
 [[estado-do-projeto]].
+
+## [2026-11-04] decision | Análises antes dos agentes; backlog primeiro
+Usuário: fazer `analysis/` antes do agente; 1ª análise = backlog de OS. Sondagem de
+18152 OS (1 ano): status próprios da Itambé (CONCL, APROG, POSEXEC, EMAND...),
+worktype `MS` dominante, 4598 sem tipo. Ler 1 ano pelo MCP: 202 s (37 páginas).
+Pendente: classificação dos status (aberta/fechada/cancelada) e significado de `MS`;
+investigar índice/site explícito no `QUERYWORKORDERS`. Push da `main` pendente (2
+commits). [[estado-do-projeto]], [[itambe-cimentos]].

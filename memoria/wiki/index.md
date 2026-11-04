@@ -13,7 +13,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 
 ## Entidades
 - [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária;
-  dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist; planos
+  dados: sem classe de falha, corretiva `CO`, OS sem tipo, OS de checklist, status
+  próprios (CONCL, APROG, POSEXEC...) e worktype `MS` a classificar; planos
   com status ATIVO (sinônimo) e 203 planos de nível sistema; quase sem registro de
   paradas (ASSETSTATUS) na homologação; sem material planejado (WPMATERIAL vazio),
   5241 baixas/devoluções em 366 dias.
