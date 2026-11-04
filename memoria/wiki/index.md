@@ -6,7 +6,7 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[estado-do-projeto]] – feito, pendente, próximo passo, riscos. **Ler primeiro.**
 - [[ferramentas-maximo]] – plano dos automation scripts (7), o que fica em
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
-  `QUERYJOBPLANS`).
+  `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito).
 - [[prompts-de-teste]] – 32 perguntas para testar OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança); base para `tests/evals/`.
 
@@ -25,7 +25,7 @@ Catálogo de páginas. Atualizar a cada alteração.
   Observação sobre idioma do usuário.
 - [[automation-scripts-como-ferramentas]] – regras, como registrar, lições do OAS e
   do runtime Jython; `QUERYWORKORDERS` **funcionando via MCP** (2026-10-29); objeto
-  filho (JOBTASK) só pelo dono.
+  filho (JOBTASK) só pelo dono; site explícito para usar índice (`QUERYWOSTATUS`).
 
 ## Fontes
 - [[doc-mcp-server]] – doc IBM do MCP Server: registro de ferramenta, flags, auth.

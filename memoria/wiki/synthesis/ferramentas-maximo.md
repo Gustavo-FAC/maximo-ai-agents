@@ -27,7 +27,9 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | funcionando via MCP |
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30) |
-| 4 | histórico de status (opção) | WOSTATUS, ASSETSTATUS, ASSETTRANS | histórico de uma OS / paradas e movimentações do ativo | P0 | a definir |
+| 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
+| 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS) | P0 | a fazer |
+| 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
 | 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
@@ -36,6 +38,15 @@ Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos
 exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
 
 ## Decisões
+
+- **Histórico de status** (usuário, 2026-11-04): 2 scripts novos, não opção nas
+  ferramentas atuais (perguntas cruzam muitos registros por período). Primeiro
+  `QUERYWOSTATUS`. ASSETTRANS adiado. Ver `maximo_scripts/querywostatus/README.md`.
+- **Site explícito em consulta de movimento** (2026-11-04): índices de movimento do
+  Maximo começam por `SITEID` (WOSTATUS_NDX1 = `SITEID, CHANGEDATE, WONUM`). O
+  filtro de autorização (`exists ... or siteid in`) não deixa o banco usar o índice;
+  sem `siteid`, o script lê os sites autorizados e põe `siteid in (...)`. Outubro:
+  196 s → 4 s. Conferir índices (Database Configuration) antes de cada script novo.
 
 - **`QUERYJOBPLANS`** (usuário, 2026-11-03): tarefas sob pedido (`include_tasks=Y`,
   2ª consulta em JOBTASK por `jobplanid`, `page_size` máx 50, teto 2000 tarefas com

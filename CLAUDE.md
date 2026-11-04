@@ -66,7 +66,10 @@ Cliente piloto: **Itambé Cimentos**.
 - 3º script `QUERYJOBPLANS` (planos, tarefas sob pedido, ligação com ativo/local)
   **funcionando via MCP** desde 2026-11-03. Itambé liga plano à **location**, não
   ao ativo (filtro `location` validado em 2026-11-04).
-- 134 testes unitários.
+- 4º script `QUERYWOSTATUS` (histórico de status de OS) **funcionando via MCP**
+  desde 2026-11-04; sem `siteid`, usa os sites autorizados explícitos (índice
+  `SITEID, CHANGEDATE, WONUM`). Próximo: `QUERYASSETDOWNTIME` (ASSETSTATUS).
+- 163 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

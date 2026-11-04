@@ -13,6 +13,31 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-04)
 
+- **`QUERYWOSTATUS` funcionando via MCP** (branch `feat/querywostatus`, commit na
+  branch, sem merge). Decisão do usuário: histórico de status em 2 scripts novos
+  (`QUERYWOSTATUS` agora, `QUERYASSETDOWNTIME` depois), não opção das atuais.
+  Uma linha por mudança (WOSTATUS); datas em `changedate` (máx 366 dias) ou
+  `wonums`; filtros da OS por subconsulta. 163 testes. Detalhes em
+  `maximo_scripts/querywostatus/README.md`.
+- **Lição de desempenho:** índice por data da WOSTATUS é `SITEID, CHANGEDATE,
+  WONUM`; sem site na consulta o banco varria a tabela (outubro: 196 s). Script
+  agora lê os sites autorizados e põe `siteid in (...)` explícito: 4 s no mês, 4 s em
+  366 dias (50204 mudanças). Conferir índices antes de cada script de movimento
+  (ver [[automation-scripts-como-ferramentas]]).
+- WOSTATUS não tem estrutura de objeto no `apischema` (HTTP 500 `mosInfo`); colunas
+  confirmadas na 1ª chamada. ASSETSTATUS tem (MXAPIASSETSTATUS).
+- Cliente de teste avulso refeito no scratchpad (`call_tool.py`); some com a sessão.
+  Reforça o item "CLI `call_tool`" de "Falta".
+- **Pendente do usuário no Maximo:** Description do `QUERYWOSTATUS` com `u200b`
+  (redigitar, se ainda não fez); Log Level de `QUERYWOSTATUS`, `QUERYJOBPLANS` e
+  `QUERYWORKORDERS` para ERROR.
+- Achado: `QUERYWORKORDERS` dá 0 OS em 1 a 5/set/2026 (homologação); conferir se é
+  buraco de dados.
+- **Próximo passo:** merge da `feat/querywostatus` (decisão do usuário) e depois
+  `QUERYASSETDOWNTIME` (ASSETSTATUS: conferir índices primeiro).
+
+### Antes, no mesmo dia
+
 - **Ligação plano–ativo respondida:** Itambé liga plano à **location**, não ao
   ativo (usuário). `QUERYJOBPLANS` com `location=L3T05M1` → 8 planos; `assetnum` dos
   3 ativos dela → 0. Filtro `location` validado; `assetnum` usa a mesma subconsulta
@@ -159,12 +184,14 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
   134 testes.
 - 2026-11-04: filtro `location` do `QUERYJOBPLANS` validado (`L3T05M1` → 8);
   Itambé liga plano à location; dica na descrição do `assetnum` (allowlist).
+- 2026-11-04: `QUERYWOSTATUS` escrito, instalado e validado via MCP; site explícito
+  pelo índice `SITEID, CHANGEDATE, WONUM` (196 s → 4 s). 163 testes.
 
 ## Falta (ordem sugerida)
 
 1. Gateway de LLM em `llm/`: **aguardando decisão do usuário**.
 2. Primeiro agente: laço com `QUERYWORKORDERS`, limite de 5 voltas, usando
-   `AGENT_TOOLS` (hoje 3 ferramentas: OS, ativos, planos), `input_schema` e
+   `AGENT_TOOLS` (hoje 4 ferramentas: OS, ativos, planos, histórico de status), `input_schema` e
    `clean_arguments`.
 3. Linha DEBUG `implicit vars` do log do Manage (origem dos parâmetros e da
    identidade no caminho MCP). Só registro; não bloqueia nada.

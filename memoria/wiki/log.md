@@ -264,3 +264,13 @@ Usuário: Itambé liga plano à location. `location=L3T05M1` → 8 planos; `asse
 3 ativos dela (ACI0343, MCA5853, PEL0151) → 0. Descrição do `assetnum` na allowlist
 manda buscar a location do ativo quando vier vazio. README do script, [[ferramentas-maximo]],
 [[itambe-cimentos]], [[estado-do-projeto]] e CLAUDE.md atualizados.
+
+## [2026-11-04] code | QUERYWOSTATUS escrito, instalado e validado
+Decisão do usuário: histórico de status em 2 scripts (WOSTATUS agora, ASSETSTATUS
+depois). Colunas: ASSETSTATUS no `apischema`; WOSTATUS sem estrutura de objeto.
+Instalação: `chengeby` digitado errado (recriado), `u200b` na Description. Filtros e
+erros ok. Mês levava 196 s: índice `SITEID, CHANGEDATE, WONUM` sem site na consulta;
+site explícito → 4 s (366 dias, 50204 mudanças, 4 s). 163 testes. Branch
+`feat/querywostatus`. [[ferramentas-maximo]], [[automation-scripts-como-ferramentas]],
+[[estado-do-projeto]].
+

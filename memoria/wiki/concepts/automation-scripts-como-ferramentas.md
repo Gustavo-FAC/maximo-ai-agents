@@ -146,3 +146,14 @@ Ferramentas de dados são automation scripts no Maximo, publicados no
   de 13 variáveis. Digitar nomes à mão; conferir `u200b` no OAS.
 - Consequência para o nosso lado: a [[allowlist-somente-leitura]] deve guardar
   descrição própria (rica) das ferramentas e rejeitar nomes com caractere não ASCII.
+
+## Desempenho: site explícito (2026-11-04)
+
+Na 1ª versão do `QUERYWOSTATUS`, outubro/2026 (1510 mudanças) levou 196 s; com
+`siteid=FABRICA`, 5 s. O índice por data da WOSTATUS (`WOSTATUS_NDX1`) é `SITEID,
+CHANGEDATE, WONUM`, e o filtro comum de sites autorizados (`exists ... or siteid in
+(...)`) não deixa o banco usá-lo. Correção: sem `siteid`, ler os sites autorizados na
+tabela SITE (mesma regra) e pôr `siteid in (...)` explícito, mantendo o filtro comum.
+Ver os índices em Database Configuration antes de escrever script de movimento. O
+log do Manage mostra SQL acima de 1 s como `BMXAA6720W` (texto e tempo). Os outros
+scripts ainda usam só o filtro comum; medir se ficarem lentos.
