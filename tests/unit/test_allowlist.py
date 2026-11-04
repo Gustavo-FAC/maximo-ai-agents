@@ -9,6 +9,7 @@ from maximo_agents.mcp.allowlist import (
     MAX_ARGUMENT_LENGTH,
     QUERY_ASSETS,
     QUERY_JOB_PLANS,
+    QUERY_WO_STATUS,
     QUERY_WORK_ORDERS,
     ToolArgumentError,
     clean_arguments,
@@ -31,15 +32,27 @@ def load_script(folder, filename):
 qwo = load_script("queryworkorders", "QUERYWORKORDERS.py")
 qa = load_script("queryassets", "QUERYASSETS.py")
 qjp = load_script("queryjobplans", "QUERYJOBPLANS.py")
+qws = load_script("querywostatus", "QUERYWOSTATUS.py")
 
 # Descrição própria (allowlist) -> script que ela descreve.
-SPEC_SCRIPTS = [(QUERY_WORK_ORDERS, qwo), (QUERY_ASSETS, qa), (QUERY_JOB_PLANS, qjp)]
+SPEC_SCRIPTS = [
+    (QUERY_WORK_ORDERS, qwo),
+    (QUERY_ASSETS, qa),
+    (QUERY_JOB_PLANS, qjp),
+    (QUERY_WO_STATUS, qws),
+]
 SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
 
 
 @pytest.mark.parametrize(
     "name",
-    ["apischema", "script_queryworkorders", "script_queryassets", "script_queryjobplans"],
+    [
+        "apischema",
+        "script_queryworkorders",
+        "script_queryassets",
+        "script_queryjobplans",
+        "script_querywostatus",
+    ],
 )
 def test_ferramentas_de_leitura_permitidas(name):
     assert is_allowed(name)
