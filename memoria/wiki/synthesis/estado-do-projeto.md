@@ -11,7 +11,27 @@ updated: 2026-11-04
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-04)
+## Onde paramos (2026-11-04, fim)
+
+- **Material em 2 scripts** (branch `feat/querywomaterials`, sem commit ainda):
+  - `QUERYMATUSAGE` (MATUSETRANS) **funcionando via MCP**: 5241 transações em 366
+    dias, 0,4 s; `issuetype`, `wonums` (ligação por `wogroup`), `worktype`, todos os
+    campos e erros conferidos. Achado: `linecost` tem sinal oposto ao de `quantity`
+    (allowlist, README, schema e comentário corrigidos; **usuário recolar script e
+    schema** para ficarem iguais ao repo, sem urgência).
+  - `QUERYWOMATERIALS` (WPMATERIAL + saldo INVBALANCES) instalado; erros/limites ok,
+    mas **WPMATERIAL vazio em homologação**: dados, `taskid`, saldo e campos não
+    validados. Validar quando houver material planejado (produção ou OS de teste).
+    Description corrigida pelo usuário (tinha "materails").
+  - 255 testes. Cliente de teste avulso refeito no scratchpad (`call_tool.py`).
+- **Itambé não planeja material no Maximo** (usuário): `QUERYWOMATERIALS` fora dos
+  agentes (`DORMANT_TOOLS`; decisão do usuário), fica no repo para outros clientes.
+  MCP Tool desativada no Maximo da Itambé pelo usuário. 256 testes.
+- **Próximo passo:** branch integrada na `main` (push pendente); depois o
+  usuário decide (CLI `call_tool` no repo, `analysis/`, `QUERYMETERREADINGS`, gateway
+  de LLM aguarda decisão).
+
+### Antes, no mesmo dia: QUERYASSETDOWNTIME
 
 - **`QUERYASSETDOWNTIME` funcionando via MCP** (commit `34fe200` na `main`, push
   pendente). ASSETSTATUS: uma linha por queda/retorno do ativo; datas em

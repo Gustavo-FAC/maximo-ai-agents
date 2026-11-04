@@ -31,8 +31,14 @@ exposta ao LLM.
 - 2026-10-29: `ToolSpec` com **descrição própria** (inglês, escrita para o LLM) da
   ferramenta e de cada parâmetro. Motivo: o Maximo corta descrição de variável em
   100 caracteres e o cliente MCP não recebe descrição de parâmetro.
-- `AGENT_TOOLS`: só `script_queryworkorders`. `apischema` fica só no Claude Code
-  (desenvolvimento), não vai para os agentes.
+- `AGENT_TOOLS`: os scripts prontos (OS, ativos, planos, status, paradas, consumo de
+  material). `apischema` fica só no Claude Code (desenvolvimento), não vai para os
+  agentes.
+- `DORMANT_TOOLS` (2026-11-04, decisão do usuário): scripts prontos, mas fora dos
+  agentes porque o cliente não usa o dado. A resposta vazia levaria o LLM a concluir
+  algo falso. Continuam em `READ_ONLY_TOOLS` (teste no Claude Code); `clean_arguments`
+  recusa. Hoje: `script_querywomaterials` (Itambé não planeja material no Maximo).
+  Com mais clientes, vira allowlist por tenant.
 - `input_schema()`: JSON Schema com `additionalProperties: false`.
 - `clean_arguments()`: recusa ferramenta fora de `AGENT_TOOLS`, parâmetro fora do
   schema (ex.: `authapp`), tipo diferente de texto/inteiro e texto > 1000; descarta

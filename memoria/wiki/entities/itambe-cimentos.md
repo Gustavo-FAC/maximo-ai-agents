@@ -45,3 +45,14 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
 - `downtime` gravado nem sempre é a diferença entre queda e retorno (MCC2213: 08:00 →
   10:56, `downtime` 2.0). ACI1020 tem 5 pares idênticos (mesma OS 979093).
 - A confirmar com o consultor: se produção registra paradas no Maximo.
+
+## Materiais (2026-11-04)
+
+- **Itambé não planeja material no Maximo** (usuário, 2026-11-04): WPMATERIAL vazio,
+  planejamento fica fora (Protheus). Campos próprios no WPMATERIAL (`sanum` =
+  solicitação do Protheus, `justificativa`, `prioridade`, `wpm1` a `wpm6`) existem,
+  mas sem uso. Material na Itambé = só consumo (`QUERYMATUSAGE`).
+- Baixas (MATUSETRANS): 5241 em nov/25–nov/26 (5011 baixas, 230 devoluções); dados até
+  jun/2026. Site `FABRICA`, almoxarifados `FAB`, `30`. OS 1116802 = material de limpeza
+  recorrente (109 baixas). `issuetype` em PT (`EMISSÃO`, `RETORNAR`); `issueid` vazio
+  nas devoluções.

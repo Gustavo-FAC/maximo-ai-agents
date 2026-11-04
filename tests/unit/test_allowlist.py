@@ -6,10 +6,13 @@ import pytest
 
 from maximo_agents.mcp.allowlist import (
     AGENT_TOOLS,
+    DORMANT_TOOLS,
     MAX_ARGUMENT_LENGTH,
     QUERY_ASSET_DOWNTIME,
     QUERY_ASSETS,
     QUERY_JOB_PLANS,
+    QUERY_MAT_USAGE,
+    QUERY_WO_MATERIALS,
     QUERY_WO_STATUS,
     QUERY_WORK_ORDERS,
     ToolArgumentError,
@@ -35,6 +38,8 @@ qa = load_script("queryassets", "QUERYASSETS.py")
 qjp = load_script("queryjobplans", "QUERYJOBPLANS.py")
 qws = load_script("querywostatus", "QUERYWOSTATUS.py")
 qad = load_script("queryassetdowntime", "QUERYASSETDOWNTIME.py")
+qwm = load_script("querywomaterials", "QUERYWOMATERIALS.py")
+qmu = load_script("querymatusage", "QUERYMATUSAGE.py")
 
 # Descrição própria (allowlist) -> script que ela descreve.
 SPEC_SCRIPTS = [
@@ -43,6 +48,8 @@ SPEC_SCRIPTS = [
     (QUERY_JOB_PLANS, qjp),
     (QUERY_WO_STATUS, qws),
     (QUERY_ASSET_DOWNTIME, qad),
+    (QUERY_WO_MATERIALS, qwm),
+    (QUERY_MAT_USAGE, qmu),
 ]
 SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
 
@@ -56,6 +63,8 @@ SPEC_IDS = [spec.name for spec, _ in SPEC_SCRIPTS]
         "script_queryjobplans",
         "script_querywostatus",
         "script_queryassetdowntime",
+        "script_querywomaterials",
+        "script_querymatusage",
     ],
 )
 def test_ferramentas_de_leitura_permitidas(name):
@@ -92,9 +101,19 @@ def test_guard_bloqueia_fora_da_allowlist():
 
 
 def test_agentes_so_recebem_ferramentas_da_allowlist():
-    assert set(AGENT_TOOLS) == set(SPEC_IDS)
+    assert set(AGENT_TOOLS) | set(DORMANT_TOOLS) == set(SPEC_IDS)
+    assert not set(AGENT_TOOLS) & set(DORMANT_TOOLS)
     assert all(is_allowed(name) for name in AGENT_TOOLS)
     assert "apischema" not in AGENT_TOOLS
+
+
+def test_ferramenta_fora_dos_agentes():
+    # Itambé não planeja material no Maximo: leitura liberada no Claude Code,
+    # mas o agente não recebe nem consegue chamar.
+    assert "script_querywomaterials" not in AGENT_TOOLS
+    assert is_allowed("script_querywomaterials")
+    with pytest.raises(ToolArgumentError):
+        clean_arguments("script_querywomaterials", {})
 
 
 @pytest.mark.parametrize(("spec", "script"), SPEC_SCRIPTS, ids=SPEC_IDS)
@@ -117,7 +136,7 @@ def test_campos_da_descricao_iguais_ao_script(spec, script):
 
 
 def test_descricoes_ascii_e_preenchidas():
-    for spec in AGENT_TOOLS.values():
+    for spec in [*AGENT_TOOLS.values(), *DORMANT_TOOLS.values()]:
         assert spec.description.isascii()
         assert all(text.isascii() and text for text in spec.parameters.values())
 

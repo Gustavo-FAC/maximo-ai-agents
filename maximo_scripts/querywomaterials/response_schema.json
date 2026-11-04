@@ -1,0 +1,31 @@
+{
+  "title": "Work order planned materials response",
+  "type": "object",
+  "properties": {
+    "total": {"type": "integer", "description": "Total planned material lines matching the filters (all pages); not a count of work orders or items."},
+    "page": {"type": "integer", "description": "Current page, starting at 1."},
+    "page_size": {"type": "integer", "description": "Maximum items per page."},
+    "total_pages": {"type": "integer", "description": "Number of pages for this query."},
+    "returned": {"type": "integer", "description": "Items returned in this page."},
+    "has_more": {"type": "boolean", "description": "True if there are more pages after this one."},
+    "date_field": {"type": "string", "description": "Work order date the range applied to (reportdate by default)."},
+    "date_from": {"type": "string", "description": "Start date applied (YYYY-MM-DD, inclusive); null if no date filter."},
+    "date_to": {"type": "string", "description": "End date applied (YYYY-MM-DD, inclusive); null if no date filter."},
+    "filters": {"type": "object", "description": "Normalized filters applied, by parameter name."},
+    "balances_truncated": {"type": "boolean", "description": "Only with include_balance: true if more than 2000 balance rows matched this page; use a smaller page_size."},
+    "items": {
+      "type": "array",
+      "description": "Planned material lines in this page, ordered by wonum, siteid and wpitemid. Only the requested fields are present; location is the storeroom; dates are yyyy-MM-ddTHH:mm:ss in server time. With include_balance, each line has balance: null without storeroom, else {total, bins: [{binnum, lotnum, conditioncode, curbal}]}.",
+      "items": {"type": "object"}
+    },
+    "error": {
+      "type": "object",
+      "description": "Present only when the request is invalid. No other field is returned.",
+      "properties": {
+        "code": {"type": "string", "description": "Machine-readable error code."},
+        "parameter": {"type": ["string", "null"], "description": "Parameter that caused the error."},
+        "message": {"type": "string", "description": "Human-readable explanation."}
+      }
+    }
+  }
+}

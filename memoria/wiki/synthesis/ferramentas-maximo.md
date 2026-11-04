@@ -31,7 +31,8 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); horas/MTTR em `analysis/` | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
-| 6 | `QUERYWOMATERIALS` | WPMATERIAL, INVBALANCES | verificar_materiais | P2 | a fazer |
+| 6a | `QUERYWOMATERIALS` | WPMATERIAL (+ WORKORDER), INVBALANCES | verificar_materiais (planejado + saldo) | P2 | instalado (2026-11-04); erros ok; **fora dos agentes** (Itambé não planeja material no Maximo) |
+| 6b | `QUERYMATUSAGE` | MATUSETRANS (+ WORKORDER) | consumo real (baixas/devoluções); custo/consumo em `analysis/` | P2 | funcionando via MCP (2026-11-04) |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
 
 Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos` (conteúdo de anexos) não vira script:
@@ -39,6 +40,13 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
 
 ## Decisões
 
+- **Material em 2 scripts** (usuário, 2026-11-04): `QUERYWOMATERIALS` (planejado,
+  WPMATERIAL, saldo INVBALANCES com `include_balance=Y`, datas pela OS-topo) e
+  `QUERYMATUSAGE` (consumo, MATUSETRANS, datas da transação). Ligação com a OS-topo
+  por `wogroup` (traz as tarefas); validada no `QUERYMATUSAGE` (`wonums=1116802` → 109).
+  Sinais: `quantity` negativo na baixa, `linecost` ao contrário. `issuetype` volta com
+  o rótulo do cliente (`EMISSÃO`/`RETORNAR`); filtro pelo valor interno. Campos
+  próprios da Itambé (`sanum` Protheus, `justificativa`, `wpm*`, `it*`) fora.
 - **Histórico de status** (usuário, 2026-11-04): 2 scripts novos, não opção nas
   ferramentas atuais (perguntas cruzam muitos registros por período). Primeiro
   `QUERYWOSTATUS`. ASSETTRANS adiado. Ver `maximo_scripts/querywostatus/README.md`.

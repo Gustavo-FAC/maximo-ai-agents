@@ -34,3 +34,6 @@ Scripts:
   (tarefas e texto do procedimento sob pedido).
 - [`querywostatus/`](querywostatus/README.md) – histórico de mudanças de status de OS.
 - [`queryassetdowntime/`](queryassetdowntime/README.md) – histórico de paradas de ativo (ASSETSTATUS).
+- [`querywomaterials/`](querywomaterials/README.md) – materiais planejados nas OS (WPMATERIAL), com saldo
+  do almoxarifado sob pedido (INVBALANCES).
+- [`querymatusage/`](querymatusage/README.md) – consumo real de material: baixas e devoluções (MATUSETRANS).

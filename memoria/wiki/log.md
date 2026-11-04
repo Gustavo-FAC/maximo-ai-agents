@@ -288,3 +288,26 @@ ASSET. Validado via MCP: filtros, paginação, erros, ~2 s em 366 dias. Regra do
 repetidos; pouquíssimos dados na homologação. Description com `YYYY-NN-DD`
 (corrigir). 194 testes. Commit `34fe200` na `main`. [[ferramentas-maximo]],
 [[itambe-cimentos]], [[estado-do-projeto]].
+
+## [2026-11-04] code | QUERYWOMATERIALS e QUERYMATUSAGE escritos e instalados
+Decisão do usuário: material em 2 scripts (planejado + saldo; consumo real), datas
+pela OS no planejado. Ligação com OS-topo por `wogroup`. `QUERYMATUSAGE` validado via
+MCP: 5241 transações em 366 dias (0,4 s), filtros, campos, erros. Achado: `linecost`
+com sinal oposto ao de `quantity` (docs e allowlist corrigidos). `QUERYWOMATERIALS`:
+erros ok, WPMATERIAL vazio em homologação (sem OS com material planejado), dados não
+validados. 255 testes. Branch `feat/querywomaterials`. [[ferramentas-maximo]],
+[[itambe-cimentos]], [[estado-do-projeto]].
+
+## [2026-11-04] decision | Itambé não planeja material no Maximo
+Usuário: a Itambé não aponta material planejado no Maximo (WPMATERIAL vazio também em
+produção). `QUERYWOMATERIALS` sem uso na Itambé; consumo via `QUERYMATUSAGE`.
+[[itambe-cimentos]], [[estado-do-projeto]].
+
+## [2026-11-04] code | QUERYWOMATERIALS fora dos agentes
+Decisão do usuário: tirar dos agentes, manter no repo. Allowlist ganha `DORMANT_TOOLS`
+(leitura liberada no Claude Code, `clean_arguments` recusa). 256 testes.
+[[allowlist-somente-leitura]], [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-11-04] git | feat/querywomaterials integrada na main
+Usuário desativou a MCP Tool do `QUERYWOMATERIALS` no Maximo da Itambé. Commit e
+fast-forward da `main`; push pendente. [[estado-do-projeto]].

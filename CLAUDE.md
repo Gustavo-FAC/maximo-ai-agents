@@ -71,7 +71,10 @@ Cliente piloto: **Itambé Cimentos**.
   `SITEID, CHANGEDATE, WONUM`).
 - 5º script `QUERYASSETDOWNTIME` (paradas de ativo, ASSETSTATUS) **funcionando via
   MCP** desde 2026-11-04; homologação quase sem dados de parada.
-- 194 testes unitários.
+- Material em 2 scripts (2026-11-04): `QUERYMATUSAGE` (consumo, MATUSETRANS)
+  **funcionando via MCP**; `QUERYWOMATERIALS` (planejado + saldo) instalado, erros
+  ok, mas **fora dos agentes** (`DORMANT_TOOLS`): Itambé não planeja material no Maximo.
+- 256 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
