@@ -40,6 +40,7 @@ def test_itambe_status_classes():
     assert len(config.status_classes) == 22  # domínio SYNONYM da Itambé + AMATER antigo
     assert config.class_of("AMATER") == "open"
     assert config.corrective_worktypes == ("CO", "EM")
+    assert config.currency == "BRL"
 
 
 def test_class_from_internal_value_or_explicit():
@@ -47,6 +48,7 @@ def test_class_from_internal_value_or_explicit():
     assert config.status_classes == {"A": OPEN, "B": EXECUTED}
     assert config.name == "Teste"
     assert config.corrective_worktypes == ()  # opcional
+    assert config.currency is None  # opcional
 
 
 @pytest.mark.parametrize(
@@ -61,6 +63,10 @@ def test_class_from_internal_value_or_explicit():
         {"sites": [""]},
         {"corrective_worktypes": "CO"},
         {"corrective_worktypes": ["CO", ""]},
+        {"currency": "R$"},
+        {"currency": "brl"},
+        {"currency": "REAL"},
+        {"currency": 986},
     ],
 )
 def test_invalid_config(change):

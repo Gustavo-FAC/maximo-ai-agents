@@ -11,6 +11,8 @@ sites = ["FABRICA", "MINERACAO"]
 history_start = "2006-01-01"
 # Tipos de trabalho corretivos (reincidência): CO corretiva, EM emergencial.
 corrective_worktypes = ["CO", "EM"]
+# Moeda dos custos (ISO 4217); o agente não deduz a moeda.
+currency = "BRL"
 
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação

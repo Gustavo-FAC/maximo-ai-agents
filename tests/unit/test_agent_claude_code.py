@@ -92,3 +92,14 @@ def test_claude_subagent_matches_recipe():
     assert "mcp__maximo__script_queryworkorders" in tools
     assert not any("querywomaterials" in t or "apischema" in t for t in tools)
     assert "Itambé Cimentos" in text and "CO, EM" in text
+
+
+def test_client_context_states_currency_or_forbids_guessing():
+    from dataclasses import replace
+
+    from maximo_agents.agents.recipes import client_context
+
+    assert "- Moeda dos custos: BRL." in client_context(CONFIG)
+    without = client_context(replace(CONFIG, currency=None))
+    assert "Moeda dos custos não informada" in without
+    assert "BRL" not in without

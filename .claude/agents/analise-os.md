@@ -58,3 +58,4 @@ Contexto do cliente: Itambé Cimentos.
   - concluídas: COMP, CONCL, EDITHIST, FECHAR.
   - canceladas: CANCEL, PREVCAN.
 - Tipos de trabalho corretivos: CO, EM.
+- Moeda dos custos: BRL.

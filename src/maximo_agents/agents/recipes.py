@@ -104,6 +104,10 @@ def client_context(config: ClientConfig) -> str:
             lines.append(f"  - {label}: {', '.join(statuses)}.")
     if config.corrective_worktypes:
         lines.append(f"- Tipos de trabalho corretivos: {', '.join(config.corrective_worktypes)}.")
+    if config.currency:
+        lines.append(f"- Moeda dos custos: {config.currency}.")
+    else:
+        lines.append("- Moeda dos custos não informada: dê os valores sem símbolo de moeda.")
     return "\n".join(lines)
 
 
