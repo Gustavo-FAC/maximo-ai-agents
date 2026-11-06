@@ -464,3 +464,9 @@ Regras 10 e 11 ok: medidas pelo nome, AGINSP/AGEXEC só como código. Desvios no
 e faz conta de cabeça ("MOI0012 gastou mais que todos os outros do ranking juntos").
 Na 40, a hipótese de baixa em lote veio marcada como impressão (ok).
 [[agente-sem-chave-de-api]], [[prompts-de-teste]].
+
+## [2026-11-06] code | Receita analise-os: regra 12
+Não afirmar causa ou evento do processo (parada, lote, planejamento, falha de carga)
+sem dado: só como hipótese. Comparações ("mais que todos juntos") só com número da
+ferramenta. Subagente gerado de novo, 355 testes. Reteste (pergunta 35) só após
+reiniciar o Claude Code. [[agente-sem-chave-de-api]].

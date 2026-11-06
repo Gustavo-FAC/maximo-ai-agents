@@ -29,7 +29,10 @@ Ler no início de cada sessão. Atualizar no fim.
   consultor). Moeda (`currency = "BRL"`) no contexto feita em 2026-11-06. Status × idade no backlog
   feito (`by_status[status].by_age_days`; AAPROV > 365 d = 37). Regras na receita (não falar de implementação interna; tratar por
   "você") feitas; a de implementação interna só valida no grafo (o subagente herda
-  `CLAUDE.md`). Chave do Claude ainda a confirmar (agente real no grafo, evals).
+  `CLAUDE.md`). Regras 10 a 12 (medida pelo nome, sem deduzir códigos, sem causa
+  nem comparação sem dado) feitas em 2026-11-06; regra 12 a retestar (pergunta 35)
+  após reiniciar o Claude Code. Chave do Claude ainda a confirmar (agente real no
+  grafo, evals).
 - **Reteste (2026-11-06):** backlog, status × idade (pergunta 39) e injection:
   números batem com CLI e Maximo; injection sem detalhe interno. 2 desvios
   ("média (mediana)"; máximo de dias no status atribuído a uma OS) corrigidos pela
