@@ -30,8 +30,8 @@ Ler no início de cada sessão. Atualizar no fim.
   feito (`by_status[status].by_age_days`; AAPROV > 365 d = 37). Regras na receita (não falar de implementação interna; tratar por
   "você") feitas; a de implementação interna só valida no grafo (o subagente herda
   `CLAUDE.md`). Regras 10 a 12 (medida pelo nome, sem deduzir códigos, sem causa
-  nem comparação sem dado) feitas em 2026-11-06; regra 12 a retestar (pergunta 35)
-  após reiniciar o Claude Code. Chave do Claude ainda a confirmar (agente real no
+  nem comparação sem dado) feitas e retestadas em 2026-11-06 (perguntas 35 e 40
+  ok). Chave do Claude ainda a confirmar (agente real no
   grafo, evals).
 - **Reteste (2026-11-06):** backlog, status × idade (pergunta 39) e injection:
   números batem com CLI e Maximo; injection sem detalhe interno. 2 desvios
@@ -43,6 +43,10 @@ Ler no início de cada sessão. Atualizar no fim.
   descrições) → **regra 11** (não deduzir significado de código que o contexto do
   cliente não explica), ainda sem reteste. Significado dos status (ex.: EMAND = em
   andamento) ainda fora do contexto do cliente.
+- **Reteste da regra 12 (2026-11-06):** perguntas 35 e 40, números iguais à CLI.
+  Sem "parada programada" nem comparação de cabeça; hipóteses (baixa concentrada
+  em 09/10; sem consumo de jul. a nov./2026) marcadas como hipótese. Regras 10 a 12
+  ok. Ver [[agente-sem-chave-de-api]].
 
 ## Antes: análises (2026-11-04 a 2026-11-06)
 

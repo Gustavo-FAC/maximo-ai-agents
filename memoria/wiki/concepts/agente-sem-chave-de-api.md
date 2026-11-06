@@ -116,3 +116,11 @@ idade dela, mas a ferramenta não diz qual OS tem o máximo: inferência não ma
   programada, a confirmar). **Regra 11**: não deduzir significado de código (tipo,
   status, prioridade) que o contexto do cliente não explica; impressão pelas
   descrições deve ser marcada. Ainda sem reteste.
+
+**Reteste da regra 12 (2026-11-06):** perguntas 35 e 40, números iguais à CLI.
+- Material (35): 9.842.265,66 (saídas 11.594.616,70 menos devoluções 1.752.351,04);
+  MOI0012 36,5%; OS 1546746 1,83 mi (18,6%). Sem "parada programada" e sem "mais que
+  todos juntos". Falta de consumo de jul. a nov./2026 dita como hipótese a confirmar.
+  `MP` só como código; "R$" pelo contexto.
+- Lead time (40): 231 OS, média 2,2, mediana 0,0, p90 9,2; AGINSP 80,5%. Baixa
+  concentrada em 09/10/2026 marcada como hipótese. Regras 10 a 12 ok.

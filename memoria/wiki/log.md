@@ -470,3 +470,10 @@ Não afirmar causa ou evento do processo (parada, lote, planejamento, falha de c
 sem dado: só como hipótese. Comparações ("mais que todos juntos") só com número da
 ferramenta. Subagente gerado de novo, 355 testes. Reteste (pergunta 35) só após
 reiniciar o Claude Code. [[agente-sem-chave-de-api]].
+
+## [2026-11-06] test | Reteste da regra 12 (perguntas 35 e 40)
+Números iguais à CLI nas duas (material 9.842.265,66, MOI0012 36,5%, OS 1546746
+1,83 mi; lead time 231 OS, média 2,2, mediana 0,0, p90 9,2, AGINSP 80,5%). Regra 12
+ok: nenhuma causa afirmada sem dado, nenhuma comparação de cabeça; hipóteses (baixa
+concentrada em 09/10; sem consumo de jul. a nov./2026) marcadas. Regras 10 e 11 ok.
+[[agente-sem-chave-de-api]], [[estado-do-projeto]].
