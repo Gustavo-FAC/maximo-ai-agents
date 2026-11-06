@@ -28,7 +28,7 @@ Catálogo de páginas. Atualizar a cada alteração.
   ferramentas (pytest), grafo com modelo falso, Claude Code como LLM (servidor
   `analises` + subagente `analise-os` gerado da receita). Teste com 6 perguntas de
   gerente (2026-11-06) e reteste: números batem com a CLI, recusas certas; pendentes:
-  escala de prioridade; 2 desvios de resposta corrigidos (regra 10).
+  escala de prioridade; desvios de resposta corrigidos (regras 10 e 11).
 - [[allowlist-somente-leitura]] – única barreira contra escrita; `DORMANT_TOOLS`; nomes exatos,
   descrições próprias para o LLM e filtro de argumentos implementados.
 - [[chave-api-por-usuario]] – decisão de arquitetura e exceção atual (MAXADMIN).

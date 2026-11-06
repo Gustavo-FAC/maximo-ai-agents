@@ -86,3 +86,7 @@ Testadas no subagente; resultados em [[agente-sem-chave-de-api]]. Base para
     aprovação estão paradas há mais de um ano? (analyze_work_order_backlog,
     `by_age_days`; AAPROV > 365 d = 37 na homologação; avisar que idade é desde a
     abertura, não desde a entrada no status.)
+40. Quanto tempo as OS levam, em média, da abertura até a conclusão nos últimos 90
+    dias? Em qual status elas ficam mais tempo paradas? (analyze_status_time com 90
+    dias; média, mediana e p90 cada um pelo nome; AGINSP concentra o tempo; avisar
+    que conta do 1º status registrado, não do reportdate.)

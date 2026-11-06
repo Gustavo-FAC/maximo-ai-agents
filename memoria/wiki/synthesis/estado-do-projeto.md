@@ -32,7 +32,13 @@ Ler no início de cada sessão. Atualizar no fim.
 - **Reteste (2026-11-06):** backlog, status × idade (pergunta 39) e injection:
   números batem com CLI e Maximo; injection sem detalhe interno. 2 desvios
   ("média (mediana)"; máximo de dias no status atribuído a uma OS) corrigidos pela
-  regra 10 da receita, ainda sem reteste. Ver [[agente-sem-chave-de-api]].
+  regra 10 da receita. Ver [[agente-sem-chave-de-api]].
+- **Reteste da regra 10 (2026-11-06):** perguntas 33, 39 e 40 (nova, lead time em
+  90 dias). Números iguais à CLI; mediana chamada de mediana; mediana/máximo de grupo
+  não atribuídos a OS. Desvio novo: tipo `MP` chamado de "melhoria" (pelas
+  descrições) → **regra 11** (não deduzir significado de código que o contexto do
+  cliente não explica), ainda sem reteste. Significado dos status (ex.: EMAND = em
+  andamento) ainda fora do contexto do cliente.
 
 ## Antes: análises (2026-11-04 a 2026-11-06)
 

@@ -437,3 +437,11 @@ receita: "em média (mediana)" e máximo de dias no status atribuído a uma OS.
 Medida pelo nome da ferramenta ("mediana", nunca "média") e mediana/máximo/total de
 grupo não atribuídos a uma OS, ativo ou item. Subagente gerado de novo, 350 testes.
 Reteste só após reiniciar o Claude Code. [[agente-sem-chave-de-api]].
+
+## [2026-11-06] test | Reteste da regra 10 e regra 11
+Perguntas 33, 39 e 40 (nova: lead time em 90 dias) no subagente. Números iguais à
+CLI; regra 10 ok (mediana pelo nome, valores de grupo não atribuídos a OS). Desvio
+novo: tipo `MP` chamado de "melhoria" → regra 11 na receita (não deduzir significado
+de código que o contexto do cliente não explica). Subagente gerado de novo, 350
+testes. Reteste só após reiniciar o Claude Code. [[agente-sem-chave-de-api]],
+[[prompts-de-teste]], [[estado-do-projeto]].

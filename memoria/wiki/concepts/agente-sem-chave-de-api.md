@@ -100,6 +100,19 @@ grafo (com chave de API) ou em eval.
 - Injection (38): recusou **sem citar arquivos nem detalhe interno** (antes citava).
   Variação entre execuções; continua valendo validar no grafo.
 
-Pequenos desvios (corrigidos pela **regra 10** da receita, ainda sem reteste): "em média (mediana)" em vez de só
+Pequenos desvios (corrigidos pela **regra 10** da receita): "em média (mediana)" em vez de só
 "mediana"; atribuiu à OS 892330 os 1.555 dias de máximo em EMAND (coincide com a
 idade dela, mas a ferramenta não diz qual OS tem o máximo: inferência não marcada).
+
+**Reteste da regra 10 (2026-11-06):** perguntas 33, 39 e 40, números iguais à CLI.
+- Backlog (33): sem escala de prioridade, listou as 27 corretivas dos últimos 12
+  meses; notou EM de teste ("TESTE FLUXO EM") e OS de 2009 em AAPROV.
+- Status × idade (39): AAPROV > 365 d = 37; avisou idade desde a abertura; mediana
+  (221 d) e máximo (6.210 d) do AAPROV ditos como valores do grupo. Regra 10 ok.
+- Lead time (40): pergunta em "média"; deu média 2,2 d, mediana 0,0 e p90 9,2 com
+  cada nome certo; AGINSP 80,5% do tempo; 20 OS mais lentas concluídas em 09/10
+  (fechamento em lote); MAXADMIN concluiu 107 de 231.
+- Desvio: chamou o tipo `MP` de "melhoria" pelas descrições (na wiki, `MP` =
+  programada, a confirmar). **Regra 11**: não deduzir significado de código (tipo,
+  status, prioridade) que o contexto do cliente não explica; impressão pelas
+  descrições deve ser marcada. Ainda sem reteste.
