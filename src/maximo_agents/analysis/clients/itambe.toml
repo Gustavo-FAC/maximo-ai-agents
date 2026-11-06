@@ -20,6 +20,9 @@ APPR = { internal = "APPR" }
 APRV = { internal = "APPR" }        # Aprovado
 APROG = { class = "open" }          # A programar; valor interno não visto (a confirmar)
 WMATL = { internal = "WMATL" }      # Aguardando material
+# Fora do domínio atual, só no histórico (WOSTATUS): aguardando material antigo
+# (confirmado pelo usuário, 2026-11-06).
+AMATER = { class = "open" }
 AGEXEC = { internal = "INPRG" }     # Aguardando execução do técnico
 AGEXECFIL = { internal = "INPRG" }  # Aguardando execução da filha
 AGINSP = { internal = "INPRG" }     # Aguardando inspeção

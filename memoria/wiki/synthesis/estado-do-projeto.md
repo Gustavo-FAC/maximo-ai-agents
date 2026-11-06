@@ -65,6 +65,23 @@ Ler no início de cada sessão. Atualizar no fim.
   FOR0001 16. Achado: muitas CO são "INSPEÇÃO ." e itens de checklist ("HÁ
   VAZAMENTO...? = SIM", "NÃO CONFORME:") ou testes ("TESTE EM"); várias OS no mesmo
   instante (mediana 0 d). Em produção, conferir se CO = falha real.
+- **Tempo em status feito (2026-11-06)**, branch `feat/analysis-status-time`, 318
+  testes: `analysis/status_time.py`. Coorte = OS cuja **1ª conclusão** (status da
+  classe closed) caiu no período; histórico **completo** de cada uma por `wonums`
+  (lotes de 50 por site, sem censura de início). Vida da OS = 1ª mudança registrada
+  até a 1ª conclusão (fechar depois de concluir não conta). Relatório: lead time
+  (mediana, p90, média), dias por classe e por status (% do tempo total, mediana,
+  p90, máx), transições, OS mais demoradas com o caminho, quem concluiu, por mês.
+  `fetch_completed_histories` + `fetch_all_pages` (paginação comum). CLI `uv run
+  python -m maximo_agents.analysis status-time [--days 90] [--worktype CO,EM]
+  [--top 20]`.
+- **Homologação:** 90 dias → 230 OS, 873 mudanças, 4 s (fechamento em massa
+  MAXADMIN em 09/10, ciclos de horas: dado de teste). 365 dias → 13608 OS, 41078
+  mudanças, **155 s**; lead time mediana 35,9 d, p90 280 d; EMAND 47% do tempo, APROG
+  32%, POSEXEC 12%. Status `AMATER` (fora do domínio atual) = aguardando material
+  antigo, confirmado pelo usuário; configurado como aberto (ver [[itambe-cimentos]]).
+  Perto do limite de 50 mil registros com 1 ano; períodos maiores pedem
+  `--max-records`.
 - **Lentidão do `QUERYWORKORDERS`: encerrada, não é problema** (usuário, 2026-11-06):
   são alguns segundos por página e não afetam o funcionamento. Histórico: 1 ano pelo
   MCP levou 202 s (37 páginas de 500, ~5,5 s cada). Script passou a pôr os sites
@@ -310,8 +327,8 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 2. ~~Lentidão do `QUERYWORKORDERS`.~~ Encerrada (usuário, 2026-11-06: alguns
    segundos, não afeta). Sites explícitos no script (branch
    `perf/queryworkorders-explicit-sites`), recolado e conferido (total 18152).
-3. Demais análises: tempo em status, reincidência de corretivas, consumo/custo de
-   material (MTTR/paradas: pouco dado).
+3. ~~Tempo em status.~~ Feito em 2026-11-06 (`feat/analysis-status-time`). Falta:
+   consumo/custo de material (MTTR/paradas: pouco dado). `AMATER` confirmado.
 4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),
    `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).

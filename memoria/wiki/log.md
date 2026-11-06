@@ -380,3 +380,12 @@ Branch `feat/analysis-recurrence`: por ativo e location (site + código), cancel
 fora, reincidência em até 30 dias, intervalo mediano. Tipos corretivos por cliente
 (Itambé CO, EM). Homologação: 964 corretivas, 144 ativos com 2+, MOI0001 22 falhas;
 muitas CO são inspeção/checklist/teste. 313 testes. [[estado-do-projeto]].
+
+## [2026-11-06] code | Tempo em status em analysis/
+Branch `feat/analysis-status-time`: OS com 1ª conclusão no período, histórico
+completo por `wonums` (QUERYWOSTATUS, lotes de 50 por site), vida até a 1ª conclusão;
+lead time, dias por status e classe, transições, OS mais demoradas. Paginação comum
+`fetch_all_pages`. Homologação: 90 dias 230 OS em 4 s; 365 dias 13608 OS, 41078
+mudanças em 155 s, EMAND 47% do tempo. Status `AMATER` fora do domínio: usuário
+confirmou aguardando material antigo, entrou no `itambe.toml` como aberto. 318 testes.
+[[estado-do-projeto]], [[itambe-cimentos]].

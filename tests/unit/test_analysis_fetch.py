@@ -6,6 +6,7 @@ import pytest
 from maximo_agents.analysis.config import parse_client_config
 from maximo_agents.analysis.fetch import (
     PAGE_SIZE,
+    STATUS_TOOL,
     WORK_ORDER_TOOL,
     MaximoToolError,
     TooManyRecordsError,
@@ -13,6 +14,7 @@ from maximo_agents.analysis.fetch import (
     count_work_orders,
     date_windows,
     fetch_backlog_work_orders,
+    fetch_completed_histories,
     fetch_corrective_work_orders,
     fetch_work_orders,
 )
@@ -189,3 +191,66 @@ def test_corrective_fetch_filters_worktypes_and_sites():
     )
     with pytest.raises(ValueError):
         run(fetch_corrective_work_orders(tool, without, D(2026, 1, 1), D(2026, 1, 2)))
+
+
+class FakeStatusTool:
+    """Com datas: conclusões. Com wonums: histórico de cada OS pedida."""
+
+    def __init__(self, completions, histories):
+        self.completions = completions
+        self.histories = histories
+        self.calls = []
+
+    async def __call__(self, name, arguments):
+        self.calls.append((name, arguments))
+        if "wonums" in arguments:
+            items = [
+                item
+                for wonum in arguments["wonums"].split(",")
+                for item in self.histories.get((arguments["siteid"], wonum), [])
+            ]
+            return {"items": items, "has_more": False}
+        return {"items": self.completions, "has_more": False}
+
+
+def test_completed_histories_by_site_in_chunks_of_50():
+    completions = [{"wonum": str(n), "siteid": "FABRICA"} for n in range(60)]
+    completions += [{"wonum": "7", "siteid": "MINERACAO"}, {"wonum": "7", "siteid": "FABRICA"}]
+
+    def history(site, wonum):
+        return [
+            {"wonum": wonum, "siteid": site, "status": s, "wostatusid": f"{site}{wonum}{s}"}
+            for s in ("AGEXEC", "CONCL")
+        ]
+
+    histories = {(c["siteid"], c["wonum"]): history(c["siteid"], c["wonum"]) for c in completions}
+    tool = FakeStatusTool(completions, histories)
+    changes = run(
+        fetch_completed_histories(tool, CONFIG, D(2026, 1, 1), D(2026, 3, 31), worktypes=["CO"])
+    )
+    assert len(changes) == 61 * 2  # wonum 7 da FABRICA repetida conta uma vez
+
+    name, args = tool.calls[0]
+    assert name == STATUS_TOOL
+    assert args["status"] == "CONCL"  # só a classe closed
+    assert args["siteid"] == "FABRICA,MINERACAO"
+    assert args["worktype"] == "CO"
+    assert (args["date_from"], args["date_to"]) == ("2026-01-01", "2026-03-31")
+
+    history_calls = [a for _, a in tool.calls[1:]]
+    assert [(a["siteid"], len(a["wonums"].split(","))) for a in history_calls] == [
+        ("FABRICA", 50),
+        ("FABRICA", 10),
+        ("MINERACAO", 1),
+    ]
+    assert all("date_from" not in a for a in history_calls)  # histórico completo
+    assert "wostatusid" in history_calls[0]["fields"]
+
+
+def test_completed_histories_needs_closed_status():
+    only_open = parse_client_config(
+        "t", {"history_start": "2024-01-01", "statuses": {"A": {"class": "open"}}}
+    )
+    tool = FakeStatusTool([], {})
+    with pytest.raises(ValueError):
+        run(fetch_completed_histories(tool, only_open, D(2026, 1, 1), D(2026, 1, 2)))

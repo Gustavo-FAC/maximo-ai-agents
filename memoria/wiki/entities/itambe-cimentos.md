@@ -90,6 +90,12 @@ inglês):
 **Pendente:** valor interno do APROG; significado dos tipos (tela de tipos de
 trabalho em Organizações).
 
+**Histórico de status (WOSTATUS, análise tempo em status, 2026-11-06):** aparece
+`AMATER` (6 OS no ano, mediana 17,5 d), **fora** do domínio atual: provável
+"aguardando material" antigo. **Confirmado pelo usuário** (2026-11-06): entrou no
+`itambe.toml` como aberta (`class = "open"`, valor interno desconhecido). Há OS cujo
+histórico começa direto em AGEXEC (sem registro de criação em outro status).
+
 ## Materiais (2026-11-04)
 
 - **Itambé não planeja material no Maximo** (usuário, 2026-11-04): WPMATERIAL vazio,

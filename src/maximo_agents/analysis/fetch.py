@@ -7,14 +7,16 @@ testes, uma função falsa. Argumentos passam por clean_arguments (allowlist).
 import datetime
 from collections.abc import Awaitable, Callable, Iterable
 
-from maximo_agents.analysis.config import EXECUTED, OPEN, ClientConfig
+from maximo_agents.analysis.config import CLOSED, EXECUTED, OPEN, ClientConfig
 from maximo_agents.mcp.allowlist import clean_arguments
 
 ToolCaller = Callable[[str, dict[str, str]], Awaitable[dict]]
 
 WORK_ORDER_TOOL = "script_queryworkorders"
+STATUS_TOOL = "script_querywostatus"
 MAX_DAYS_PER_CALL = 366  # limite do script
 MAX_LIST_VALUES = 20  # limite do script por lista
+MAX_WONUMS = 50  # limite do QUERYWOSTATUS por chamada
 PAGE_SIZE = 500  # máximo do script
 DEFAULT_MAX_RECORDS = 50_000
 
@@ -76,44 +78,68 @@ async def fetch_work_orders(
     max_records: int = DEFAULT_MAX_RECORDS,
 ) -> list[dict]:
     """Todas as OS do período (janelas de 366 dias, todas as páginas), sem repetição."""
+    check_filters(filters)
+    seen: set[tuple] = set()
+    records: list[dict] = []
+    for window_from, window_to in date_windows(date_from, date_to):
+        arguments = {
+            "date_from": window_from.isoformat(),
+            "date_to": window_to.isoformat(),
+            "date_field": date_field,
+            "fields": ",".join(fields),
+        }
+        arguments.update(joined(filters))
+        await fetch_all_pages(
+            call_tool, WORK_ORDER_TOOL, arguments, ("siteid", "wonum"), seen, records, max_records
+        )
+    return records
+
+
+def check_filters(filters: dict[str, list[str]]) -> None:
     for name, values in filters.items():
         if len(values) > MAX_LIST_VALUES:
             raise ValueError(f"Filter '{name}' has more than {MAX_LIST_VALUES} values.")
 
-    seen: set[tuple] = set()
-    records: list[dict] = []
-    for window_from, window_to in date_windows(date_from, date_to):
-        page = 1
-        while True:
-            arguments = {
-                "date_from": window_from.isoformat(),
-                "date_to": window_to.isoformat(),
-                "date_field": date_field,
-                "fields": ",".join(fields),
-                "page": str(page),
-                "page_size": str(PAGE_SIZE),
-            }
-            arguments.update({k: ",".join(v) for k, v in filters.items() if v})
-            response = await call_tool(WORK_ORDER_TOOL, clean_arguments(WORK_ORDER_TOOL, arguments))
-            error = response.get("error")
-            if error:
-                raise MaximoToolError(
-                    str(error.get("code")), error.get("parameter"), str(error.get("message"))
-                )
-            for item in response.get("items") or []:
-                # A página pode repetir OS se os dados mudarem durante a busca.
-                key = (item.get("siteid"), item.get("wonum"))
-                if key not in seen:
-                    seen.add(key)
-                    records.append(item)
-            if len(records) > max_records:
-                raise TooManyRecordsError(
-                    f"More than {max_records} work orders; narrow the filters."
-                )
-            if not response.get("has_more"):
-                break
-            page += 1
-    return records
+
+def joined(filters: dict[str, list[str]]) -> dict[str, str]:
+    """Listas viram texto separado por vírgula; lista vazia não vai."""
+    return {k: ",".join(v) for k, v in filters.items() if v}
+
+
+def raise_on_error(response: dict) -> None:
+    error = response.get("error")
+    if error:
+        raise MaximoToolError(
+            str(error.get("code")), error.get("parameter"), str(error.get("message"))
+        )
+
+
+async def fetch_all_pages(
+    call_tool: ToolCaller,
+    tool: str,
+    arguments: dict[str, str],
+    key_fields: tuple[str, ...],
+    seen: set[tuple],
+    records: list[dict],
+    max_records: int,
+) -> None:
+    """Acrescenta a records todas as páginas da chamada, sem repetir a chave."""
+    page = 1
+    while True:
+        page_arguments = {**arguments, "page": str(page), "page_size": str(PAGE_SIZE)}
+        response = await call_tool(tool, clean_arguments(tool, page_arguments))
+        raise_on_error(response)
+        for item in response.get("items") or []:
+            # A página pode repetir registros se os dados mudarem durante a busca.
+            key = tuple(item.get(field) for field in key_fields)
+            if key not in seen:
+                seen.add(key)
+                records.append(item)
+        if len(records) > max_records:
+            raise TooManyRecordsError(f"More than {max_records} records; narrow the filters.")
+        if not response.get("has_more"):
+            break
+        page += 1
 
 
 async def count_work_orders(
@@ -134,13 +160,9 @@ async def count_work_orders(
             "fields": "wonum",
             "page_size": "1",
         }
-        arguments.update({k: ",".join(v) for k, v in filters.items() if v})
+        arguments.update(joined(filters))
         response = await call_tool(WORK_ORDER_TOOL, clean_arguments(WORK_ORDER_TOOL, arguments))
-        error = response.get("error")
-        if error:
-            raise MaximoToolError(
-                str(error.get("code")), error.get("parameter"), str(error.get("message"))
-            )
+        raise_on_error(response)
         total += int(response.get("total") or 0)
     return total
 
@@ -236,3 +258,72 @@ async def count_executed_by_age(
                 call_tool, date_from=date_from, date_to=date_to, filters=filters
             )
     return by_age
+
+
+STATUS_FIELDS = ("wonum", "siteid", "status", "changedate", "changeby", "wostatusid")
+
+
+async def fetch_completed_histories(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    worktypes: Iterable[str] = (),
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """Histórico completo de status das OS que foram para um status fechado no período.
+
+    1) Mudanças para status da classe 'closed' no período (pelo changedate) dão as OS.
+    2) O histórico de cada OS vem por wonums (sem datas), em lotes de 50 por site.
+    Se a conclusão foi mesmo no período (e não antes) fica para a análise.
+    """
+    statuses = config.statuses_of(CLOSED)
+    if not statuses:
+        raise ValueError(f"{config.client_id}: no closed status configured.")
+    worktypes = list(worktypes)
+    check_filters({"worktype": worktypes})
+
+    seen: set[tuple] = set()
+    completions: list[dict] = []
+    for filters in status_filters(config, statuses):
+        filters["worktype"] = worktypes
+        for window_from, window_to in date_windows(date_from, date_to):
+            arguments = {
+                "date_from": window_from.isoformat(),
+                "date_to": window_to.isoformat(),
+                "fields": "wonum,siteid,status,changedate",
+            }
+            arguments.update(joined(filters))
+            await fetch_all_pages(
+                call_tool,
+                STATUS_TOOL,
+                arguments,
+                ("siteid", "wonum"),
+                seen,
+                completions,
+                max_records,
+            )
+
+    wonums_by_site: dict[str, set[str]] = {}
+    for item in completions:
+        wonums_by_site.setdefault(item["siteid"], set()).add(item["wonum"])
+
+    seen = set()
+    history: list[dict] = []
+    for siteid in sorted(wonums_by_site):
+        for wonum_chunk in chunks(sorted(wonums_by_site[siteid]), MAX_WONUMS):
+            arguments = {
+                "siteid": siteid,
+                "wonums": ",".join(wonum_chunk),
+                "fields": ",".join(STATUS_FIELDS),
+            }
+            await fetch_all_pages(
+                call_tool,
+                STATUS_TOOL,
+                arguments,
+                ("siteid", "wonum", "wostatusid", "changedate", "status"),
+                seen,
+                history,
+                max_records,
+            )
+    return history

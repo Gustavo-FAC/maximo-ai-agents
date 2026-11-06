@@ -4,6 +4,8 @@ uv run python -m maximo_agents.analysis backlog [--client itambe] [--as-of AAAA-
     [--since AAAA-MM-DD] [--json]
 uv run python -m maximo_agents.analysis recurrence [--client itambe] [--as-of AAAA-MM-DD]
     [--days 365] [--repeat-days 30] [--top 20] [--json]
+uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of AAAA-MM-DD]
+    [--days 90] [--worktype CO,EM] [--top 20] [--json]
 """
 
 import argparse
@@ -19,6 +21,7 @@ from maximo_agents.analysis.fetch import (
     DEFAULT_MAX_RECORDS,
     count_executed_by_age,
     fetch_backlog_work_orders,
+    fetch_completed_histories,
     fetch_corrective_work_orders,
 )
 from maximo_agents.analysis.recurrence import (
@@ -27,6 +30,7 @@ from maximo_agents.analysis.recurrence import (
     format_recurrence_text,
     recurrence_report,
 )
+from maximo_agents.analysis.status_time import format_status_time_text, status_time_report
 from maximo_agents.config.settings import get_settings
 from maximo_agents.mcp.session import open_maximo_session
 
@@ -50,15 +54,23 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     recurrence.add_argument("--days", type=int, default=365, help="Período até --as-of")
     recurrence.add_argument("--repeat-days", type=int, default=DEFAULT_REPEAT_DAYS)
     recurrence.add_argument("--top", type=int, default=DEFAULT_TOP)
+
+    status_time = sub.add_parser("status-time", help="Tempo em status das OS concluídas")
+    common(status_time)
+    status_time.add_argument("--days", type=int, default=90, help="Período até --as-of")
+    status_time.add_argument(
+        "--worktype", default="", help="Tipos de trabalho separados por vírgula (padrão: todos)"
+    )
+    status_time.add_argument("--top", type=int, default=DEFAULT_TOP)
     return parser.parse_args(argv)
 
 
-def print_report(args, report, text, records, elapsed) -> None:
+def print_report(args, report, text, records, elapsed, unit="OS") -> None:
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
         print(text)
-        print(f"\n({len(records)} OS lidas do Maximo em {elapsed:.0f} s)")
+        print(f"\n({len(records)} {unit} lidas do Maximo em {elapsed:.0f} s)")
 
 
 async def run_backlog(args: argparse.Namespace) -> int:
@@ -93,12 +105,34 @@ async def run_recurrence(args: argparse.Namespace) -> int:
     return 0
 
 
+async def run_status_time(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    date_to = args.as_of or datetime.date.today()
+    date_from = date_to - datetime.timedelta(days=args.days - 1)
+    worktypes = [w.strip() for w in args.worktype.split(",") if w.strip()]
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        changes = await fetch_completed_histories(
+            call_tool, config, date_from, date_to, worktypes, max_records=args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = status_time_report(changes, config, date_from, date_to, worktypes, args.top)
+    text = format_status_time_text(report)
+    print_report(args, report, text, changes, elapsed, unit="mudanças de status")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     # Saída em UTF-8 no console do Windows (acentos das descrições).
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args(sys.argv[1:] if argv is None else argv)
-    runners = {"backlog": run_backlog, "recurrence": run_recurrence}
+    runners = {
+        "backlog": run_backlog,
+        "recurrence": run_recurrence,
+        "status-time": run_status_time,
+    }
     return asyncio.run(runners[args.analysis](args))
 
 

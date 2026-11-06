@@ -82,7 +82,9 @@ Cliente piloto: **Itambé Cimentos**.
   em pandas, CLI `uv run python -m maximo_agents.analysis backlog`.
 - 2ª análise (reincidência de corretivas, por ativo e location) desde 2026-11-06:
   CLI `... analysis recurrence`; tipos corretivos por cliente (Itambé: CO, EM).
-- 313 testes unitários.
+- 3ª análise (tempo em status das OS concluídas no período, histórico completo por
+  `wonums`) desde 2026-11-06: CLI `... analysis status-time [--days 90] [--worktype]`.
+- 318 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
@@ -104,8 +106,8 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 5. ~~Criar o gateway de LLM em `llm/`.~~ Feito em 2026-11-04 (`llm/gateway.py`,
    provedores `anthropic` e `ollama`; commit `0cc4b0f`).
 6. **Análises em `analysis/` antes dos agentes** (decisão do usuário, 2026-11-04).
-   Feitas em 2026-11-06: backlog de OS e reincidência de corretivas.
-   Próximas: tempo em status, consumo de material. Ver
+   Feitas em 2026-11-06: backlog de OS, reincidência de corretivas e tempo em status.
+   Próxima: consumo de material. Ver
    `memoria/wiki/synthesis/estado-do-projeto.md`.
 7. Primeiro agente (Análise de OS), depois das análises: LangGraph, cliente MCP com
    `AGENT_TOOLS` e `clean_arguments`, limite de 5 voltas; testes com modelo falso.

@@ -37,7 +37,8 @@ def test_itambe_status_classes():
         "INPRG OSFILENC".split()
     )
     assert config.statuses_of(EXECUTED) == ["POSEXEC"]
-    assert len(config.status_classes) == 21  # domínio SYNONYM da Itambé
+    assert len(config.status_classes) == 22  # domínio SYNONYM da Itambé + AMATER antigo
+    assert config.class_of("AMATER") == "open"
     assert config.corrective_worktypes == ("CO", "EM")
 
 
