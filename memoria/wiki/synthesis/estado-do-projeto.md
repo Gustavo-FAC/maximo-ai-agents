@@ -18,14 +18,15 @@ Ler no início de cada sessão. Atualizar no fim.
   `analyze_*` + `script_*` com `clean_arguments`), `agents/recipes.py` (receita
   `analise-os`, contexto do cliente do TOML), `agents/graph.py` (LangGraph 1.2,
   5 rodadas), `agents/mcp_server.py` (servidor local `analises` em `.mcp.json`),
-  `agents/claude_agent.py` (gera `.claude/agents/analise-os.md`). 350 testes.
+  `agents/claude_agent.py` (gera `.claude/agents/analise-os.md`). 355 testes.
   Teste real do servidor por stdio OK (0,6 s).
 - **Teste com perguntas de gerente feito (2026-11-06):** 6 perguntas no subagente
   `analise-os` (backlog, reincidência, material, pedido de escrita, MTBF, prompt
   injection). Números conferidos contra a CLI: todos batem; recusas certas. Ver
   [[agente-sem-chave-de-api]] e perguntas 33-38 em [[prompts-de-teste]].
-- **Próximo:** ajustes do teste: escala de prioridade e significado de EMAND no
-  contexto do cliente (confirmar com o consultor). Status × idade no backlog
+- **Próximo:** ajustes do teste: escala de prioridade, significado de EMAND e dos
+  tipos de trabalho (`MP`, `MS`, `MPR`, `FAB`) no contexto do cliente (confirmar com o
+  consultor). Moeda (`currency = "BRL"`) no contexto feita em 2026-11-06. Status × idade no backlog
   feito (`by_status[status].by_age_days`; AAPROV > 365 d = 37). Regras na receita (não falar de implementação interna; tratar por
   "você") feitas; a de implementação interna só valida no grafo (o subagente herda
   `CLAUDE.md`). Chave do Claude ainda a confirmar (agente real no grafo, evals).

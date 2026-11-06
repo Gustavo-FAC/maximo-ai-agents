@@ -92,7 +92,7 @@ Cliente piloto: **Itambé Cimentos**.
   servidor MCP local `analises` (`.mcp.json`) e subagente gerado
   `.claude/agents/analise-os.md` (`uv run python -m maximo_agents.agents.claude_agent`
   após mudar a receita). Ver `memoria/wiki/concepts/agente-sem-chave-de-api.md`.
-- 350 testes unitários.
+- 355 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

@@ -445,3 +445,12 @@ novo: tipo `MP` chamado de "melhoria" → regra 11 na receita (não deduzir sign
 de código que o contexto do cliente não explica). Subagente gerado de novo, 350
 testes. Reteste só após reiniciar o Claude Code. [[agente-sem-chave-de-api]],
 [[prompts-de-teste]], [[estado-do-projeto]].
+
+## [2026-11-06] test | Reteste da regra 11 e moeda no contexto
+Perguntas 40 e 35 no subagente. Números iguais à CLI. Regra 11 ok: `MP` só citado
+como código, status sem significado inventado. Desvios: "R$" sem moeda no contexto
+e "troca planejada" (insinua `MP` = preventiva). Moeda: `currency` opcional (ISO 4217)
+no config do cliente (Itambé BRL); contexto diz a moeda ou manda dar valores sem
+símbolo. Significado dos tipos de trabalho (`MP`, `MS`, `MPR`, `FAB`) a pedir ao
+consultor. 355 testes. Reteste só após reiniciar o Claude Code.
+[[agente-sem-chave-de-api]], [[prompts-de-teste]], [[estado-do-projeto]].

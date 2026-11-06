@@ -8,8 +8,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
   `QUERYASSETDOWNTIME`).
-- [[prompts-de-teste]] – 39 perguntas: 32 para OS e ativos via MCP (filtros,
-  `text`, hierarquia, limites, segurança) e 7 de gerente para o agente `analise-os`;
+- [[prompts-de-teste]] – 40 perguntas: 32 para OS e ativos via MCP (filtros,
+  `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
 
 ## Entidades
