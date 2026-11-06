@@ -353,3 +353,24 @@ Medição (pág. 1 de 500): sem `siteid` (MAXADMIN, todos os sites) ~4 s; 2 site
 ~1,5 s; 2 + 18 sites falsos ~4 s (lista longa larga o índice). Usuário: não é
 problema, alguns segundos não afetam o funcionamento. Achado: 2º site `MINERACAO`
 (734 OS no ano); só `FABRICA` perde 4%. [[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-06] decision | Classificação de status da OS (Itambé)
+Domínio SYNONYM (21 valores, tela do usuário). Classe pelo valor interno, exceções
+por cliente: POSEXEC = "executada" (separada do backlog, usuário), PREVCAN =
+cancelada. APROG sem valor interno visto (aberta). Worktypes: hipóteses pelas
+descrições (`MS` rotina preventiva que parece ter virado `MPV`). Usuário da chave
+voltou a PT (BMXAA10147E, 3ª vez) e foi reposto em EN. [[itambe-cimentos]],
+[[estado-do-projeto]].
+
+## [2026-11-06] code | Backlog de OS em analysis/
+Branch `feat/analysis-backlog`: configuração por cliente (TOML), busca pelo MCP com
+allowlist, pandas, CLI. Idade pelo `reportdate` (usuário). Homologação: 6989 abertas
+(5610 com 181-365 dias, MS 5799), `persongroup` sempre vazio; POSEXEC 109420 desde
+2007, só contadas. Dados desde 2006. Pandas 3.1.1 adicionado. 307 testes.
+[[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-06] decision | Homologação é base de teste; sem data de corte
+Usuário: POSEXEC não é fim de processo; o backlog da homologação é lixo do processo
+antigo (OS não fechadas). Homologação só para testes e desenvolvimento: números do
+backlog validam o código, não o negócio. Não definir data de início do processo novo.
+[[estado-do-projeto]], [[itambe-cimentos]].

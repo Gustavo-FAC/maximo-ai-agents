@@ -1,0 +1,36 @@
+# Itambé Cimentos: configuração das análises.
+# Status = valor externo do domínio SYNONYM da OS (tela do usuário, 2026-11-06).
+# "internal" = valor interno do Maximo; a classe vem dele, salvo "class" explícita.
+# Classes: open, executed, closed, cancelled.
+
+name = "Itambé Cimentos"
+# Sites com OS (2026-11-06). Passar só FABRICA perde as OS da MINERACAO.
+sites = ["FABRICA", "MINERACAO"]
+# Início da busca do backlog (OS abertas há anos também contam). 1ª OS em 2006
+# (homologação, 2026-11-06).
+history_start = "2006-01-01"
+
+[statuses]
+AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação
+AGENV = { internal = "WAPPR" }      # Aguardando envio
+ACONDF = { internal = "APPR" }      # Aguardando cond. da fábrica
+APPR = { internal = "APPR" }
+APRV = { internal = "APPR" }        # Aprovado
+APROG = { class = "open" }          # A programar; valor interno não visto (a confirmar)
+WMATL = { internal = "WMATL" }      # Aguardando material
+AGEXEC = { internal = "INPRG" }     # Aguardando execução do técnico
+AGEXECFIL = { internal = "INPRG" }  # Aguardando execução da filha
+AGINSP = { internal = "INPRG" }     # Aguardando inspeção
+DEVPCM = { internal = "INPRG" }     # Devolvido ao PCM
+EMAND = { internal = "INPRG" }      # Em andamento
+INPRG = { internal = "INPRG" }      # Em andamento
+OSFILENC = { internal = "INPRG" }   # OS's filhas encerradas
+# Serviço feito, falta fechar: fora do backlog aberto (decisão do usuário, 2026-11-06).
+POSEXEC = { internal = "INPRG", class = "executed" }
+CANCEL = { internal = "CAN" }       # Cancelado
+FECHAR = { internal = "CLOSE" }     # Fechado
+# Interno CLOSE, mas é cancelamento de preventiva.
+PREVCAN = { internal = "CLOSE", class = "cancelled" }
+COMP = { internal = "COMP" }        # Concluídas - Tarefa - Mobile
+CONCL = { internal = "COMP" }       # Concluído
+EDITHIST = { internal = "HISTEDIT" }  # Editado no Histórico

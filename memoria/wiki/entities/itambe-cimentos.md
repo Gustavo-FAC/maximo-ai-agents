@@ -21,6 +21,10 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
 
 ## Dados (homologação, 2026-10-30)
 
+- **Homologação é só para testes e desenvolvimento** (usuário, 2026-11-06): OS abertas
+  e POSEXEC antigas são lixo do processo antigo, que não fechava as OS (POSEXEC não é
+  fim de processo). Indicadores reais só em produção.
+
 - **Sites com OS** (2026-11-06): `FABRICA` (17418 OS por `reportdate` de 2025-11-05 a
   2026-11-04) e `MINERACAO` (734). Filtrar só `FABRICA` perde 4% das OS.
 
@@ -52,25 +56,39 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
 ## Status e tipos de OS (sondagem 2026-11-04)
 
 18152 OS com `reportdate` de 2025-11-05 a 2026-11-04 (homologação). Status são
-**próprios** (valor externo):
+**próprios** (valor externo). Domínio SYNONYM da OS (tela do usuário, 2026-11-06):
+21 valores; classificação **decidida** (usuário, 2026-11-06): pelo valor interno, com
+exceções por cliente.
 
-| Status | OS | Leitura do Claude (a confirmar) |
+| Classe | Valor interno | Status Itambé (OS no ano) |
 |---|---|---|
-| CONCL | 8456 | fechada |
-| APROG | 4153 | aberta (a programar) |
-| POSEXEC | 2557 | ? (pós-execução) |
-| EMAND | 1727 | aberta (em andamento) |
-| CANCEL | 341 | cancelada |
-| FECHAR | 293 | ? (a fechar) |
-| AAPROV | 202 | aberta (aguardando aprovação) |
-| COMP | 126 | fechada |
-| PREVCAN | 109 | ? |
-| AGENV 77, AGINSP 30, APRV 27, DEVPCM 16, AGEXECFIL 14, INPRG 12, AGEXEC 7, OSFILENC 4, ACONDF 1 | | provavelmente abertas |
+| aberta | WAPPR | AAPROV 202 (Aguardando Aprovação), AGENV 77 (Aguardando envio) |
+| aberta | APPR | APRV 27 (Aprovado), APPR, ACONDF 1 (Aguardando cond. da fábrica) |
+| aberta | ? (21º valor, fora da tela) | APROG 4153 (a programar) |
+| aberta | WMATL | WMATL (Aguardando material) |
+| aberta | INPRG | EMAND 1727 (Em andamento), INPRG 12, AGEXEC 7 (Aguardando execução do técnico), AGEXECFIL 14 (Aguardando execução da filha), AGINSP 30 (Aguardando inspeção), DEVPCM 16 (Devolvido ao PCM), OSFILENC 4 (OS's filhas encerradas) |
+| **executada** (separada, decisão do usuário) | INPRG | POSEXEC 2557 (Pós Execução) |
+| fechada | COMP | CONCL 8456 (Concluído), COMP 126 (Concluídas - Tarefa - Mobile) |
+| fechada | CLOSE | FECHAR 293 (Fechado) |
+| fechada | HISTEDIT | EDITHIST (Editado no Histórico) |
+| cancelada | CAN | CANCEL 341 (Cancelado) |
+| **cancelada** (exceção: interno CLOSE) | CLOSE | PREVCAN 109 (Preventiva cancelada) |
 
-Worktype: `MS` 11193 (significado a perguntar), sem tipo 4598, `CO` 951, `MPV` 404,
-`INSP` 321, `MP` 317, `MPR` 109, `CPG` 105, `IL` 85, `EM` 33, outros < 20.
-**Pendente (usuário/consultor):** classificar status em aberta/fechada/cancelada para
-o backlog; significado de `MS`.
+Worktype: `MS` 11193, sem tipo 4598, `CO` 951, `MPV` 404, `INSP` 321, `MP` 317,
+`MPR` 109, `CPG` 105, `IL` 85, `EM` 33, outros < 20. Leitura pelas descrições das OS
+(2026-11-06, **hipóteses, perguntar ao consultor**; usuário: siglas podem vir do
+inglês):
+- `MS`: preventiva de rotina (lubrificação, limpeza, verificação de nível). Quase
+  sumiu: 1 OS em out/2026. Parece ter virado `MPV`; juntar os dois ao comparar meses.
+- `MPV`: preventiva (lubrificação, revisão, inspeção de equipamento).
+- `MP`: programada/planejada (retirada de motor, usinar bucha, trocar vedação).
+- `MPR`: preditiva? (troca de rolamento).
+- `CO`: corretiva (confirmado antes). `EM`: emergencial.
+- `INSP`: inspeção, rotas e checklists.
+- `CPG`: não conformidade de checklist? ("NÃO CONFORME: ILUMINAÇÃO").
+- `IL`: sem exemplo visto.
+**Pendente:** valor interno do APROG; significado dos tipos (tela de tipos de
+trabalho em Organizações).
 
 ## Materiais (2026-11-04)
 

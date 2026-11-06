@@ -77,7 +77,10 @@ Cliente piloto: **Itambé Cimentos**.
   **funcionando via MCP**; `QUERYWOMATERIALS` (planejado + saldo) instalado, erros
   ok, mas **fora dos agentes** (`DORMANT_TOOLS`): Itambé não planeja material no Maximo.
 - Gateway de LLM (LangChain) em `llm/gateway.py` desde 2026-11-04.
-- 272 testes unitários.
+- 1ª análise (backlog de OS) em `analysis/` desde 2026-11-06: configuração por
+  cliente (`analysis/clients/itambe.toml`), busca pelo MCP (`mcp/session.py`), contas
+  em pandas, CLI `uv run python -m maximo_agents.analysis backlog`.
+- 307 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
@@ -99,8 +102,9 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 5. ~~Criar o gateway de LLM em `llm/`.~~ Feito em 2026-11-04 (`llm/gateway.py`,
    provedores `anthropic` e `ollama`; commit `0cc4b0f`).
 6. **Análises em `analysis/` antes dos agentes** (decisão do usuário, 2026-11-04).
-   Primeira: backlog de OS; aguarda classificação dos status da Itambé (configuração
-   por cliente). Ver `memoria/wiki/synthesis/estado-do-projeto.md`.
+   Primeira: backlog de OS, feita em 2026-11-06 (branch `feat/analysis-backlog`).
+   Próximas: tempo em status, reincidência de corretivas, consumo de material. Ver
+   `memoria/wiki/synthesis/estado-do-projeto.md`.
 7. Primeiro agente (Análise de OS), depois das análises: LangGraph, cliente MCP com
    `AGENT_TOOLS` e `clean_arguments`, limite de 5 voltas; testes com modelo falso.
 8. Quando o guia da Itambé voltar: especificar e escrever os automation scripts

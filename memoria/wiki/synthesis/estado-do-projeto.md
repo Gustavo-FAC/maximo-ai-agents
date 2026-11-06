@@ -25,9 +25,34 @@ Ler no início de cada sessão. Atualizar no fim.
 - **Sondagem (18152 OS, `reportdate` 2025-11-05 a 2026-11-04):** status próprios da
   Itambé (ver [[itambe-cimentos]]). Script devolve o valor externo, então
   "aberta/fechada/cancelada" vira **configuração por cliente** no repo.
-  **Pendente do usuário/consultor:** classificar os status (em especial POSEXEC,
-  FECHAR, PREVCAN e os pequenos) e dizer o que é worktype `MS`. Opção oferecida:
-  começar com a classificação provisória do Claude marcada "a confirmar".
+  **Classificação decidida (2026-11-06):** pelo valor interno do domínio SYNONYM
+  (padrão do Maximo) com exceções por cliente; Itambé: POSEXEC como classe própria
+  "executada" (fora do backlog aberto), PREVCAN como cancelada. Tabela em
+  [[itambe-cimentos]]. Falta só o valor interno do APROG (aberta de qualquer jeito).
+  Worktypes com hipóteses pelas descrições (`MS` parece ter virado `MPV`); confirmar
+  com o consultor.
+- **Backlog de OS feito (2026-11-06)**, branch `feat/analysis-backlog`, 307 testes:
+  `analysis/config.py` + `clients/itambe.toml` (status → classe pelo valor interno,
+  sites, `history_start` 2006-01-01), `analysis/fetch.py` (janelas de 366 dias, todas
+  as páginas, limite 50 mil, só ferramentas da allowlist), `analysis/backlog.py`
+  (pandas: idade pelo `reportdate`, decisão do usuário; dias no status pelo
+  `statusdate`; por status, tipo, prioridade, equipe, site, location; 10 mais antigas),
+  `mcp/session.py` (sessão MCP reutilizável), CLI `uv run python -m
+  maximo_agents.analysis backlog [--as-of] [--since] [--json]`. 27 s na homologação.
+- **Números da homologação (2026-11-06):** **6989 abertas** (mediana 232 dias):
+  0-30 d 328, 31-90 d 264, 91-180 d 67, **181-365 d 5610**, >365 d 720. APROG 4271,
+  EMAND 2282, AAPROV 239. Tipo **MS 5799** (lote de preventivas de rotina geradas
+  ~mar/2026 e não executadas?), sem tipo 384, MPV 318. **`persongroup` vazio em
+  todas** (Itambé não usa equipe na OS). Prioridade vazia 2730. FABRICA 6867,
+  MINERACAO 122. Mais antigas: testes de interface de 2009 em AAPROV.
+- **POSEXEC = acúmulo histórico:** **109420 OS** desde 2007, 4 a 8 mil por ano
+  (~22% das OS); 106894 com mais de 1 ano. Executadas só **contadas** por faixa de
+  idade (total do script), sem baixar as OS.
+- **Usuário (2026-11-06):** POSEXEC **não** é fim de processo; as OS do backlog da
+  homologação são lixo do processo antigo da Itambé, que não fechava as OS.
+  **Homologação é ambiente só de testes e desenvolvimento:** os números servem para
+  validar o código, não descrevem o backlog real (só em produção). **Sem data de
+  corte** do processo novo (usuário não sabe e não precisa definir).
 - **Lentidão do `QUERYWORKORDERS`: encerrada, não é problema** (usuário, 2026-11-06):
   são alguns segundos por página e não afetam o funcionamento. Histórico: 1 ano pelo
   MCP levou 202 s (37 páginas de 500, ~5,5 s cada). Script passou a pôr os sites
@@ -267,9 +292,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 
 ## Falta (ordem sugerida)
 
-1. **Backlog de OS em `analysis/`** (próximo): aguardando classificação dos status da
-   Itambé (aberta/fechada/cancelada) e significado de `MS`. Busca pelo MCP, pandas,
-   CLI, configuração de status por cliente.
+1. ~~Backlog de OS em `analysis/`.~~ Feito em 2026-11-06 (branch
+   `feat/analysis-backlog`). Homologação = base de teste (lixo do processo antigo);
+   números reais só em produção. Sem data de corte do processo novo (usuário).
 2. ~~Lentidão do `QUERYWORKORDERS`.~~ Encerrada (usuário, 2026-11-06: alguns
    segundos, não afeta). Sites explícitos no script (branch
    `perf/queryworkorders-explicit-sites`), recolado e conferido (total 18152).
