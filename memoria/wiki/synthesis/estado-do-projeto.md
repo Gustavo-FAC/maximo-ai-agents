@@ -28,10 +28,17 @@ Ler no início de cada sessão. Atualizar no fim.
   **Pendente do usuário/consultor:** classificar os status (em especial POSEXEC,
   FECHAR, PREVCAN e os pequenos) e dizer o que é worktype `MS`. Opção oferecida:
   começar com a classificação provisória do Claude marcada "a confirmar".
-- **Lentidão:** ler 1 ano pelo MCP levou **202 s** (37 páginas de 500, ~5,5 s cada).
-  **Resolvida** (usuário, 2026-11-06). Repo ainda sem `siteid in (...)` explícito no
-  `QUERYWORKORDERS.py`: forma da correção a registrar (script no Maximo × índice no
-  banco). Backlog segue buscando só status abertos, por janelas de 366 dias.
+- **Lentidão do `QUERYWORKORDERS`: encerrada, não é problema** (usuário, 2026-11-06):
+  são alguns segundos por página e não afetam o funcionamento. Histórico: 1 ano pelo
+  MCP levou 202 s (37 páginas de 500, ~5,5 s cada). Script passou a pôr os sites
+  autorizados explícitos (`siteid in (...)`, como no `QUERYWOSTATUS`), recolado no
+  Maximo. Medição 2026-11-06 (pág. 1 de 500): sem `siteid` (MAXADMIN, todos os
+  sites) ~4 s; `FABRICA,MINERACAO` ~1,5 s; os mesmos 2 + 18 sites falsos ~4 s. Lista
+  longa faz o banco largar o índice; gerente com 1 a 3 sites deve ficar perto de 1,5 s
+  (medir quando houver chave de gerente). Sem índice novo no banco.
+- **Itambé tem 2 sites com OS:** `FABRICA` (17418 OS no ano) e **`MINERACAO`** (734).
+  `siteid=FABRICA` sozinho perde 4% das OS: em `analysis/`, não passar só FABRICA.
+  Backlog segue buscando só status abertos, por janelas de 366 dias.
 - Sondas no scratchpad (`call_tool.py`, `probe_status.py`) somem com a sessão; reforça
   o CLI `call_tool` no repo.
 
@@ -263,8 +270,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 1. **Backlog de OS em `analysis/`** (próximo): aguardando classificação dos status da
    Itambé (aberta/fechada/cancelada) e significado de `MS`. Busca pelo MCP, pandas,
    CLI, configuração de status por cliente.
-2. ~~Investigar lentidão do `QUERYWORKORDERS`.~~ Resolvida (usuário, 2026-11-06);
-   conferir se o repo precisa receber a mudança.
+2. ~~Lentidão do `QUERYWORKORDERS`.~~ Encerrada (usuário, 2026-11-06: alguns
+   segundos, não afeta). Sites explícitos no script (branch
+   `perf/queryworkorders-explicit-sites`), recolado e conferido (total 18152).
 3. Demais análises: tempo em status, reincidência de corretivas, consumo/custo de
    material (MTTR/paradas: pouco dado).
 4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),

@@ -426,6 +426,7 @@ MAX_WONUMS = 50
 MAX_LIST_VALUES = 20
 DEFAULT_PAGE_SIZE = 100
 MAX_PAGE_SIZE = 500
+MAX_AUTHORIZED_SITES = 200
 
 DATE_FIELDS = (
     "reportdate",
@@ -524,7 +525,15 @@ BASE_WHERE = (
 )
 
 
-def build_query(raw, userid):
+def authorized_sites_query(userid):
+    """(where, binds) for the SITE rows the user is authorized for."""
+    clauses = []
+    binds = []
+    add_site_auth(clauses, binds, userid)
+    return " and ".join(clauses), binds
+
+
+def build_query(raw, userid, authorized_sites=None):
     """Validate raw parameters and build the where clause with bind values.
 
     Returns a dict. "binds" is a list of (object, attribute, value) in placeholder
@@ -532,6 +541,11 @@ def build_query(raw, userid):
 
     The date range is required, except when wonums is given and both dates are
     omitted: wonums is capped at MAX_WONUMS, so the query stays bounded.
+
+    Without siteid, authorized_sites becomes an explicit "siteid in (...)" (lesson
+    of QUERYWOSTATUS): the "exists ... or siteid in" of the site authorization does
+    not let the database use the site indexes. One year by reportdate, 37 pages of
+    500: 202 s without siteid (homologation 2026-11-04), fast with it (2026-11-06).
     """
     wonums = parse_list("wonums", raw.get("wonums"), "str", MAX_WONUMS)
     if wonums and is_unset(raw.get("date_from")) and is_unset(raw.get("date_to")):
@@ -575,6 +589,9 @@ def build_query(raw, userid):
         if values:
             filters[name] = values
             add_in_filter(clauses, binds, OBJECT_NAME, attribute, values)
+        elif name == "siteid" and authorized_sites:
+            # Not reported in filters: the caller did not ask for these sites.
+            add_in_filter(clauses, binds, OBJECT_NAME, attribute, authorized_sites)
 
     words = parse_text(raw.get("text"))
     if words:
@@ -615,9 +632,34 @@ def run(user_info, raw):
             None,
             "User needs %s access to %s." % (PERMISSION_OPTION, PERMISSION_APP),
         )
-    query = build_query(raw, user_info.getUserName())
+    userid = user_info.getUserName()
+    sites = read_authorized_sites(user_info, userid)
+    if not sites:
+        return error_response("not_authorized", "siteid", "User has no authorized site.")
+    query = build_query(raw, userid, sites)
     total, items = query_page(user_info, OBJECT_NAME, query, FIELD_TYPES)
     return build_response(query, total, items)
+
+
+def read_authorized_sites(user_info, userid):
+    """Site IDs the user is authorized for, sorted, at most MAX_AUTHORIZED_SITES."""
+    from psdi.mbo import MboConstants
+    from psdi.server import MXServer
+
+    where, binds = authorized_sites_query(userid)
+    site_set = MXServer.getMXServer().getMboSet("SITE", user_info)
+    try:
+        site_set.setFlag(MboConstants.DISCARDABLE, True)
+        site_set.setWhere(format_where(user_info, where, binds))
+        site_set.setOrderBy("siteid")
+        sites = []
+        mbo = site_set.getMbo(0)
+        while mbo is not None and len(sites) < MAX_AUTHORIZED_SITES:
+            sites.append(mbo.getString("siteid"))
+            mbo = site_set.getMbo(len(sites))
+        return sites
+    finally:
+        site_set.cleanup()
 
 
 try:

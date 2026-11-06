@@ -334,3 +334,22 @@ Push de `4bc978a`, `0cc4b0f` e `936399c` (`a5ca255..936399c`); `main` sincroniza
 Lentidão do `QUERYWORKORDERS` resolvida; `QUERYMATUSAGE.py` e schema recolados;
 Description do `QUERYASSETDOWNTIME` corrigida. Forma da correção da lentidão a
 registrar (repo sem `siteid` explícito). [[estado-do-projeto]].
+
+## [2026-11-06] update | Lentidão do QUERYWORKORDERS: passar siteid
+Usuário: sem índice novo; passar `siteid` na chamada deixa a consulta rápida. Script
+igual ao repo (subconsulta de `siteauth`). Conferido via MCP: 1 ano por `reportdate`,
+18152 OS, 37 páginas, sem erro. Proposta: sites explícitos no script, como no
+`QUERYWOSTATUS`. [[estado-do-projeto]].
+
+## [2026-11-06] code | QUERYWORKORDERS com sites explícitos
+Branch `perf/queryworkorders-explicit-sites`: sem `siteid`, o script lê os sites
+autorizados (SITE) e põe `siteid in (...)`; sem site autorizado, `not_authorized`.
+Mesmo código do `QUERYWOSTATUS`. 272 testes. Falta recolar no Maximo e medir.
+[[estado-do-projeto]], [[automation-scripts-como-ferramentas]].
+
+## [2026-11-06] update | Lentidão do QUERYWORKORDERS encerrada; site MINERACAO
+Script com sites explícitos recolado pelo usuário; total 18152 sem `siteid`.
+Medição (pág. 1 de 500): sem `siteid` (MAXADMIN, todos os sites) ~4 s; 2 sites
+~1,5 s; 2 + 18 sites falsos ~4 s (lista longa larga o índice). Usuário: não é
+problema, alguns segundos não afetam o funcionamento. Achado: 2º site `MINERACAO`
+(734 OS no ano); só `FABRICA` perde 4%. [[estado-do-projeto]], [[itambe-cimentos]].

@@ -77,7 +77,7 @@ Cliente piloto: **Itambé Cimentos**.
   **funcionando via MCP**; `QUERYWOMATERIALS` (planejado + saldo) instalado, erros
   ok, mas **fora dos agentes** (`DORMANT_TOOLS`): Itambé não planeja material no Maximo.
 - Gateway de LLM (LangChain) em `llm/gateway.py` desde 2026-11-04.
-- 268 testes unitários.
+- 272 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

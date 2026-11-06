@@ -223,6 +223,45 @@ def test_site_authorization_always_applied():
     assert q["where"].endswith(qwo.SITE_AUTH_WHERE % (n - 1, n))
 
 
+def test_authorized_sites_become_explicit_site_filter():
+    # Without the site in the where, the database does not use the site indexes.
+    q = qwo.build_query(BASE, "GERENTE1", ["FABRICA", "MATRIZ"])
+    assert q["where"].startswith(
+        qwo.BASE_WHERE + " and reportdate >= :1 and reportdate < :2 and siteid in (:3, :4)"
+    )
+    assert q["binds"][2:4] == [
+        ("WORKORDER", "SITEID", "FABRICA"),
+        ("WORKORDER", "SITEID", "MATRIZ"),
+    ]
+    assert q["filters"] == {}  # not asked by the caller
+    n = len(q["binds"])
+    assert q["where"].endswith(qwo.SITE_AUTH_WHERE % (n - 1, n))  # still applied
+    assert q["where"].count(":") == n
+
+
+def test_authorized_sites_with_wonums_without_dates():
+    q = qwo.build_query({"wonums": "1564759"}, "GERENTE1", ["FABRICA"])
+    assert "siteid in (:1)" in q["where"]
+    assert "wonum in (:2)" in q["where"]
+    assert q["binds"][0] == ("WORKORDER", "SITEID", "FABRICA")
+
+
+def test_requested_siteid_wins_over_authorized_sites():
+    q = qwo.build_query({**BASE, "siteid": "fabrica"}, "GERENTE1", ["FABRICA", "MATRIZ"])
+    assert "siteid in (:3)" in q["where"]
+    assert ("WORKORDER", "SITEID", "MATRIZ") not in q["binds"]
+    assert q["filters"] == {"siteid": ["FABRICA"]}
+    # An empty siteid list falls back to the authorized sites.
+    q = qwo.build_query({**BASE, "siteid": " , "}, "GERENTE1", ["FABRICA"])
+    assert "siteid in (:3)" in q["where"]
+
+
+def test_authorized_sites_query():
+    where, binds = qwo.authorized_sites_query("GERENTE1")
+    assert where == qwo.SITE_AUTH_WHERE % (1, 2)
+    assert binds == [("GROUPUSER", "USERID", "GERENTE1")] * 2
+
+
 def test_permission_is_fixed_in_code():
     assert (qwo.PERMISSION_APP, qwo.PERMISSION_OPTION) == ("WOTRACK", "READ")
     assert qwo.permission_binds(qwo.PERMISSION_APP, qwo.PERMISSION_OPTION, "GERENTE1") == [

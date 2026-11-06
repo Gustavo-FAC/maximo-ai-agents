@@ -74,6 +74,12 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
   2026-10-22).
 - Filtro de sites autorizados ao usuário (`SITEAUTH`/`MAXGROUP.authallsites`)
   sempre aplicado, além da segurança do próprio Maximo.
+- **Site sempre explícito** (desde 2026-11-06, lição do `QUERYWOSTATUS`): sem
+  `siteid`, o script lê os sites autorizados do usuário (tabela SITE, mesma regra) e
+  põe `siteid in (...)`. Sem site autorizado: `not_authorized`. Motivo: o
+  `exists ... or siteid in` da autorização não deixa o banco usar os índices por site.
+  Homologação (2026-11-04), 1 ano por `reportdate`, 37 páginas de 500: **202 s sem
+  `siteid`**; com `siteid` informado a consulta fica rápida (usuário, 2026-11-06).
 - `count()` chamado uma vez para o `total`.
 
 ## Bloco comum
@@ -93,6 +99,10 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
 - [ ] `SqlFormat.setTimestamp` aceito; intervalo de datas correto no SQL
       (logger `autoscript` em DEBUG).
 - [ ] Usuário **sem** acesso a um site não recebe OS desse site.
+- [x] Site explícito (reinstalado 2026-11-06): sem `siteid`, `total` 18152 (igual).
+      Página de 500: MAXADMIN (todos os sites) ~4 s; 2 sites ~1,5 s; lista longa
+      (20 sites) ~4 s. Alguns segundos, não afeta o funcionamento (usuário).
+- [ ] Tempo com chave de gerente (1 a 3 sites): esperado ~1,5 s por página.
 - [ ] Usuário sem permissão READ em WOTRACK recebe `not_authorized`.
 - [ ] Página profunda (ex.: página 50 de 100) com tempo aceitável.
 - [ ] Valores com acento (ex.: equipe) funcionam.

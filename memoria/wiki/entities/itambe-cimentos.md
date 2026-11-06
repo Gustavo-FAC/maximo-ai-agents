@@ -4,7 +4,7 @@ type: entity
 sources: []
 related: [[mas-mcp-server]], [[chave-api-por-usuario]], [[automation-scripts-como-ferramentas]]
 created: 2026-10-21
-updated: 2026-11-04
+updated: 2026-11-06
 ---
 
 # Itambé Cimentos
@@ -20,6 +20,9 @@ Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
   [[automation-scripts-como-ferramentas]].
 
 ## Dados (homologação, 2026-10-30)
+
+- **Sites com OS** (2026-11-06): `FABRICA` (17418 OS por `reportdate` de 2025-11-05 a
+  2026-11-04) e `MINERACAO` (734). Filtrar só `FABRICA` perde 4% das OS.
 
 - **Planos de trabalho** (2026-11-03): 2102, 2025 ativos; status gravado em
   português (sinônimo **ATIVO** de ACTIVE); `templatetype` MANUTENÇÃO; 203 planos
