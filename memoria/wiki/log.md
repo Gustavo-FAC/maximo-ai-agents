@@ -477,3 +477,9 @@ Números iguais à CLI nas duas (material 9.842.265,66, MOI0012 36,5%, OS 154674
 ok: nenhuma causa afirmada sem dado, nenhuma comparação de cabeça; hipóteses (baixa
 concentrada em 09/10; sem consumo de jul. a nov./2026) marcadas. Regras 10 e 11 ok.
 [[agente-sem-chave-de-api]], [[estado-do-projeto]].
+
+## [2026-11-06] fim | Fim de sessão
+Reteste da regra 12 commitado (`1d7deac`) e com push (usuário). Estado: agente
+`analise-os` estável nas perguntas 33-40. Próximo sugerido: `tests/evals/` com 33-40
+(não iniciado). Pendentes: chave do Claude e chave de gerente (usuário); prioridade,
+significado de tipos e status, guia da Fase 1 (consultor). [[estado-do-projeto]].

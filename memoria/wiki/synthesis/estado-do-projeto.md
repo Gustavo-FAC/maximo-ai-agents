@@ -11,6 +11,33 @@ updated: 2026-11-06
 
 Ler no início de cada sessão. Atualizar no fim.
 
+## Fim do dia (2026-11-06)
+
+**Onde paramos:** agente `analise-os` estável nas perguntas 33-40 de
+[[prompts-de-teste]] no subagente do Claude Code. Regras 1-12 na receita; 10-12
+retestadas (35 e 40) com números iguais à CLI. Último commit `1d7deac`, com push
+(usuário). `main` sincronizada, árvore limpa. 355 testes.
+
+**Próximo passo sugerido (não iniciado):** montar `tests/evals/` com as perguntas
+33-40 e as respostas esperadas de [[prompts-de-teste]]: ferramenta e período certos,
+números vindos da ferramenta, recusas nas 36-38. Pronto para rodar no grafo quando
+houver chave; perguntas reais da Itambé entram depois. Usuário ainda não confirmou.
+
+**Pendente com o usuário:**
+- Chave do Claude (rodar o grafo real, evals, validar regra 9 de não falar de
+  implementação interna, que o subagente não testa por herdar `CLAUDE.md`).
+- Log Level ERROR nos scripts no Maximo.
+- Chave de gerente no lugar da MAXADMIN (e mitigação do log da `apikey`).
+
+**Pendente com o consultor funcional:**
+- Escala de prioridade (backlog dizer o que é "crítico").
+- Significado dos tipos de trabalho (`MP`, `MS`, `MPR`, `FAB`) e dos status (ex.:
+  EMAND, AGINSP, AGEXEC) para o contexto do cliente.
+- Guia de levantamento da Fase 1 (perguntas reais → novos scripts e evals).
+
+**Ideia em aberto:** 5ª análise MTBF/MTTR (pergunta 37 hoje recusa); homologação
+quase sem dados de parada.
+
 ## Onde paramos (2026-11-06, agente)
 
 - **1º agente (Análise de OS) começado sem chave de API** (pergunta do usuário):
@@ -303,7 +330,8 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Git
 
-GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-04 (fim): `4bc978a`
+GitHub `Gustavo-FAC/maximo-ai-agents` (privado). 2026-11-06 (fim): `1d7deac` (reteste da regra 12) na `main`, com push (usuário); só a `main`, sincronizada.
+2026-11-04 (fim): `4bc978a`
 (materiais), `0cc4b0f` (gateway) e `936399c` (wiki do fim do dia) na `main`, **com
 push**; `main` sincronizada com `origin/main`. Branches `feat/querywomaterials` e
 `feat/llm-gateway` apagadas. Só a `main`. 2026-11-03:
@@ -379,8 +407,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
    (`feat/analysis-status-time`, `feat/analysis-material`). `AMATER` confirmado.
    MTTR/paradas: pouco dado na homologação.
 4. Primeiro agente: camadas 1-3 feitas em 2026-11-06 ([[agente-sem-chave-de-api]]).
-   Falta testar no Claude Code com o subagente `analise-os` e, com a chave do
-   Claude, rodar o grafo real e montar `tests/evals/`.
+   Testado no subagente `analise-os` (perguntas 33-40, regras 1-12). Falta montar
+   `tests/evals/` (dá para começar sem chave) e, com a chave do Claude, rodar o
+   grafo real.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
 6. Pendências do usuário no Maximo: Log Level ERROR nos scripts. (Recolar
    `QUERYMATUSAGE.py` e schema e Description do `QUERYASSETDOWNTIME`: feitos,

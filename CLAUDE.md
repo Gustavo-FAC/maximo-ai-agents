@@ -120,7 +120,8 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
 7. Primeiro agente (Análise de OS): grafo, ferramentas e teste no Claude Code feitos
    em 2026-11-06. Perguntas de gerente testadas no subagente `analise-os` em
    2026-11-06 (números batem, recusas certas). Status × idade no backlog e regras da
-   receita feitos. Falta: escala de prioridade (consultor) e, com a chave do Claude,
+   receita (1 a 12, retestadas) feitos. Próximo sugerido: `tests/evals/` com as
+   perguntas 33-40 (não iniciado). Falta: escala de prioridade (consultor) e, com a chave do Claude,
    rodar o grafo real (e validar a regra de não falar de implementação interna).
 8. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
