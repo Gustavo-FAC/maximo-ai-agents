@@ -6,6 +6,11 @@
       "headers": {
         "apikey": "${MAXIMO_API_KEY}"
       }
+    },
+    "analises": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--no-sync", "python", "-m", "maximo_agents.agents.mcp_server"]
     }
   }
 }
