@@ -86,7 +86,13 @@ Cliente piloto: **Itambé Cimentos**.
   `wonums`) desde 2026-11-06: CLI `... analysis status-time [--days 90] [--worktype]`.
 - 4ª análise (consumo de material: custo líquido por tipo da OS, item, ativo,
   location, OS, mês; Pareto) desde 2026-11-06: CLI `... analysis material [--days 365]`.
-- 324 testes unitários.
+- 1º agente (Análise de OS) desde 2026-11-06, sem chave de API: `agents/tools.py`
+  (análises como ferramentas + `script_*`), `agents/recipes.py` (receita
+  `analise-os`), `agents/graph.py` (LangGraph, 5 rodadas, testes com modelo falso),
+  servidor MCP local `analises` (`.mcp.json`) e subagente gerado
+  `.claude/agents/analise-os.md` (`uv run python -m maximo_agents.agents.claude_agent`
+  após mudar a receita). Ver `memoria/wiki/concepts/agente-sem-chave-de-api.md`.
+- 350 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
@@ -111,8 +117,11 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
    Feitas em 2026-11-06: backlog de OS, reincidência de corretivas, tempo em status
    e consumo de material. Ver
    `memoria/wiki/synthesis/estado-do-projeto.md`.
-7. Primeiro agente (Análise de OS), depois das análises: LangGraph, cliente MCP com
-   `AGENT_TOOLS` e `clean_arguments`, limite de 5 voltas; testes com modelo falso.
+7. Primeiro agente (Análise de OS): grafo, ferramentas e teste no Claude Code feitos
+   em 2026-11-06. Perguntas de gerente testadas no subagente `analise-os` em
+   2026-11-06 (números batem, recusas certas). Falta: ajustes do teste (escala de
+   prioridade, status × idade, regras da receita) e, com a chave do Claude, rodar o
+   grafo real.
 8. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.

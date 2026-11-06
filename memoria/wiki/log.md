@@ -397,3 +397,18 @@ por tipo da OS, item, ativo, location, OS, almoxarifado e mês. Homologação (1
 9,84 mi líquidos, 5127 transações, 18 s; MP 47%, sem tipo 34%, CO 4%; MOI0012 36,5%;
 144 itens = 80% do custo. As 4 análises planejadas feitas. 324 testes.
 [[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-06] code | 1º agente (Análise de OS) sem chave de API
+Pergunta do usuário: desenvolver sem LLM por API, testando no Claude Code. Feito em
+3 camadas: `agents/tools.py` (análises como ferramentas, `Toolbox` com erros
+seguros), `agents/graph.py` (LangGraph, 5 rodadas, testes com modelo falso),
+servidor MCP local `analises` + subagente `.claude/agents/analise-os.md` gerado da
+receita. Dependência `langgraph` 1.2. Servidor testado na homologação. 350 testes.
+[[agente-sem-chave-de-api]], [[estado-do-projeto]].
+
+## [2026-11-06] test | Agente analise-os com perguntas de gerente
+6 perguntas no subagente (backlog, reincidência, material, pedido de escrita, MTBF,
+prompt injection). Números conferidos contra a CLI: todos batem. Recusas corretas.
+Ajustes pendentes: escala de prioridade e EMAND no contexto do cliente, status ×
+idade no backlog, sem detalhe interno na recusa, tratar por "você". Perguntas 33-38
+em [[prompts-de-teste]]. [[agente-sem-chave-de-api]], [[estado-do-projeto]].

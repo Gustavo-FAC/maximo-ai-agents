@@ -11,7 +11,25 @@ updated: 2026-11-06
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-04, fim do dia)
+## Onde paramos (2026-11-06, agente)
+
+- **1º agente (Análise de OS) começado sem chave de API** (pergunta do usuário):
+  ver [[agente-sem-chave-de-api]]. `agents/tools.py` (4 análises como ferramentas
+  `analyze_*` + `script_*` com `clean_arguments`), `agents/recipes.py` (receita
+  `analise-os`, contexto do cliente do TOML), `agents/graph.py` (LangGraph 1.2,
+  5 rodadas), `agents/mcp_server.py` (servidor local `analises` em `.mcp.json`),
+  `agents/claude_agent.py` (gera `.claude/agents/analise-os.md`). 350 testes.
+  Teste real do servidor por stdio OK (0,6 s).
+- **Teste com perguntas de gerente feito (2026-11-06):** 6 perguntas no subagente
+  `analise-os` (backlog, reincidência, material, pedido de escrita, MTBF, prompt
+  injection). Números conferidos contra a CLI: todos batem; recusas certas. Ver
+  [[agente-sem-chave-de-api]] e perguntas 33-38 em [[prompts-de-teste]].
+- **Próximo:** ajustes do teste: escala de prioridade e significado de EMAND no
+  contexto do cliente (confirmar com o consultor), faixas de idade por status no
+  backlog, regra na receita para não falar de implementação interna e tratar o
+  gerente por "você". Chave do Claude ainda a confirmar (agente real no grafo, evals).
+
+## Antes: análises (2026-11-04 a 2026-11-06)
 
 - **Decisão do usuário: antes dos agentes, scripts de análise (`analysis/`).** Primeira
   análise escolhida: **backlog de OS** (abertas por idade, status, tipo, prioridade,
@@ -341,8 +359,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 3. ~~Tempo em status e consumo de material.~~ Feitos em 2026-11-06
    (`feat/analysis-status-time`, `feat/analysis-material`). `AMATER` confirmado.
    MTTR/paradas: pouco dado na homologação.
-4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),
-   `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
+4. Primeiro agente: camadas 1-3 feitas em 2026-11-06 ([[agente-sem-chave-de-api]]).
+   Falta testar no Claude Code com o subagente `analise-os` e, com a chave do
+   Claude, rodar o grafo real e montar `tests/evals/`.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
 6. Pendências do usuário no Maximo: Log Level ERROR nos scripts. (Recolar
    `QUERYMATUSAGE.py` e schema e Description do `QUERYASSETDOWNTIME`: feitos,
