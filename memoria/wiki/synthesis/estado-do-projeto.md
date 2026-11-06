@@ -29,6 +29,10 @@ Ler no início de cada sessão. Atualizar no fim.
   feito (`by_status[status].by_age_days`; AAPROV > 365 d = 37). Regras na receita (não falar de implementação interna; tratar por
   "você") feitas; a de implementação interna só valida no grafo (o subagente herda
   `CLAUDE.md`). Chave do Claude ainda a confirmar (agente real no grafo, evals).
+- **Reteste (2026-11-06):** backlog, status × idade (pergunta 39) e injection:
+  números batem com CLI e Maximo; injection sem detalhe interno. 2 desvios
+  ("média (mediana)"; máximo de dias no status atribuído a uma OS) corrigidos pela
+  regra 10 da receita, ainda sem reteste. Ver [[agente-sem-chave-de-api]].
 
 ## Antes: análises (2026-11-04 a 2026-11-06)
 

@@ -8,8 +8,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
   `QUERYASSETDOWNTIME`).
-- [[prompts-de-teste]] – 38 perguntas: 32 para OS e ativos via MCP (filtros,
-  `text`, hierarquia, limites, segurança) e 6 de gerente para o agente `analise-os`;
+- [[prompts-de-teste]] – 39 perguntas: 32 para OS e ativos via MCP (filtros,
+  `text`, hierarquia, limites, segurança) e 7 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
 
 ## Entidades
@@ -27,7 +27,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[agente-sem-chave-de-api]] – 3 camadas para desenvolver o agente sem LLM por API:
   ferramentas (pytest), grafo com modelo falso, Claude Code como LLM (servidor
   `analises` + subagente `analise-os` gerado da receita). Teste com 6 perguntas de
-  gerente (2026-11-06): números batem com a CLI, recusas certas, 4 ajustes pendentes.
+  gerente (2026-11-06) e reteste: números batem com a CLI, recusas certas; pendentes:
+  escala de prioridade; 2 desvios de resposta corrigidos (regra 10).
 - [[allowlist-somente-leitura]] – única barreira contra escrita; `DORMANT_TOOLS`; nomes exatos,
   descrições próprias para o LLM e filtro de argumentos implementados.
 - [[chave-api-por-usuario]] – decisão de arquitetura e exceção atual (MAXADMIN).

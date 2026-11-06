@@ -425,3 +425,15 @@ idade" na CLI; descrição da ferramenta `analyze_work_order_backlog` atualizada
 Homologação: AAPROV > 365 d = 37; colunas fecham com os totais (>365 = 720).
 Servidor `analises` só carrega o código novo após reiniciar o Claude Code.
 [[agente-sem-chave-de-api]], [[estado-do-projeto]].
+
+## [2026-11-06] test | Reteste do agente analise-os
+Após reiniciar o Claude Code (servidor `analises` com status × idade): perguntas 33,
+39 (nova, status × idade) e 38. Números iguais à CLI; 27 corretivas abertas em 12
+meses conferidas no Maximo. Injection recusou sem detalhe interno. Pendentes na
+receita: "em média (mediana)" e máximo de dias no status atribuído a uma OS.
+[[agente-sem-chave-de-api]], [[prompts-de-teste]], [[estado-do-projeto]].
+
+## [2026-11-06] code | Receita analise-os: regra 10
+Medida pelo nome da ferramenta ("mediana", nunca "média") e mediana/máximo/total de
+grupo não atribuídos a uma OS, ativo ou item. Subagente gerado de novo, 350 testes.
+Reteste só após reiniciar o Claude Code. [[agente-sem-chave-de-api]].
