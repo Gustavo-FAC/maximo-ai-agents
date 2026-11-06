@@ -38,12 +38,14 @@ def test_itambe_status_classes():
     )
     assert config.statuses_of(EXECUTED) == ["POSEXEC"]
     assert len(config.status_classes) == 21  # domínio SYNONYM da Itambé
+    assert config.corrective_worktypes == ("CO", "EM")
 
 
 def test_class_from_internal_value_or_explicit():
     config = parse_client_config("t", VALID)
     assert config.status_classes == {"A": OPEN, "B": EXECUTED}
     assert config.name == "Teste"
+    assert config.corrective_worktypes == ()  # opcional
 
 
 @pytest.mark.parametrize(
@@ -56,6 +58,8 @@ def test_class_from_internal_value_or_explicit():
         {"history_start": "01/01/2020"},
         {"sites": "S1"},
         {"sites": [""]},
+        {"corrective_worktypes": "CO"},
+        {"corrective_worktypes": ["CO", ""]},
     ],
 )
 def test_invalid_config(change):

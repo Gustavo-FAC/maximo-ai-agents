@@ -44,6 +44,7 @@ class ClientConfig:
     sites: tuple[str, ...]
     history_start: datetime.date
     status_classes: dict[str, str]  # status externo -> classe
+    corrective_worktypes: tuple[str, ...] = ()
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
@@ -97,10 +98,15 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
     except (KeyError, ValueError) as e:
         raise ClientConfigError(f"{client_id}: 'history_start' must be YYYY-MM-DD.") from e
 
+    corrective = data.get("corrective_worktypes", [])
+    if not isinstance(corrective, list) or not all(isinstance(w, str) and w for w in corrective):
+        raise ClientConfigError(f"{client_id}: 'corrective_worktypes' must be a list of codes.")
+
     return ClientConfig(
         client_id=client_id,
         name=str(data.get("name", client_id)),
         sites=tuple(sites),
         history_start=history_start,
         status_classes=status_classes,
+        corrective_worktypes=tuple(corrective),
     )

@@ -9,6 +9,8 @@ sites = ["FABRICA", "MINERACAO"]
 # Início da busca do backlog (OS abertas há anos também contam). 1ª OS em 2006
 # (homologação, 2026-11-06).
 history_start = "2006-01-01"
+# Tipos de trabalho corretivos (reincidência): CO corretiva, EM emergencial.
+corrective_worktypes = ["CO", "EM"]
 
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação

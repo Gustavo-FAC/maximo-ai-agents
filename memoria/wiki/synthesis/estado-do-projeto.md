@@ -53,6 +53,18 @@ Ler no início de cada sessão. Atualizar no fim.
   **Homologação é ambiente só de testes e desenvolvimento:** os números servem para
   validar o código, não descrevem o backlog real (só em produção). **Sem data de
   corte** do processo novo (usuário não sabe e não precisa definir).
+- **Reincidência de corretivas feita (2026-11-06)**, branch
+  `feat/analysis-recurrence`, 313 testes: `analysis/recurrence.py` (canceladas fora;
+  por ativo e por location, chave site + código; falhas, reincidências em até 30
+  dias, intervalo mediano, última OS; por tipo, status e mês), `corrective_worktypes`
+  no TOML (Itambé: CO, EM), `fetch_corrective_work_orders`, CLI `uv run python -m
+  maximo_agents.analysis recurrence [--days 365] [--repeat-days 30] [--top 20]`. 2 s.
+- **Homologação (2025-11-07 a 2026-11-06):** 964 corretivas (CO 931, EM 33); 165 sem
+  ativo, 1 sem location; buraco abr-jun/2026. 358 ativos com corretiva, 144 com 2+,
+  355 reincidências. Top: MOI0001 22 (mediana 5,2 d), BMB0126 18, CTS0032 16,
+  FOR0001 16. Achado: muitas CO são "INSPEÇÃO ." e itens de checklist ("HÁ
+  VAZAMENTO...? = SIM", "NÃO CONFORME:") ou testes ("TESTE EM"); várias OS no mesmo
+  instante (mediana 0 d). Em produção, conferir se CO = falha real.
 - **Lentidão do `QUERYWORKORDERS`: encerrada, não é problema** (usuário, 2026-11-06):
   são alguns segundos por página e não afetam o funcionamento. Histórico: 1 ano pelo
   MCP levou 202 s (37 páginas de 500, ~5,5 s cada). Script passou a pôr os sites
@@ -292,8 +304,8 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 
 ## Falta (ordem sugerida)
 
-1. ~~Backlog de OS em `analysis/`.~~ Feito em 2026-11-06 (branch
-   `feat/analysis-backlog`). Homologação = base de teste (lixo do processo antigo);
+1. ~~Backlog de OS e reincidência de corretivas em `analysis/`.~~ Feitos em 2026-11-06 (branches
+   `feat/analysis-backlog` e `feat/analysis-recurrence`). Homologação = base de teste (lixo do processo antigo);
    números reais só em produção. Sem data de corte do processo novo (usuário).
 2. ~~Lentidão do `QUERYWORKORDERS`.~~ Encerrada (usuário, 2026-11-06: alguns
    segundos, não afeta). Sites explícitos no script (branch

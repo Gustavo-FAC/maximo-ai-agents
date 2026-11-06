@@ -13,6 +13,7 @@ from maximo_agents.analysis.fetch import (
     count_work_orders,
     date_windows,
     fetch_backlog_work_orders,
+    fetch_corrective_work_orders,
     fetch_work_orders,
 )
 
@@ -28,6 +29,7 @@ CONFIG = parse_client_config(
             "POSEXEC": {"internal": "INPRG", "class": "executed"},
             "CONCL": {"internal": "COMP"},
         },
+        "corrective_worktypes": ["CO", "EM"],
     },
 )
 
@@ -171,3 +173,19 @@ def test_executed_counted_by_age_bucket():
     assert by_age[">365"] == 2 * 2  # 2024-01-01 a 2025-11-05: 2 janelas
     assert {args["status"] for _, args in tool.calls} == {"POSEXEC"}
     assert all(args["siteid"] == "FABRICA,MINERACAO" for _, args in tool.calls)
+
+
+def test_corrective_fetch_filters_worktypes_and_sites():
+    tool = FakeTool()
+    run(fetch_corrective_work_orders(tool, CONFIG, D(2025, 11, 7), D(2026, 11, 6)))
+    args = tool.calls[0][1]
+    assert args["worktype"] == "CO,EM"
+    assert args["siteid"] == "FABRICA,MINERACAO"
+    assert "status" not in args  # canceladas saem na análise, pela classe
+    assert (args["date_from"], args["date_to"]) == ("2025-11-07", "2026-11-06")
+    assert "assetnum" in args["fields"] and "location" in args["fields"]
+    without = parse_client_config(
+        "t", {"history_start": "2024-01-01", "statuses": {"A": {"class": "open"}}}
+    )
+    with pytest.raises(ValueError):
+        run(fetch_corrective_work_orders(tool, without, D(2026, 1, 1), D(2026, 1, 2)))

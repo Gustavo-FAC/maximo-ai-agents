@@ -182,6 +182,42 @@ async def fetch_backlog_work_orders(
     return records
 
 
+CORRECTIVE_FIELDS = (
+    "wonum",
+    "siteid",
+    "description",
+    "status",
+    "worktype",
+    "assetnum",
+    "location",
+    "reportdate",
+    "actfinish",
+)
+
+
+async def fetch_corrective_work_orders(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """OS dos tipos corretivos do cliente no período (pelo reportdate), qualquer status."""
+    if not config.corrective_worktypes:
+        raise ValueError(f"{config.client_id}: no corrective_worktypes configured.")
+    filters = {"worktype": list(config.corrective_worktypes)}
+    if config.sites:
+        filters["siteid"] = list(config.sites)
+    return await fetch_work_orders(
+        call_tool,
+        date_from=date_from,
+        date_to=date_to,
+        filters=filters,
+        fields=CORRECTIVE_FIELDS,
+        max_records=max_records,
+    )
+
+
 async def count_executed_by_age(
     call_tool: ToolCaller,
     config: ClientConfig,

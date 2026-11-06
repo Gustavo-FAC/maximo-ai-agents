@@ -374,3 +374,9 @@ Usuário: POSEXEC não é fim de processo; o backlog da homologação é lixo do
 antigo (OS não fechadas). Homologação só para testes e desenvolvimento: números do
 backlog validam o código, não o negócio. Não definir data de início do processo novo.
 [[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-06] code | Reincidência de corretivas em analysis/
+Branch `feat/analysis-recurrence`: por ativo e location (site + código), canceladas
+fora, reincidência em até 30 dias, intervalo mediano. Tipos corretivos por cliente
+(Itambé CO, EM). Homologação: 964 corretivas, 144 ativos com 2+, MOI0001 22 falhas;
+muitas CO são inspeção/checklist/teste. 313 testes. [[estado-do-projeto]].
