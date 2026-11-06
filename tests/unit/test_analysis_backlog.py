@@ -101,7 +101,26 @@ def test_backlog_report():
         "count": 2,
         "median_days_in_status": 17,  # 5 e 30 dias (17,5 truncado)
         "max_days_in_status": 30,
+        "by_age_days": {"0-30": 1, "31-90": 0, "91-180": 0, "181-365": 1, ">365": 0},
     }
+    # Status × idade: as faixas de cada status somam o total do status.
+    assert opened["by_status"]["EMAND"]["by_age_days"] == {
+        "0-30": 0,
+        "31-90": 1,
+        "91-180": 0,
+        "181-365": 0,
+        ">365": 1,
+    }
+    assert opened["by_status"]["AAPROV"]["by_age_days"] == {
+        "0-30": 0,
+        "31-90": 0,
+        "91-180": 0,
+        "181-365": 0,
+        ">365": 0,
+        "no date": 1,
+    }
+    for info in opened["by_status"].values():
+        assert sum(info["by_age_days"].values()) == info["count"]
     assert list(opened["by_status"]) == ["APROG", "EMAND", "AAPROV"]
     assert opened["by_worktype"] == {"(empty)": 3, "CO": 1, "MS": 1}
     assert opened["by_priority"] == {"(empty)": 3, "1": 1, "3": 1}
@@ -130,5 +149,8 @@ def test_text_report():
     records = [wo("3", "EMAND", "2009-08-13T00:00:00", description=None)]
     text = format_backlog_text(backlog_report(records, {">365": 5}, CONFIG, AS_OF))
     assert "ABERTAS: 1 OS" in text
+    section = text.split("Status x idade", 1)[1]
+    status_row = next(line for line in section.splitlines() if line.startswith("  EMAND"))
+    assert status_row.split()[-5:] == ["0", "0", "0", "0", "1"]  # 0-30 ... >365
     assert "EXECUTADAS, AGUARDANDO FECHAMENTO (POSEXEC): 5 OS" in text
     assert "nan" not in text.lower().replace("manutenção", "")

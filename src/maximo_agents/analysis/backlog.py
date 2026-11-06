@@ -78,12 +78,16 @@ def counts(series: pd.Series, limit: int | None = None) -> dict[str, int]:
     return {str(k): int(v) for k, v in ordered}
 
 
-def summarize(frame: pd.DataFrame) -> dict:
+def bucket_counts(buckets: pd.Series) -> dict[str, int]:
+    """OS por faixa de idade, todas as faixas na ordem; "no date" só se houver."""
     by_age = {label: 0 for _, _, label in AGE_BUCKETS}
-    by_age.update(counts(frame["age_bucket"]))
+    by_age.update(counts(buckets))
     if not by_age.get(NO_DATE):
         by_age.pop(NO_DATE, None)
+    return by_age
 
+
+def summarize(frame: pd.DataFrame) -> dict:
     by_status = {}
     for status, group in frame.groupby("status", sort=False, dropna=False):
         days = group["days_in_status"].dropna()
@@ -91,6 +95,7 @@ def summarize(frame: pd.DataFrame) -> dict:
             "count": len(group),
             "median_days_in_status": int(days.median()) if len(days) else None,
             "max_days_in_status": int(days.max()) if len(days) else None,
+            "by_age_days": bucket_counts(group["age_bucket"]),
         }
     by_status = dict(sorted(by_status.items(), key=lambda kv: (-kv[1]["count"], kv[0])))
 
@@ -112,7 +117,7 @@ def summarize(frame: pd.DataFrame) -> dict:
     return {
         "total": len(frame),
         "median_age_days": int(ages.median()) if len(ages) else None,
-        "by_age_days": by_age,
+        "by_age_days": bucket_counts(frame["age_bucket"]),
         "by_status": by_status,
         "by_worktype": counts(frame["worktype"]),
         "by_priority": counts(frame["wopriority"].astype("Int64")),
@@ -165,6 +170,12 @@ def format_backlog_text(report: dict) -> str:
                 f"  {status:<12}{info['count']:>7}   "
                 f"({info['median_days_in_status']} / {info['max_days_in_status']})"
             )
+        labels = [label for _, _, label in AGE_BUCKETS]
+        lines += ["", "Status x idade (dias desde o reportdate):"]
+        lines.append(f"  {'':<12}" + "".join(f"{label:>9}" for label in labels))
+        for status, info in part["by_status"].items():
+            ages = info["by_age_days"]
+            lines.append(f"  {status:<12}" + "".join(f"{ages[label]:>9}" for label in labels))
         lines += _table("Tipo de trabalho", part["by_worktype"])
         lines += _table("Prioridade", part["by_priority"])
         lines += _table("Equipe", part["by_persongroup"])
