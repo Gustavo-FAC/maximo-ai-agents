@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-04
+updated: 2026-11-06
 ---
 
 # Estado do projeto
@@ -29,9 +29,9 @@ Ler no início de cada sessão. Atualizar no fim.
   FECHAR, PREVCAN e os pequenos) e dizer o que é worktype `MS`. Opção oferecida:
   começar com a classificação provisória do Claude marcada "a confirmar".
 - **Lentidão:** ler 1 ano pelo MCP levou **202 s** (37 páginas de 500, ~5,5 s cada).
-  Backlog deve buscar só status abertos, por janelas de 366 dias para trás, poucos
-  campos. **Investigar** se `QUERYWORKORDERS` tem o problema de índice do
-  `QUERYWOSTATUS` (sem `siteid` explícito); pode ser ganho grande.
+  **Resolvida** (usuário, 2026-11-06). Repo ainda sem `siteid in (...)` explícito no
+  `QUERYWORKORDERS.py`: forma da correção a registrar (script no Maximo × índice no
+  banco). Backlog segue buscando só status abertos, por janelas de 366 dias.
 - Sondas no scratchpad (`call_tool.py`, `probe_status.py`) somem com a sessão; reforça
   o CLI `call_tool` no repo.
 
@@ -263,15 +263,16 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 1. **Backlog de OS em `analysis/`** (próximo): aguardando classificação dos status da
    Itambé (aberta/fechada/cancelada) e significado de `MS`. Busca pelo MCP, pandas,
    CLI, configuração de status por cliente.
-2. Investigar lentidão do `QUERYWORKORDERS` (~5,5 s por página de 500): índice e
-   `siteid` explícito como no `QUERYWOSTATUS`.
+2. ~~Investigar lentidão do `QUERYWORKORDERS`.~~ Resolvida (usuário, 2026-11-06);
+   conferir se o repo precisa receber a mudança.
 3. Demais análises: tempo em status, reincidência de corretivas, consumo/custo de
    material (MTTR/paradas: pouco dado).
 4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),
    `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
-6. Pendências do usuário no Maximo: recolar `QUERYMATUSAGE.py` e schema; Description
-   do `QUERYASSETDOWNTIME` (`YYYY-NN-DD`); Log Level ERROR nos scripts.
+6. Pendências do usuário no Maximo: Log Level ERROR nos scripts. (Recolar
+   `QUERYMATUSAGE.py` e schema e Description do `QUERYASSETDOWNTIME`: feitos,
+   usuário, 2026-11-06.)
 7. Linha DEBUG `implicit vars` do log do Manage. Só registro; não bloqueia nada.
 8. Quando o guia da Itambé voltar: novos scripts/filtros/campos e `tests/evals/`.
 9. Trocar a chave MAXADMIN por chave de gerente e testar com usuário **sem** acesso

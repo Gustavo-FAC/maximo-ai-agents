@@ -329,3 +329,8 @@ commits). [[estado-do-projeto]], [[itambe-cimentos]].
 ## [2026-11-04] git | Push da main
 Push de `4bc978a`, `0cc4b0f` e `936399c` (`a5ca255..936399c`); `main` sincronizada.
 [[estado-do-projeto]].
+
+## [2026-11-06] update | Pendências resolvidas pelo usuário
+Lentidão do `QUERYWORKORDERS` resolvida; `QUERYMATUSAGE.py` e schema recolados;
+Description do `QUERYASSETDOWNTIME` corrigida. Forma da correção da lentidão a
+registrar (repo sem `siteid` explícito). [[estado-do-projeto]].
