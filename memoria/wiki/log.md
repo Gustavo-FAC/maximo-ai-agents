@@ -454,3 +454,13 @@ no config do cliente (Itambé BRL); contexto diz a moeda ou manda dar valores se
 símbolo. Significado dos tipos de trabalho (`MP`, `MS`, `MPR`, `FAB`) a pedir ao
 consultor. 355 testes. Reteste só após reiniciar o Claude Code.
 [[agente-sem-chave-de-api]], [[prompts-de-teste]], [[estado-do-projeto]].
+
+## [2026-11-06] test | Reteste da moeda (perguntas 35 e 40)
+Sessão nova (subagente com `currency = "BRL"`). Números iguais à CLI nas duas
+(material: 9.842.265,66, MOI0012 36,5%, OS 1546746 1,83 mi; lead time: 231 OS,
+mediana 0,0, p90 9,2, média 2,2, AGINSP 80,5%). Moeda ok: "R$" agora vem do contexto.
+Regras 10 e 11 ok: medidas pelo nome, AGINSP/AGEXEC só como código. Desvios novos na
+35: afirma "parada programada" sem dado nenhum (troca de peças de desgaste, dezembro)
+e faz conta de cabeça ("MOI0012 gastou mais que todos os outros do ranking juntos").
+Na 40, a hipótese de baixa em lote veio marcada como impressão (ok).
+[[agente-sem-chave-de-api]], [[prompts-de-teste]].
