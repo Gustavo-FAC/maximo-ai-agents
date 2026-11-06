@@ -5,6 +5,7 @@ import pytest
 
 from maximo_agents.analysis.config import parse_client_config
 from maximo_agents.analysis.fetch import (
+    MATERIAL_TOOL,
     PAGE_SIZE,
     STATUS_TOOL,
     WORK_ORDER_TOOL,
@@ -16,7 +17,9 @@ from maximo_agents.analysis.fetch import (
     fetch_backlog_work_orders,
     fetch_completed_histories,
     fetch_corrective_work_orders,
+    fetch_material_usage,
     fetch_work_orders,
+    fetch_work_orders_by_number,
 )
 
 D = datetime.date
@@ -245,6 +248,31 @@ def test_completed_histories_by_site_in_chunks_of_50():
     ]
     assert all("date_from" not in a for a in history_calls)  # histórico completo
     assert "wostatusid" in history_calls[0]["fields"]
+
+
+def test_material_usage_by_actualdate_with_sites():
+    item = {"siteid": "FABRICA", "matusetransid": 1, "refwo": None}
+    tool = FakeTool(pages={("2025-11-07", 1): ([item, item], False)})
+    records = run(fetch_material_usage(tool, CONFIG, D(2025, 11, 7), D(2026, 11, 6)))
+    assert records == [item]  # repetida some (siteid + matusetransid)
+    name, args = tool.calls[0]
+    assert name == MATERIAL_TOOL
+    assert args["date_field"] == "actualdate"
+    assert args["siteid"] == "FABRICA,MINERACAO"
+    assert "linecost" in args["fields"] and "refwo" in args["fields"]
+    assert "worktype" not in args  # baixas sem OS também entram
+
+
+def test_work_orders_by_number_in_batches():
+    orders = {("FABRICA", str(n)): [{"wonum": str(n), "siteid": "FABRICA"}] for n in range(51)}
+    tool = FakeStatusTool([], orders)
+    pairs = [("FABRICA", str(n)) for n in range(51)] + [("FABRICA", "1"), ("FABRICA", None)]
+    records = run(fetch_work_orders_by_number(tool, pairs))
+    assert len(records) == 51
+    assert {name for name, _ in tool.calls} == {WORK_ORDER_TOOL}
+    assert [len(args["wonums"].split(",")) for _, args in tool.calls] == [50, 1]
+    assert all("date_from" not in args for _, args in tool.calls)
+    assert "worktype" in tool.calls[0][1]["fields"]
 
 
 def test_completed_histories_needs_closed_status():

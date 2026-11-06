@@ -82,6 +82,17 @@ Ler no início de cada sessão. Atualizar no fim.
   antigo, confirmado pelo usuário; configurado como aberto (ver [[itambe-cimentos]]).
   Perto do limite de 50 mil registros com 1 ano; períodos maiores pedem
   `--max-records`.
+- **Consumo de material feito (2026-11-06)**, branch `feat/analysis-material`, 324
+  testes: `analysis/material.py`. Transações do `QUERYMATUSAGE` no período
+  (`actualdate`, sites do cliente, com ou sem OS) + OS delas pelo `QUERYWORKORDERS`
+  por `wonums` (tipo, ativo, location, descrição; lotes de 50 por site,
+  `wonum_batches` comum). Custo líquido = soma(`linecost`), devolução pelo sinal da
+  quantidade (não pelo rótulo do `issuetype`, que é PT). Ativo/location da transação
+  ou, se vazio, da OS. Relatório: totais, por tipo da OS (`(sem OS)`, `(OS não
+  encontrada)` = tarefa), almoxarifado, mês, Pareto 80%, itens, ativos, locations
+  (com item de maior custo) e OS. CLI `uv run python -m maximo_agents.analysis
+  material [--days 365] [--top 20]`. **18 s** em 1 ano. Números em [[itambe-cimentos]].
+- **As 4 análises planejadas estão feitas.** Próximo: primeiro agente.
 - **Lentidão do `QUERYWORKORDERS`: encerrada, não é problema** (usuário, 2026-11-06):
   são alguns segundos por página e não afetam o funcionamento. Histórico: 1 ano pelo
   MCP levou 202 s (37 páginas de 500, ~5,5 s cada). Script passou a pôr os sites
@@ -327,8 +338,9 @@ integrada por fast-forward e apagada (local e remoto) em 2026-10-29.
 2. ~~Lentidão do `QUERYWORKORDERS`.~~ Encerrada (usuário, 2026-11-06: alguns
    segundos, não afeta). Sites explícitos no script (branch
    `perf/queryworkorders-explicit-sites`), recolado e conferido (total 18152).
-3. ~~Tempo em status.~~ Feito em 2026-11-06 (`feat/analysis-status-time`). Falta:
-   consumo/custo de material (MTTR/paradas: pouco dado). `AMATER` confirmado.
+3. ~~Tempo em status e consumo de material.~~ Feitos em 2026-11-06
+   (`feat/analysis-status-time`, `feat/analysis-material`). `AMATER` confirmado.
+   MTTR/paradas: pouco dado na homologação.
 4. Primeiro agente (depois das análises): LangGraph, `AGENT_TOOLS` (6 ferramentas),
    `input_schema`, `clean_arguments`, 5 voltas. Chave do Claude a confirmar.
 5. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).

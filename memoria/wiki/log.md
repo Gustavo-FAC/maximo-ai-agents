@@ -389,3 +389,11 @@ lead time, dias por status e classe, transições, OS mais demoradas. Paginaçã
 mudanças em 155 s, EMAND 47% do tempo. Status `AMATER` fora do domínio: usuário
 confirmou aguardando material antigo, entrou no `itambe.toml` como aberto. 318 testes.
 [[estado-do-projeto]], [[itambe-cimentos]].
+
+## [2026-11-06] code | Consumo de material em analysis/
+Branch `feat/analysis-material`: transações do QUERYMATUSAGE no período + OS delas
+por `wonums` (tipo, ativo, location). Custo líquido, devolução pelo sinal, Pareto,
+por tipo da OS, item, ativo, location, OS, almoxarifado e mês. Homologação (1 ano):
+9,84 mi líquidos, 5127 transações, 18 s; MP 47%, sem tipo 34%, CO 4%; MOI0012 36,5%;
+144 itens = 80% do custo. As 4 análises planejadas feitas. 324 testes.
+[[estado-do-projeto]], [[itambe-cimentos]].

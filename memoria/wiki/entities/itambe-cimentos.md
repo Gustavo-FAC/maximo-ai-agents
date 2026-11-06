@@ -106,3 +106,12 @@ histórico começa direto em AGEXEC (sem registro de criação em outro status).
   jun/2026. Site `FABRICA`, almoxarifados `FAB`, `30`. OS 1116802 = material de limpeza
   recorrente (109 baixas). `issuetype` em PT (`EMISSÃO`, `RETORNAR`); `issueid` vazio
   nas devoluções.
+- **Análise de consumo (2026-11-06, 2025-11-07 a 2026-11-06, homologação):** custo
+  líquido 9,84 mi (baixas 11,59 mi, devoluções 1,75 mi), 5127 transações, 1742
+  itens, 1127 OS; **toda baixa tem OS** e todas as OS foram achadas (nenhuma tarefa).
+  Dados só até jun/2026 (dez/2025 = 4,4 mi). Tipo da OS: `MP` 47%, **sem tipo 34%**
+  (547 OS), `MS` 10%, `MPR` 4%, `CO` só 4%. Pareto: 144 de 1708 itens = 80% do
+  custo. **MOI0012** (location N5M01) = 36,5% (placas de desgaste e segmentos do
+  moinho). 2343 transações sem ativo (nem na OS), mas todas com location (pela OS).
+  Almoxarifados: `29`, `FAB`, `28`, `UY`, `Z2`, `27` e outros 13 (códigos estranhos
+  como `Z{`, `W$`, `W?`).

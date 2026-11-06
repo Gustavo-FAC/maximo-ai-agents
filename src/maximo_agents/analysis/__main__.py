@@ -6,6 +6,8 @@ uv run python -m maximo_agents.analysis recurrence [--client itambe] [--as-of AA
     [--days 365] [--repeat-days 30] [--top 20] [--json]
 uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of AAAA-MM-DD]
     [--days 90] [--worktype CO,EM] [--top 20] [--json]
+uv run python -m maximo_agents.analysis material [--client itambe] [--as-of AAAA-MM-DD]
+    [--days 365] [--top 20] [--json]
 """
 
 import argparse
@@ -23,7 +25,10 @@ from maximo_agents.analysis.fetch import (
     fetch_backlog_work_orders,
     fetch_completed_histories,
     fetch_corrective_work_orders,
+    fetch_material_usage,
+    fetch_work_orders_by_number,
 )
+from maximo_agents.analysis.material import format_material_text, material_report
 from maximo_agents.analysis.recurrence import (
     DEFAULT_REPEAT_DAYS,
     DEFAULT_TOP,
@@ -62,6 +67,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--worktype", default="", help="Tipos de trabalho separados por vírgula (padrão: todos)"
     )
     status_time.add_argument("--top", type=int, default=DEFAULT_TOP)
+
+    material = sub.add_parser("material", help="Consumo e custo de material")
+    common(material)
+    material.add_argument("--days", type=int, default=365, help="Período até --as-of")
+    material.add_argument("--top", type=int, default=DEFAULT_TOP)
     return parser.parse_args(argv)
 
 
@@ -123,6 +133,27 @@ async def run_status_time(args: argparse.Namespace) -> int:
     return 0
 
 
+async def run_material(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    date_to = args.as_of or datetime.date.today()
+    date_from = date_to - datetime.timedelta(days=args.days - 1)
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        transactions = await fetch_material_usage(
+            call_tool, config, date_from, date_to, max_records=args.max_records
+        )
+        pairs = [(t.get("siteid"), t.get("refwo")) for t in transactions]
+        work_orders = await fetch_work_orders_by_number(
+            call_tool, pairs, max_records=args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = material_report(transactions, work_orders, config, date_from, date_to, args.top)
+    text = format_material_text(report)
+    print_report(args, report, text, transactions, elapsed, unit="transações de material")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     # Saída em UTF-8 no console do Windows (acentos das descrições).
     if hasattr(sys.stdout, "reconfigure"):
@@ -132,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
         "backlog": run_backlog,
         "recurrence": run_recurrence,
         "status-time": run_status_time,
+        "material": run_material,
     }
     return asyncio.run(runners[args.analysis](args))
 

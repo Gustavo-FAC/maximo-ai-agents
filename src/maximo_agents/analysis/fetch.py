@@ -304,26 +304,102 @@ async def fetch_completed_histories(
                 max_records,
             )
 
-    wonums_by_site: dict[str, set[str]] = {}
-    for item in completions:
-        wonums_by_site.setdefault(item["siteid"], set()).add(item["wonum"])
-
     seen = set()
     history: list[dict] = []
-    for siteid in sorted(wonums_by_site):
-        for wonum_chunk in chunks(sorted(wonums_by_site[siteid]), MAX_WONUMS):
-            arguments = {
-                "siteid": siteid,
-                "wonums": ",".join(wonum_chunk),
-                "fields": ",".join(STATUS_FIELDS),
-            }
-            await fetch_all_pages(
-                call_tool,
-                STATUS_TOOL,
-                arguments,
-                ("siteid", "wonum", "wostatusid", "changedate", "status"),
-                seen,
-                history,
-                max_records,
-            )
+    pairs = ((item["siteid"], item["wonum"]) for item in completions)
+    for siteid, wonum_chunk in wonum_batches(pairs):
+        arguments = {
+            "siteid": siteid,
+            "wonums": ",".join(wonum_chunk),
+            "fields": ",".join(STATUS_FIELDS),
+        }
+        await fetch_all_pages(
+            call_tool,
+            STATUS_TOOL,
+            arguments,
+            ("siteid", "wonum", "wostatusid", "changedate", "status"),
+            seen,
+            history,
+            max_records,
+        )
     return history
+
+
+def wonum_batches(pairs: Iterable[tuple[str, str]]) -> list[tuple[str, list[str]]]:
+    """(siteid, wonum) sem repetição, em lotes de até 50 wonums do mesmo site."""
+    by_site: dict[str, set[str]] = {}
+    for siteid, wonum in pairs:
+        if siteid and wonum:
+            by_site.setdefault(siteid, set()).add(wonum)
+    return [
+        (siteid, wonum_chunk)
+        for siteid in sorted(by_site)
+        for wonum_chunk in chunks(sorted(by_site[siteid]), MAX_WONUMS)
+    ]
+
+
+MATERIAL_TOOL = "script_querymatusage"
+MATERIAL_FIELDS = (
+    "refwo",
+    "siteid",
+    "matusetransid",
+    "actualdate",
+    "itemnum",
+    "description",
+    "quantity",
+    "issueunit",
+    "linecost",
+    "storeloc",
+    "assetnum",
+    "location",
+)
+WORK_ORDER_LOOKUP_FIELDS = ("wonum", "siteid", "description", "worktype", "assetnum", "location")
+
+
+async def fetch_material_usage(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """Baixas e devoluções de material no período (actualdate), com ou sem OS."""
+    filters = {"siteid": list(config.sites)}
+    check_filters(filters)
+    seen: set[tuple] = set()
+    records: list[dict] = []
+    for window_from, window_to in date_windows(date_from, date_to):
+        arguments = {
+            "date_from": window_from.isoformat(),
+            "date_to": window_to.isoformat(),
+            "date_field": "actualdate",
+            "fields": ",".join(MATERIAL_FIELDS),
+        }
+        arguments.update(joined(filters))
+        await fetch_all_pages(
+            call_tool,
+            MATERIAL_TOOL,
+            arguments,
+            ("siteid", "matusetransid"),
+            seen,
+            records,
+            max_records,
+        )
+    return records
+
+
+async def fetch_work_orders_by_number(
+    call_tool: ToolCaller,
+    pairs: Iterable[tuple[str, str]],
+    fields: Iterable[str] = WORK_ORDER_LOOKUP_FIELDS,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """OS pedidas por (siteid, wonum), em lotes de 50 por site. Tarefas não vêm."""
+    seen: set[tuple] = set()
+    records: list[dict] = []
+    for siteid, wonum_chunk in wonum_batches(pairs):
+        arguments = {"siteid": siteid, "wonums": ",".join(wonum_chunk), "fields": ",".join(fields)}
+        await fetch_all_pages(
+            call_tool, WORK_ORDER_TOOL, arguments, ("siteid", "wonum"), seen, records, max_records
+        )
+    return records
