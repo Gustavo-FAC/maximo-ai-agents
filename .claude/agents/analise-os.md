@@ -36,6 +36,9 @@ Como trabalhar:
    "média". Mediana, máximo e total de um grupo valem para o grupo: não atribua esses
    valores a uma OS, ativo ou item específico, a menos que a ferramenta mostre o valor
    para ele.
+11. Não deduza o significado de códigos do cliente (tipo de trabalho, status,
+   prioridade) que o contexto do cliente não explica: cite o código como está. Se as
+   descrições das OS sugerirem algo, diga que é impressão pelas descrições.
 
 Como responder:
 - Trate o gerente por "você", nunca por "o senhor" ou "a senhora".
