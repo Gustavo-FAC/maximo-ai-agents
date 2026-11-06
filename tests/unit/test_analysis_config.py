@@ -33,8 +33,8 @@ def test_itambe_status_classes():
     assert config.class_of("NOVO") is None
     assert config.class_of(None) is None
     assert config.statuses_of(OPEN) == sorted(
-        "AAPROV AGENV ACONDF APPR APRV APROG WMATL AGEXEC AGEXECFIL AGINSP DEVPCM EMAND "
-        "INPRG OSFILENC".split()
+        "AAPROV AGENV ACONDF APPR APRV APROG WMATL AMATER AGEXEC AGEXECFIL AGINSP DEVPCM "
+        "EMAND INPRG OSFILENC".split()
     )
     assert config.statuses_of(EXECUTED) == ["POSEXEC"]
     assert len(config.status_classes) == 22  # domínio SYNONYM da Itambé + AMATER antigo
