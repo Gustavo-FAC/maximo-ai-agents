@@ -70,12 +70,13 @@ nenhum número inventado ou calculado pelo modelo. 2 a 4 rodadas por pergunta,
 códigos, limitações, próximo passo); `script_*` só para detalhe; hipóteses marcadas
 como não verificadas; percebeu OS de teste sozinho.
 
-**Ajustes encontrados (1 e 2 pendentes; 3 e 4 feitos na receita em 2026-11-06):**
+**Ajustes encontrados (1 pendente; 2, 3 e 4 feitos em 2026-11-06):**
 1. **Escala de prioridade** desconhecida (2352 com prioridade 1, 2730 sem): agente
    usou CO/EM para "críticas". Pôr a escala no contexto do cliente (TOML) após
    confirmar com o consultor. Idem significado de **EMAND**.
 2. **Backlog não cruza status × idade**: "quantas AAPROV com mais de 1 ano" não sai
-   de nenhuma ferramenta. Avaliar faixas de idade por status em `analyze_work_order_backlog`.
+   de nenhuma ferramenta. **Feito:** `by_status[status].by_age_days` no backlog
+   (AAPROV > 365 d = 37 na homologação).
 3. **Detalhes internos na recusa** (caminhos de arquivo, allowlist, nomes das
    ferramentas de escrita, `analysis/`): vem do `CLAUDE.md` que o subagente herda no
    Claude Code; no grafo não haveria, mas pôr regra na receita: não falar de

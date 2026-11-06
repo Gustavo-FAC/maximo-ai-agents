@@ -418,3 +418,10 @@ Regra 9 (não falar de implementação interna) e tratar o gerente por "você".
 Subagente gerado de novo, 350 testes. Reteste: "você" ok; injection ainda cita
 arquivos porque o subagente do Claude Code herda `CLAUDE.md` e git status.
 [[agente-sem-chave-de-api]].
+
+## [2026-11-06] code | Backlog: status × idade
+Cada status do backlog ganhou `by_age_days` (mesmas faixas da idade); tabela "Status x
+idade" na CLI; descrição da ferramenta `analyze_work_order_backlog` atualizada.
+Homologação: AAPROV > 365 d = 37; colunas fecham com os totais (>365 = 720).
+Servidor `analises` só carrega o código novo após reiniciar o Claude Code.
+[[agente-sem-chave-de-api]], [[estado-do-projeto]].

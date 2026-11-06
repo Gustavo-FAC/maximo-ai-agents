@@ -25,8 +25,8 @@ Ler no início de cada sessão. Atualizar no fim.
   injection). Números conferidos contra a CLI: todos batem; recusas certas. Ver
   [[agente-sem-chave-de-api]] e perguntas 33-38 em [[prompts-de-teste]].
 - **Próximo:** ajustes do teste: escala de prioridade e significado de EMAND no
-  contexto do cliente (confirmar com o consultor), faixas de idade por status no
-  backlog. Regras na receita (não falar de implementação interna; tratar por
+  contexto do cliente (confirmar com o consultor). Status × idade no backlog
+  feito (`by_status[status].by_age_days`; AAPROV > 365 d = 37). Regras na receita (não falar de implementação interna; tratar por
   "você") feitas; a de implementação interna só valida no grafo (o subagente herda
   `CLAUDE.md`). Chave do Claude ainda a confirmar (agente real no grafo, evals).
 
