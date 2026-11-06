@@ -26,8 +26,9 @@ Ler no início de cada sessão. Atualizar no fim.
   [[agente-sem-chave-de-api]] e perguntas 33-38 em [[prompts-de-teste]].
 - **Próximo:** ajustes do teste: escala de prioridade e significado de EMAND no
   contexto do cliente (confirmar com o consultor), faixas de idade por status no
-  backlog, regra na receita para não falar de implementação interna e tratar o
-  gerente por "você". Chave do Claude ainda a confirmar (agente real no grafo, evals).
+  backlog. Regras na receita (não falar de implementação interna; tratar por
+  "você") feitas; a de implementação interna só valida no grafo (o subagente herda
+  `CLAUDE.md`). Chave do Claude ainda a confirmar (agente real no grafo, evals).
 
 ## Antes: análises (2026-11-04 a 2026-11-06)
 

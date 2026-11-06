@@ -412,3 +412,9 @@ prompt injection). Números conferidos contra a CLI: todos batem. Recusas corret
 Ajustes pendentes: escala de prioridade e EMAND no contexto do cliente, status ×
 idade no backlog, sem detalhe interno na recusa, tratar por "você". Perguntas 33-38
 em [[prompts-de-teste]]. [[agente-sem-chave-de-api]], [[estado-do-projeto]].
+
+## [2026-11-06] code | Receita analise-os: regras 9 e tratamento
+Regra 9 (não falar de implementação interna) e tratar o gerente por "você".
+Subagente gerado de novo, 350 testes. Reteste: "você" ok; injection ainda cita
+arquivos porque o subagente do Claude Code herda `CLAUDE.md` e git status.
+[[agente-sem-chave-de-api]].
