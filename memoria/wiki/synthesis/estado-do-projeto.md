@@ -4,12 +4,60 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-06
+updated: 2026-11-10
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
+
+## Hoje (2026-11-10): 5ª análise, MTBF e MTTR
+
+**Decisão do usuário:** duas bases, separadas, nunca misturadas; reparo pela OS =
+`actstart` → `actfinish`.
+
+- `analysis/reliability.py`:
+  - **Base OS corretivas:** falha = OS CO/EM pelo reportdate, canceladas fora.
+    Por ativo e por location: MTBF em dias (dias do período / falhas, tempo de
+    calendário), MTTR em horas (média de actstart→actfinish, só OS com as duas
+    datas). Dois rankings: por falhas e por horas de reparo. O relatório conta as
+    OS sem datas e as com fim antes do início.
+  - **Base paradas (ASSETSTATUS):** parada = queda até o retorno seguinte, pelas
+    datas; o `downtime` gravado vai à parte. Pares repetidos contam uma vez. A
+    parada é cortada no período. MTTR = média das paradas começadas e terminadas
+    no período. MTBF = (horas do período − horas paradas) / paradas. Também dá a
+    disponibilidade e quem está parado no fim.
+  - MTBF e disponibilidade só por objeto. Não há valor da frota: falta a lista de
+    todos os ativos.
+- `fetch.fetch_downtime_histories`: busca as mudanças no período e depois o
+  histórico completo por `assetnums`, em lotes de 50 por site, para pegar a queda
+  anterior ao período. Limitação: ativo parado o período todo, sem mudança no
+  período, não aparece.
+- `fetch_corrective_work_orders`: ganhou `actstart` e filtros `assetnums` e
+  `locations`.
+- CLI: `uv run python -m maximo_agents.analysis reliability [--days 365]
+  [--asset X] [--location Y]`.
+- Ferramenta `analyze_reliability` na receita `analise-os`. Subagente gerado de
+  novo.
+- Pergunta 37 de [[prompts-de-teste]] agora tem análise. 367 testes, Ruff limpo.
+- **Validado com dados reais** (idioma da chave corrigido para EN pelo usuário):
+  - 1 ano (2025-11-11 a 2026-11-10): 907 corretivas em 3 s, igual à reincidência
+    (156 sem ativo). 794 com tempo de reparo e 113 sem as datas.
+  - MTTR geral: média 21,4 h, mediana 1,03 h, p90 8,45 h.
+  - MOI0001 conferido à mão nas 22 OS: MTBF 16,6 d, MTTR 1,25 h, mediana 1,0 h.
+  - Base de paradas: 0 no último ano. Em 2023, ACI1020 com 1 parada de 0,67 h
+    (código PCE), igual ao `downtime` gravado; 8 linhas repetidas removidas.
+- **Achado:** na Itambé o `actstart` fica quase igual ao `reportdate` e algumas
+  OS fecham semanas depois. Ex.: OS 1567877 (BMB0364, "FABRICAR TUBULAÇÃO"):
+  818 h de relógio, 2 h de mão de obra apontada. Isso puxa a média para cima. A
+  descrição da ferramenta manda dar a mediana junto. **Perguntar ao consultor:**
+  o `actstart` é preenchido sozinho na abertura? O reparo deve ser medido pelas
+  horas apontadas?
+- Pergunta 37 testada no subagente após reiniciar (2026-11-10): números iguais à
+  conferência manual (22 CO, MTBF 16,6 d, MTTR média 1,25 h, mediana 1,0 h, p90
+  1,95 h). Sem paradas → disse que o site pode não registrar, não que o ativo nunca
+  parou. Hipótese (sem corretiva de abril a novembro/2026) marcada como hipótese.
+  367 testes ok.
 
 ## Fim do dia (2026-11-06)
 

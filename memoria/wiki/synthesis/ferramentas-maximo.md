@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[automation-scripts-como-ferramentas]], [[allowlist-somente-leitura]], [[estado-do-projeto]], [[itambe-cimentos]]
 created: 2026-10-29
-updated: 2026-11-04
+updated: 2026-11-10
 ---
 
 # Ferramentas de dados – plano
@@ -28,7 +28,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
 | 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30) |
 | 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
-| 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); horas/MTTR em `analysis/` | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
+| 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); MTBF/MTTR/disponibilidade em `analysis/reliability.py` (2026-11-10) | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
 | 6a | `QUERYWOMATERIALS` | WPMATERIAL (+ WORKORDER), INVBALANCES | verificar_materiais (planejado + saldo) | P2 | instalado (2026-11-04); erros ok; **fora dos agentes** (Itambé não planeja material no Maximo) |

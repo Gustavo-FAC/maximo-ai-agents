@@ -86,13 +86,18 @@ Cliente piloto: **Itambé Cimentos**.
   `wonums`) desde 2026-11-06: CLI `... analysis status-time [--days 90] [--worktype]`.
 - 4ª análise (consumo de material: custo líquido por tipo da OS, item, ativo,
   location, OS, mês; Pareto) desde 2026-11-06: CLI `... analysis material [--days 365]`.
+- 5ª análise (MTBF e MTTR, duas bases separadas: OS corretivas com reparo
+  actstart→actfinish, e paradas da ASSETSTATUS com disponibilidade) desde 2026-11-10:
+  CLI `... analysis reliability [--days 365] [--asset X]`; ferramenta
+  `analyze_reliability`. Validado com dados reais (MOI0001 conferido à mão). Média do
+  MTTR inflada por OS fechadas semanas depois: usar mediana junto.
 - 1º agente (Análise de OS) desde 2026-11-06, sem chave de API: `agents/tools.py`
   (análises como ferramentas + `script_*`), `agents/recipes.py` (receita
   `analise-os`), `agents/graph.py` (LangGraph, 5 rodadas, testes com modelo falso),
   servidor MCP local `analises` (`.mcp.json`) e subagente gerado
   `.claude/agents/analise-os.md` (`uv run python -m maximo_agents.agents.claude_agent`
   após mudar a receita). Ver `memoria/wiki/concepts/agente-sem-chave-de-api.md`.
-- 355 testes unitários.
+- 367 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

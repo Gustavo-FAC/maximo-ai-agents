@@ -4,7 +4,7 @@ type: concept
 sources: []
 related: [[estado-do-projeto]], [[allowlist-somente-leitura]], [[prompts-de-teste]], [[itambe-cimentos]]
 created: 2026-11-06
-updated: 2026-11-06
+updated: 2026-11-10
 ---
 
 # Agente sem chave de API (3 camadas de teste)
@@ -12,8 +12,8 @@ updated: 2026-11-06
 Pergunta do usuário (2026-11-06): desenvolver os agentes sem LLM por API, usando o
 Claude Code para testar. Resposta: sim, em 3 camadas sobre o mesmo código.
 
-1. **Ferramentas (`agents/tools.py`)**: código puro, pytest. As 4 análises viram
-   ferramentas `analyze_*` (descrição e `input_schema` em inglês, argumentos validados,
+1. **Ferramentas (`agents/tools.py`)**: código puro, pytest. As análises (5 desde
+   2026-11-10) viram ferramentas `analyze_*` (descrição e `input_schema` em inglês, argumentos validados,
    número como texto aceito); as `script_*` passam por `clean_arguments`. `Toolbox`
    da receita: fora da lista → `unknown_tool`; falha → `{"error": {code, parameter,
    message}}` sem detalhe interno; resposta acima de 60 mil caracteres →
@@ -25,7 +25,7 @@ Claude Code para testar. Resposta: sim, em 3 camadas sobre o mesmo código.
    modelo insistir, resposta vira texto sem chamadas) e conversa com checkpointer.
    Não testa a qualidade do raciocínio.
 3. **Claude Code como o LLM**: servidor MCP local `analises` (stdio,
-   `agents/mcp_server.py`, em `.mcp.json`) com as 4 análises; subagente
+   `agents/mcp_server.py`, em `.mcp.json`) com as análises; subagente
    `.claude/agents/analise-os.md` **gerado** da receita (`python -m
    maximo_agents.agents.claude_agent`; teste garante sincronia) com só as
    ferramentas da receita (`mcp__analises__*` + `mcp__maximo__script_*`). Dados reais

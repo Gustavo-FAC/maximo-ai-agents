@@ -483,3 +483,26 @@ Reteste da regra 12 commitado (`1d7deac`) e com push (usuário). Estado: agente
 `analise-os` estável nas perguntas 33-40. Próximo sugerido: `tests/evals/` com 33-40
 (não iniciado). Pendentes: chave do Claude e chave de gerente (usuário); prioridade,
 significado de tipos e status, guia da Fase 1 (consultor). [[estado-do-projeto]].
+
+## [2026-11-10] code | 5ª análise: MTBF e MTTR
+Decisão do usuário: duas bases separadas (OS corretivas e paradas da ASSETSTATUS);
+reparo pela OS = actstart → actfinish. `analysis/reliability.py`,
+`fetch_downtime_histories` (período + histórico por assetnums), CLI `reliability`,
+ferramenta `analyze_reliability` na receita. 367 testes. Validação real bloqueada:
+BMXAA10147E (usuário da chave voltou a idioma PT). [[estado-do-projeto]],
+[[prompts-de-teste]].
+
+## [2026-11-10] test | MTBF/MTTR com dados reais
+Idioma da chave corrigido (EN). 1 ano: 907 corretivas (igual à reincidência), MTTR
+média 21,4 h × mediana 1,03 h; MOI0001 conferido à mão (MTBF 16,6 d, MTTR 1,25 h).
+Paradas: 0 no último ano; 2023 ACI1020 0,67 h PCE (bate com o gravado), 8
+repetidas removidas. Achado: actstart ≈ reportdate e OS fechadas semanas depois
+inflam a média (OS 1567877: 818 h de relógio, 2 h apontadas): descrição da
+ferramenta pede mediana junto; pergunta ao consultor. [[estado-do-projeto]].
+
+## [2026-11-10] test | Pergunta 37 no subagente (MTBF/MTTR do MOI0001)
+Após reiniciar o Claude Code. analyze_reliability com assetnum=MOI0001: 22 CO,
+MTBF 16,6 d, MTTR média 1,25 h, mediana 1,0 h, p90 1,95 h (igual à conferência
+manual). Bases separadas; sem paradas → "site pode não registrar", certo. Falhas só
+de nov./2025 a mar./2026, motivo dado como hipótese (regra 12 ok). 367 testes.
+[[prompts-de-teste]], [[estado-do-projeto]].
