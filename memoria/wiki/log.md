@@ -506,3 +506,10 @@ MTBF 16,6 d, MTTR média 1,25 h, mediana 1,0 h, p90 1,95 h (igual à conferênci
 manual). Bases separadas; sem paradas → "site pode não registrar", certo. Falhas só
 de nov./2025 a mar./2026, motivo dado como hipótese (regra 12 ok). 367 testes.
 [[prompts-de-teste]], [[estado-do-projeto]].
+
+## [2026-11-10] query | Pendências de desenvolvimento
+Levantamento salvo no topo de [[estado-do-projeto]]: sem dependência (evals 33-40,
+CLI `call_tool`, Assistente Geral, plataforma SaaS: auth, multi-tenant, cofre, api e
+portal, audit) e bloqueado (chaves e Log Level com o usuário; prioridade, tipos,
+status, MTTR e guia da Fase 1 com o consultor). Recomendação: evals, depois auth +
+multi-tenant.

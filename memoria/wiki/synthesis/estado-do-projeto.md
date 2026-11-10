@@ -11,6 +11,34 @@ updated: 2026-11-10
 
 Ler no início de cada sessão. Atualizar no fim.
 
+## Pendente de desenvolvimento (levantamento de 2026-11-10)
+
+5 análises e agente `analise-os` prontos (commits `19e8ec2`, `8761e50`, com push).
+
+**Sem dependência (dá para fazer já):**
+1. `tests/evals/` com as perguntas 33-40 de [[prompts-de-teste]] (ferramenta e
+   período certos, números da ferramenta, recusas 36-38). Roda sem chave.
+2. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
+3. Assistente Geral (roteador): 2º agente da arquitetura, não iniciado.
+4. Plataforma SaaS: `api/`, `auth/`, `audit/` só com `__init__.py`.
+   - `auth/`: convite, Argon2id, MFA TOTP, sessão no servidor (cookie
+     HttpOnly/Secure/SameSite), limite de tentativas.
+   - Multi-tenant: tenant da sessão, isolamento por cliente.
+   - Cofre: chave do Maximo por gerente, ligada ao login
+     ([[chave-api-por-usuario]]).
+   - `api/` + portal web: chat do gerente com o agente.
+   - `audit/`: quem perguntou o quê, ferramentas chamadas, sem chaves.
+
+**Bloqueado:**
+- Usuário: chave do Claude (grafo real, evals, regra 9); chave de gerente no lugar
+  da MAXADMIN (antes, mitigar `apikey` no log do MCP Server); Log Level ERROR nos
+  scripts.
+- Consultor: escala de prioridade; significado de tipos e status; `actstart` e
+  horas apontadas no MTTR; guia da Fase 1 (perguntas reais, novos scripts, evals).
+
+**Recomendação dada:** evals (1) primeiro; depois plataforma (4) começando por
+`auth/` + multi-tenant. Usuário ainda não escolheu.
+
 ## Hoje (2026-11-10): 5ª análise, MTBF e MTTR
 
 **Decisão do usuário:** duas bases, separadas, nunca misturadas; reparo pela OS =
