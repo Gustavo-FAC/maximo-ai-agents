@@ -213,6 +213,7 @@ CORRECTIVE_FIELDS = (
     "assetnum",
     "location",
     "reportdate",
+    "actstart",
     "actfinish",
 )
 
@@ -223,13 +224,22 @@ async def fetch_corrective_work_orders(
     date_from: datetime.date,
     date_to: datetime.date,
     max_records: int = DEFAULT_MAX_RECORDS,
+    assetnums: Iterable[str] = (),
+    locations: Iterable[str] = (),
 ) -> list[dict]:
-    """OS dos tipos corretivos do cliente no período (pelo reportdate), qualquer status."""
+    """OS dos tipos corretivos do cliente no período (pelo reportdate), qualquer status.
+
+    assetnums e locations filtram pelo ativo e pela location da própria OS.
+    """
     if not config.corrective_worktypes:
         raise ValueError(f"{config.client_id}: no corrective_worktypes configured.")
     filters = {"worktype": list(config.corrective_worktypes)}
     if config.sites:
         filters["siteid"] = list(config.sites)
+    if assetnums := list(assetnums):
+        filters["assetnum"] = assetnums
+    if locations := list(locations):
+        filters["location"] = locations
     return await fetch_work_orders(
         call_tool,
         date_from=date_from,
@@ -336,6 +346,81 @@ def wonum_batches(pairs: Iterable[tuple[str, str]]) -> list[tuple[str, list[str]
         for siteid in sorted(by_site)
         for wonum_chunk in chunks(sorted(by_site[siteid]), MAX_WONUMS)
     ]
+
+
+DOWNTIME_TOOL = "script_queryassetdowntime"
+DOWNTIME_FIELDS = (
+    "assetnum",
+    "siteid",
+    "assetstatusid",
+    "changedate",
+    "isrunning",
+    "downtime",
+    "code",
+    "operational",
+    "wonum",
+    "location",
+)
+
+
+async def fetch_downtime_histories(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    assetnums: Iterable[str] = (),
+    locations: Iterable[str] = (),
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """Histórico completo de paradas dos ativos com mudança de estado no período.
+
+    1) Mudanças no período (pelo changedate) dão os ativos.
+    2) O histórico de cada ativo vem por assetnums (sem datas), em lotes de 50 por
+       site: a queda antes de date_from de uma parada que termina no período só vem
+       assim. Ativo parado o período todo, sem mudança no período, não aparece.
+    """
+    filters = {"siteid": list(config.sites), "location": list(locations)}
+    if assetnums := list(assetnums):
+        filters["assetnums"] = assetnums
+    check_filters(filters)
+    seen: set[tuple] = set()
+    changes: list[dict] = []
+    for window_from, window_to in date_windows(date_from, date_to):
+        arguments = {
+            "date_from": window_from.isoformat(),
+            "date_to": window_to.isoformat(),
+            "fields": "assetnum,siteid,assetstatusid",
+        }
+        arguments.update(joined(filters))
+        await fetch_all_pages(
+            call_tool,
+            DOWNTIME_TOOL,
+            arguments,
+            ("siteid", "assetstatusid"),
+            seen,
+            changes,
+            max_records,
+        )
+
+    seen = set()
+    history: list[dict] = []
+    pairs = ((item.get("siteid"), item.get("assetnum")) for item in changes)
+    for siteid, asset_chunk in wonum_batches(pairs):
+        arguments = {
+            "siteid": siteid,
+            "assetnums": ",".join(asset_chunk),
+            "fields": ",".join(DOWNTIME_FIELDS),
+        }
+        await fetch_all_pages(
+            call_tool,
+            DOWNTIME_TOOL,
+            arguments,
+            ("siteid", "assetstatusid"),
+            seen,
+            history,
+            max_records,
+        )
+    return history
 
 
 MATERIAL_TOOL = "script_querymatusage"

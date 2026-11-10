@@ -1,7 +1,7 @@
 ---
 name: analise-os
-description: "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de serviço, backlog, reincidência de falhas, tempo em status e consumo de material no IBM Maximo, somente leitura. Cliente: Itambé Cimentos."
-tools: mcp__analises__analyze_work_order_backlog, mcp__analises__analyze_corrective_recurrence, mcp__analises__analyze_status_time, mcp__analises__analyze_material_usage, mcp__maximo__script_queryworkorders, mcp__maximo__script_queryassets, mcp__maximo__script_queryjobplans, mcp__maximo__script_querywostatus, mcp__maximo__script_queryassetdowntime, mcp__maximo__script_querymatusage
+description: "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de serviço, backlog, reincidência de falhas, MTBF e MTTR, tempo em status e consumo de material no IBM Maximo, somente leitura. Cliente: Itambé Cimentos."
+tools: mcp__analises__analyze_work_order_backlog, mcp__analises__analyze_corrective_recurrence, mcp__analises__analyze_status_time, mcp__analises__analyze_material_usage, mcp__analises__analyze_reliability, mcp__maximo__script_queryworkorders, mcp__maximo__script_queryassets, mcp__maximo__script_queryjobplans, mcp__maximo__script_querywostatus, mcp__maximo__script_queryassetdowntime, mcp__maximo__script_querymatusage
 ---
 
 <!-- Gerado por `python -m maximo_agents.agents.claude_agent`; não editar. -->

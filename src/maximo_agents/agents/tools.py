@@ -22,11 +22,13 @@ from maximo_agents.analysis.fetch import (
     fetch_backlog_work_orders,
     fetch_completed_histories,
     fetch_corrective_work_orders,
+    fetch_downtime_histories,
     fetch_material_usage,
     fetch_work_orders_by_number,
 )
 from maximo_agents.analysis.material import material_report
 from maximo_agents.analysis.recurrence import recurrence_report
+from maximo_agents.analysis.reliability import reliability_report
 from maximo_agents.analysis.status_time import status_time_report
 from maximo_agents.mcp.allowlist import (
     AGENT_TOOLS,
@@ -183,6 +185,22 @@ async def _material(ctx: ToolContext, arguments: dict) -> dict:
     return material_report(transactions, work_orders, ctx.config, date_from, date_to, top)
 
 
+async def _reliability(ctx: ToolContext, arguments: dict) -> dict:
+    date_from, date_to = _period(arguments, ctx, 365, 730)
+    assetnums = _codes(arguments, "assetnum")
+    locations = _codes(arguments, "location")
+    top = _int(arguments, "top", 20, 1, MAX_TOP)
+    work_orders = await fetch_corrective_work_orders(
+        ctx.call_tool, ctx.config, date_from, date_to, assetnums=assetnums, locations=locations
+    )
+    changes = await fetch_downtime_histories(
+        ctx.call_tool, ctx.config, date_from, date_to, assetnums, locations
+    )
+    return reliability_report(
+        work_orders, changes, ctx.config, date_from, date_to, assetnums, locations, top
+    )
+
+
 ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
     tool.name: tool
     for tool in (
@@ -274,6 +292,45 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
             ),
             input_schema=_schema(days=_days(365, 730), date_to=DATE_TO, top=TOP),
             run=_material,
+        ),
+        AnalysisTool(
+            name="analyze_reliability",
+            description=(
+                "MTBF and MTTR in a period, on two separate bases that must never be mixed "
+                "or averaged together; always say which basis a number comes from. "
+                "'work_orders' basis: a failure is a corrective work order (the client's "
+                "corrective work types, by reportdate, cancelled ones excluded); repair "
+                "time is actstart to actfinish in hours, only for work orders with both "
+                "dates (counts without them are reported). Per asset and per location: "
+                "failures, MTBF in days (period days / failures, calendar time) and MTTR "
+                "in hours (mean repair time), ranked by failures and by repair hours. "
+                "Repair time is calendar time, waiting included: a few work orders "
+                "finished weeks after the start pull the mean far above the median, so "
+                "always give median_repair_hours (or mttr_hours.median) next to the mean. "
+                "'downtime' basis: asset downtime records (asset went down until it came "
+                "back up, by dates): stops started in the period, downtime hours inside "
+                "the period, MTTR in hours (mean length of stops started and ended in the "
+                "period), and per asset MTBF in days ((period hours - downtime hours) / "
+                "stops) and availability_pct. If the downtime basis has no stops, the site "
+                "may not record downtime in Maximo: say so, do not conclude the assets "
+                "never stopped. MTBF and availability exist only per object, never for "
+                "the whole plant. assetnum and location filter by exact code (child "
+                "assets and locations are not included)." + COMMON_NOTE
+            ),
+            input_schema=_schema(
+                days=_days(365, 730),
+                date_to=DATE_TO,
+                assetnum={
+                    "type": "string",
+                    "description": "Asset numbers, comma-separated, max 20. Default: all.",
+                },
+                location={
+                    "type": "string",
+                    "description": "Location codes, comma-separated, max 20. Default: all.",
+                },
+                top=TOP,
+            ),
+            run=_reliability,
         ),
     )
 }

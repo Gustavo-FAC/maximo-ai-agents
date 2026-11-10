@@ -7,7 +7,12 @@ import pytest
 from maximo_agents.agents.recipes import WORK_ORDER_ANALYSIS
 from maximo_agents.agents.tools import ANALYSIS_TOOLS, MAX_RESULT_CHARS, Toolbox
 from maximo_agents.analysis.config import load_client_config
-from maximo_agents.analysis.fetch import MATERIAL_TOOL, WORK_ORDER_TOOL, MaximoToolError
+from maximo_agents.analysis.fetch import (
+    DOWNTIME_TOOL,
+    MATERIAL_TOOL,
+    WORK_ORDER_TOOL,
+    MaximoToolError,
+)
 from maximo_agents.mcp.allowlist import AGENT_TOOLS
 
 CONFIG = load_client_config("itambe")
@@ -83,6 +88,43 @@ def test_material_analysis_runs_with_period():
     material_args = maximo.calls[0][1]
     assert (material_args["date_from"], material_args["date_to"]) == ("2026-10-02", "2026-10-31")
     assert maximo.calls[1][1]["wonums"] == "100"
+
+
+def test_reliability_analysis_for_one_asset():
+    maximo = FakeMaximo(
+        {
+            WORK_ORDER_TOOL: [
+                {
+                    "wonum": "1",
+                    "siteid": "FABRICA",
+                    "status": "CONCL",
+                    "worktype": "CO",
+                    "assetnum": "MOI0001",
+                    "location": "L1",
+                    "reportdate": "2026-10-01T08:00:00",
+                    "actstart": "2026-10-01T09:00:00",
+                    "actfinish": "2026-10-01T12:00:00",
+                }
+            ],
+            DOWNTIME_TOOL: [],
+        }
+    )
+    result = run(
+        toolbox(maximo).run(
+            "analyze_reliability", {"assetnum": "MOI0001", "days": 31, "date_to": "2026-10-31"}
+        )
+    )
+    asset = result["work_orders"]["by_asset"]["top_by_failures"][0]
+    assert (asset["assetnum"], asset["mtbf_days"], asset["mttr_hours"]) == ("MOI0001", 31.0, 3.0)
+    assert result["downtime"]["stops"] == 0
+    assert result["assetnums"] == ["MOI0001"]
+    calls = {name: args for name, args in maximo.calls}
+    assert calls[WORK_ORDER_TOOL]["assetnum"] == "MOI0001"
+    assert calls[DOWNTIME_TOOL]["assetnums"] == "MOI0001"
+    assert calls[DOWNTIME_TOOL]["date_from"] == "2026-10-01"
+    too_many = ",".join(f"A{n}" for n in range(21))
+    error = run(toolbox(maximo).run("analyze_reliability", {"location": too_many}))["error"]
+    assert error["code"] == "invalid_argument"
 
 
 def test_analysis_defaults_and_numbers_as_text():

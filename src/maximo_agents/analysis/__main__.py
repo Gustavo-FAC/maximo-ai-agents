@@ -8,6 +8,8 @@ uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of A
     [--days 90] [--worktype CO,EM] [--top 20] [--json]
 uv run python -m maximo_agents.analysis material [--client itambe] [--as-of AAAA-MM-DD]
     [--days 365] [--top 20] [--json]
+uv run python -m maximo_agents.analysis reliability [--client itambe] [--as-of AAAA-MM-DD]
+    [--days 365] [--asset MOI0001] [--location L1] [--top 20] [--json]
 """
 
 import argparse
@@ -25,6 +27,7 @@ from maximo_agents.analysis.fetch import (
     fetch_backlog_work_orders,
     fetch_completed_histories,
     fetch_corrective_work_orders,
+    fetch_downtime_histories,
     fetch_material_usage,
     fetch_work_orders_by_number,
 )
@@ -35,6 +38,7 @@ from maximo_agents.analysis.recurrence import (
     format_recurrence_text,
     recurrence_report,
 )
+from maximo_agents.analysis.reliability import format_reliability_text, reliability_report
 from maximo_agents.analysis.status_time import format_status_time_text, status_time_report
 from maximo_agents.config.settings import get_settings
 from maximo_agents.mcp.session import open_maximo_session
@@ -72,7 +76,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     common(material)
     material.add_argument("--days", type=int, default=365, help="Período até --as-of")
     material.add_argument("--top", type=int, default=DEFAULT_TOP)
+
+    reliability = sub.add_parser("reliability", help="MTBF e MTTR (OS corretivas e paradas)")
+    common(reliability)
+    reliability.add_argument("--days", type=int, default=365, help="Período até --as-of")
+    reliability.add_argument("--asset", default="", help="Ativos separados por vírgula")
+    reliability.add_argument("--location", default="", help="Locations separadas por vírgula")
+    reliability.add_argument("--top", type=int, default=DEFAULT_TOP)
     return parser.parse_args(argv)
+
+
+def split_codes(text: str) -> list[str]:
+    return [code.strip() for code in text.split(",") if code.strip()]
 
 
 def print_report(args, report, text, records, elapsed, unit="OS") -> None:
@@ -120,7 +135,7 @@ async def run_status_time(args: argparse.Namespace) -> int:
     config = load_client_config(args.client or settings.tenant_id)
     date_to = args.as_of or datetime.date.today()
     date_from = date_to - datetime.timedelta(days=args.days - 1)
-    worktypes = [w.strip() for w in args.worktype.split(",") if w.strip()]
+    worktypes = split_codes(args.worktype)
     start = time.perf_counter()
     async with open_maximo_session(settings) as call_tool:
         changes = await fetch_completed_histories(
@@ -154,6 +169,37 @@ async def run_material(args: argparse.Namespace) -> int:
     return 0
 
 
+async def run_reliability(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    date_to = args.as_of or datetime.date.today()
+    date_from = date_to - datetime.timedelta(days=args.days - 1)
+    assetnums, locations = split_codes(args.asset), split_codes(args.location)
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        work_orders = await fetch_corrective_work_orders(
+            call_tool,
+            config,
+            date_from,
+            date_to,
+            max_records=args.max_records,
+            assetnums=assetnums,
+            locations=locations,
+        )
+        changes = await fetch_downtime_histories(
+            call_tool, config, date_from, date_to, assetnums, locations, args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = reliability_report(
+        work_orders, changes, config, date_from, date_to, assetnums, locations, args.top
+    )
+    text = format_reliability_text(report)
+    print_report(args, report, text, work_orders, elapsed)
+    if not args.json:
+        print(f"({len(changes)} mudanças de estado de ativo lidas do Maximo)")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     # Saída em UTF-8 no console do Windows (acentos das descrições).
     if hasattr(sys.stdout, "reconfigure"):
@@ -164,6 +210,7 @@ def main(argv: list[str] | None = None) -> int:
         "recurrence": run_recurrence,
         "status-time": run_status_time,
         "material": run_material,
+        "reliability": run_reliability,
     }
     return asyncio.run(runners[args.analysis](args))
 

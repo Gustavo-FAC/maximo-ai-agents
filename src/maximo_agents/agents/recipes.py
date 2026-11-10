@@ -27,8 +27,8 @@ WORK_ORDER_ANALYSIS = Recipe(
     name="analise-os",
     description=(
         "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de "
-        "serviço, backlog, reincidência de falhas, tempo em status e consumo de material "
-        "no IBM Maximo, somente leitura."
+        "serviço, backlog, reincidência de falhas, MTBF e MTTR, tempo em status e consumo "
+        "de material no IBM Maximo, somente leitura."
     ),
     instructions=f"""\
 Você é o agente de Análise de OS de uma plataforma para gerentes de manutenção. Você
@@ -83,6 +83,7 @@ Como responder:
         "analyze_corrective_recurrence",
         "analyze_status_time",
         "analyze_material_usage",
+        "analyze_reliability",
         *AGENT_TOOLS,
     ),
 )

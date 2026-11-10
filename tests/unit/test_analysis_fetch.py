@@ -5,6 +5,7 @@ import pytest
 
 from maximo_agents.analysis.config import parse_client_config
 from maximo_agents.analysis.fetch import (
+    DOWNTIME_TOOL,
     MATERIAL_TOOL,
     PAGE_SIZE,
     STATUS_TOOL,
@@ -17,6 +18,7 @@ from maximo_agents.analysis.fetch import (
     fetch_backlog_work_orders,
     fetch_completed_histories,
     fetch_corrective_work_orders,
+    fetch_downtime_histories,
     fetch_material_usage,
     fetch_work_orders,
     fetch_work_orders_by_number,
@@ -194,6 +196,76 @@ def test_corrective_fetch_filters_worktypes_and_sites():
     )
     with pytest.raises(ValueError):
         run(fetch_corrective_work_orders(tool, without, D(2026, 1, 1), D(2026, 1, 2)))
+
+
+def test_corrective_fetch_by_asset_and_location():
+    tool = FakeTool()
+    run(
+        fetch_corrective_work_orders(
+            tool, CONFIG, D(2026, 1, 1), D(2026, 1, 31), assetnums=["MOI0001"], locations=["L1"]
+        )
+    )
+    args = tool.calls[0][1]
+    assert (args["assetnum"], args["location"]) == ("MOI0001", "L1")
+    assert "actstart" in args["fields"] and "actfinish" in args["fields"]
+
+
+class FakeDowntimeTool:
+    """Com datas: mudanças do período. Com assetnums: histórico de cada ativo pedido."""
+
+    def __init__(self, period, histories):
+        self.period = period
+        self.histories = histories
+        self.calls = []
+
+    async def __call__(self, name, arguments):
+        self.calls.append((name, arguments))
+        if "assetnums" in arguments and "date_from" not in arguments:
+            items = [
+                item
+                for assetnum in arguments["assetnums"].split(",")
+                for item in self.histories.get((arguments["siteid"], assetnum), [])
+            ]
+            return {"items": items, "has_more": False}
+        return {"items": self.period, "has_more": False}
+
+
+def test_downtime_histories_by_asset_in_chunks_of_50():
+    period = [{"siteid": "FABRICA", "assetnum": str(n), "assetstatusid": n} for n in range(51)]
+    period.append({"siteid": "MINERACAO", "assetnum": "1", "assetstatusid": 99})
+    histories = {
+        ("FABRICA", "1"): [
+            {"siteid": "FABRICA", "assetnum": "1", "assetstatusid": 1000},  # queda antiga
+            {"siteid": "FABRICA", "assetnum": "1", "assetstatusid": 1},
+        ],
+        ("MINERACAO", "1"): [{"siteid": "MINERACAO", "assetnum": "1", "assetstatusid": 99}],
+    }
+    tool = FakeDowntimeTool(period, histories)
+    history = run(
+        fetch_downtime_histories(tool, CONFIG, D(2025, 11, 7), D(2026, 11, 6), locations=["L1"])
+    )
+    assert len(history) == 3
+    assert {name for name, _ in tool.calls} == {DOWNTIME_TOOL}
+    first = tool.calls[0][1]
+    assert (first["date_from"], first["date_to"]) == ("2025-11-07", "2026-11-06")
+    assert first["siteid"] == "FABRICA,MINERACAO" and first["location"] == "L1"
+    batches = [args for _, args in tool.calls if "date_from" not in args]
+    assert [(a["siteid"], len(a["assetnums"].split(","))) for a in batches] == [
+        ("FABRICA", 50),
+        ("FABRICA", 1),
+        ("MINERACAO", 1),
+    ]
+    assert all("location" not in a for a in batches)  # histórico inteiro do ativo
+    assert "isrunning" in batches[0]["fields"] and "downtime" in batches[0]["fields"]
+
+
+def test_downtime_histories_without_changes_and_with_assets():
+    tool = FakeDowntimeTool([], {})
+    assert run(fetch_downtime_histories(tool, CONFIG, D(2026, 1, 1), D(2026, 1, 2))) == []
+    assert len(tool.calls) == 1
+    tool = FakeDowntimeTool([], {})
+    run(fetch_downtime_histories(tool, CONFIG, D(2026, 1, 1), D(2026, 1, 2), assetnums=["A"]))
+    assert tool.calls[0][1]["assetnums"] == "A" and "date_from" in tool.calls[0][1]
 
 
 class FakeStatusTool:
