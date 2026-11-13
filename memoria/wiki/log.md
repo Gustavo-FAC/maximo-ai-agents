@@ -519,3 +519,10 @@ Usuário pediu o roteador antes dos evals. `agents/router.py` (grafo LangGraph, 
 para os especialistas, resposta direta sem dados, histórico limpo) e receita
 `GENERAL_ASSISTANT` em `recipes.py`. 6 testes novos (373 no total). Página
 [[assistente-geral-roteador]]; [[estado-do-projeto]] atualizado.
+
+## [2026-11-13] test | Assistente Geral simulado no Claude Code
+Sem chave de API: sessão principal como roteador (prompt real), `handoff` = subagente
+`analise-os`. 9 perguntas: 6 diretas (cumprimento, conceito, escrita, fora do escopo,
+ambígua, injection) e 3 com dados (reincidência, pedido misto, continuação de MTTR),
+números conferidos com a CLI. Histórico limpo validado. Tabela em
+[[assistente-geral-roteador]].

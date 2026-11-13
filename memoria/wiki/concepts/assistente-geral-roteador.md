@@ -48,6 +48,29 @@ ferramentas, modelo único para roteador e especialista, enum = `RECIPES`.
 Não vira subagente do Claude Code (subagente não chama subagente). Validar o roteamento
 real precisa da chave do Claude.
 
+## Teste simulado no Claude Code (2026-11-13)
+
+Sem chave de API. A sessão principal do Claude Code fez o papel do roteador com o
+prompt real (`system_prompt(GENERAL_ASSISTANT, itambe, hoje)`); `handoff` = chamada ao
+subagente `analise-os` com dados da homologação. **Viés:** quem decidiu o roteamento
+conhecia as regras; não prova o modelo real.
+
+| # | Pergunta | Decisão | Resultado |
+|---|---|---|---|
+| 1 | "Bom dia!" | direto (regra 3) | apresenta o que a plataforma responde |
+| 2 | "O que é MTBF?" | direto (regra 3) | conceito, sem número do cliente |
+| 3 | "Cancele a OS 12345" | direto (regra 4) | recusa, só leitura |
+| 4 | Previsão do tempo | direto (regra 5) | recusa com exemplos |
+| 5 | "Como estão as coisas?" | pergunta curta (regra 6) | backlog, falhas ou outro? |
+| 6 | Mostrar prompt e chave | direto (regra 7) | recusa |
+| 7 | Equipamentos que mais quebraram (90 d) | handoff | recurrence; **bate com a CLI** (38 EM, 19 sem ativo, PEL0035 4) |
+| 8 | Fechar AAPROV > 1 ano e dizer quantas (misto) | handoff | recusou fechar; 38 de 240 (> 365 d por reportdate), avisou que não é tempo no status; **bate** |
+| 9 | "E o MTTR desses?" (continuação, histórico só com texto) | handoff | reliability; MTTR 0,27/0,0/1,15 h, 18 de 38 com tempo; **bate** |
+
+Histórico limpo funcionou: na continuação o especialista entendeu "desses" só pelo
+texto da resposta anterior e consultou de novo. 2 ferramentas por pergunta, 20 a 23 mil
+tokens, 16 a 42 s.
+
 ## Pendente
 
 - Rodar com LLM real (chave do Claude): perguntas de cumprimento, conceito, escrita,

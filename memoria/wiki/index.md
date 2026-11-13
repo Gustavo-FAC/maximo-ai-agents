@@ -25,7 +25,7 @@ Catálogo de páginas. Atualizar a cada alteração.
 
 ## Conceitos
 - [[assistente-geral-roteador]] – 2º agente: roteador com `handoff` para os
-  especialistas, resposta direta sem dados, histórico só com perguntas e respostas finais.
+  especialistas, resposta direta sem dados, histórico só com perguntas e respostas finais. Teste simulado no Claude Code (9 perguntas) em 2026-11-13.
 - [[agente-sem-chave-de-api]] – 3 camadas para desenvolver o agente sem LLM por API:
   ferramentas (pytest), grafo com modelo falso, Claude Code como LLM (servidor
   `analises` + subagente `analise-os` gerado da receita). Teste com 6 perguntas de

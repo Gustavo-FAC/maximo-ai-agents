@@ -20,7 +20,7 @@ Ler no início de cada sessão. Atualizar no fim.
    período certos, números da ferramenta, recusas 36-38). Roda sem chave.
 2. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
 3. ~~Assistente Geral (roteador)~~: feito em 2026-11-13 ([[assistente-geral-roteador]]),
-   testado com modelo falso; falta rodar com LLM real.
+   testado com modelo falso e simulado no Claude Code (9 perguntas, números batem); falta rodar com LLM real.
 4. Plataforma SaaS: `api/`, `auth/`, `audit/` só com `__init__.py`.
    - `auth/`: convite, Argon2id, MFA TOTP, sessão no servidor (cookie
      HttpOnly/Secure/SameSite), limite de tentativas.
