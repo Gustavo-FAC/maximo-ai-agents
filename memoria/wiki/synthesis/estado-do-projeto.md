@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-10
+updated: 2026-11-13
 ---
 
 # Estado do projeto
@@ -19,7 +19,8 @@ Ler no início de cada sessão. Atualizar no fim.
 1. `tests/evals/` com as perguntas 33-40 de [[prompts-de-teste]] (ferramenta e
    período certos, números da ferramenta, recusas 36-38). Roda sem chave.
 2. CLI `call_tool` no repo (sondas do scratchpad somem a cada sessão).
-3. Assistente Geral (roteador): 2º agente da arquitetura, não iniciado.
+3. ~~Assistente Geral (roteador)~~: feito em 2026-11-13 ([[assistente-geral-roteador]]),
+   testado com modelo falso; falta rodar com LLM real.
 4. Plataforma SaaS: `api/`, `auth/`, `audit/` só com `__init__.py`.
    - `auth/`: convite, Argon2id, MFA TOTP, sessão no servidor (cookie
      HttpOnly/Secure/SameSite), limite de tentativas.
@@ -36,7 +37,7 @@ Ler no início de cada sessão. Atualizar no fim.
 - Consultor: escala de prioridade; significado de tipos e status; `actstart` e
   horas apontadas no MTTR; guia da Fase 1 (perguntas reais, novos scripts, evals).
 
-**Recomendação dada:** evals (1) primeiro; depois plataforma (4) começando por
+**Recomendação dada:** evals (1) primeiro (usuário preferiu o roteador em 2026-11-13); depois plataforma (4) começando por
 `auth/` + multi-tenant. Usuário ainda não escolheu.
 
 ## Hoje (2026-11-10): 5ª análise, MTBF e MTTR

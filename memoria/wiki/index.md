@@ -24,6 +24,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   descrição de parâmetro.
 
 ## Conceitos
+- [[assistente-geral-roteador]] – 2º agente: roteador com `handoff` para os
+  especialistas, resposta direta sem dados, histórico só com perguntas e respostas finais.
 - [[agente-sem-chave-de-api]] – 3 camadas para desenvolver o agente sem LLM por API:
   ferramentas (pytest), grafo com modelo falso, Claude Code como LLM (servidor
   `analises` + subagente `analise-os` gerado da receita). Teste com 6 perguntas de

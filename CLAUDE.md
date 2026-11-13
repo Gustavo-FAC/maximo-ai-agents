@@ -97,7 +97,11 @@ Cliente piloto: **Itambé Cimentos**.
   servidor MCP local `analises` (`.mcp.json`) e subagente gerado
   `.claude/agents/analise-os.md` (`uv run python -m maximo_agents.agents.claude_agent`
   após mudar a receita). Ver `memoria/wiki/concepts/agente-sem-chave-de-api.md`.
-- 367 testes unitários.
+- 2º agente, Assistente Geral (roteador), desde 2026-11-13: `agents/router.py`,
+  `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
+  e respostas finais. Testado com modelo falso; falta LLM real. Ver
+  `memoria/wiki/concepts/assistente-geral-roteador.md`.
+- 373 testes unitários.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

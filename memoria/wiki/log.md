@@ -513,3 +513,9 @@ CLI `call_tool`, Assistente Geral, plataforma SaaS: auth, multi-tenant, cofre, a
 portal, audit) e bloqueado (chaves e Log Level com o usuário; prioridade, tipos,
 status, MTTR e guia da Fase 1 com o consultor). Recomendação: evals, depois auth +
 multi-tenant.
+
+## [2026-11-13] code | Assistente Geral (roteador)
+Usuário pediu o roteador antes dos evals. `agents/router.py` (grafo LangGraph, `handoff`
+para os especialistas, resposta direta sem dados, histórico limpo) e receita
+`GENERAL_ASSISTANT` em `recipes.py`. 6 testes novos (373 no total). Página
+[[assistente-geral-roteador]]; [[estado-do-projeto]] atualizado.
