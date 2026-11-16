@@ -9,9 +9,10 @@
     "returned": {"type": "integer", "description": "Items returned in this page."},
     "has_more": {"type": "boolean", "description": "True if there are more pages after this one."},
     "filters": {"type": "object", "description": "Normalized filters applied, by parameter name."},
+    "specs_truncated": {"type": "boolean", "description": "Present only with include_specs. True if the specifications of this page exceeded the limit: later assets in the page have empty or partial specs; use a smaller page_size."},
     "items": {
       "type": "array",
-      "description": "Assets in this page, ordered by siteid and assetnum. Only the requested fields are present; dates are yyyy-MM-ddTHH:mm:ss in server time.",
+      "description": "Assets in this page, ordered by siteid and assetnum. Only the requested fields are present; dates are yyyy-MM-ddTHH:mm:ss in server time. With include_specs, each item has 'specs' (attribute, description, section, value, unit; value null when not filled in).",
       "items": {"type": "object"}
     },
     "error": {

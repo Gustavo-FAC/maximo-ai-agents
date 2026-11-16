@@ -1,4 +1,5 @@
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
@@ -206,6 +207,15 @@ def test_spec_item_picks_filled_value():
     assert qa.spec_item({"assetattrid": "FABR", "alnvalue": "BBC"}, None)["value"] == "BBC"
     assert qa.spec_item({"assetattrid": "CARC", "tablevalue": "315M"}, None)["value"] == "315M"
     assert qa.spec_item({"assetattrid": "NUMSERIE"}, None)["value"] is None  # not filled in
+
+
+def test_response_keys_declared_in_response_schema():
+    # The MCP Server drops keys missing from the Response Schema (specs_truncated was
+    # lost in homologation, 2026-11-16).
+    schema = json.loads((SCRIPT.parent / "response_schema.json").read_text(encoding="utf-8"))
+    declared = set(schema["properties"])
+    for q in (query(), query(include_specs="Y")):
+        assert set(qa.build_response(q, 1, [], True)) <= declared
 
 
 def test_attach_specs_and_response():
