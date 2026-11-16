@@ -60,7 +60,8 @@ QUERY_WORK_ORDERS = ToolSpec(
         "priority": "Priority integers, comma-separated, max 20.",
         "assetnum": "Asset numbers, comma-separated, max 20.",
         "location": "Location codes, comma-separated, max 20.",
-        "persongroup": "Crew/person group codes, comma-separated, max 20.",
+        "persongroup": "Person group (work group) codes, comma-separated, max 20.",
+        "crewid": "Crew IDs (work order crew/team, CREWID), comma-separated, max 20.",
         "worktype": "Work type codes, comma-separated, max 20.",
         "text": (
             "Words that must all appear in the work order description (case-insensitive, "
@@ -69,8 +70,8 @@ QUERY_WORK_ORDERS = ToolSpec(
         ),
         "fields": (
             "Fields to return, comma-separated. Default: wonum, siteid, description, "
-            "status, worktype, wopriority, assetnum, location, persongroup, reportdate, "
-            "actstart, actfinish. Also accepted: statusdate, lead, owner, reportedby, "
+            "status, worktype, wopriority, assetnum, location, persongroup, crewid, "
+            "reportdate, actstart, actfinish. Also accepted: statusdate, lead, owner, reportedby, "
             "targstartdate, targcompdate, schedstart, schedfinish, changedate, estdur, "
             "actlabhrs, actlabcost, actmatcost, acttotalcost, failurecode, problemcode, "
             "parent. wonum and siteid are always included."

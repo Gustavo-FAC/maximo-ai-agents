@@ -43,10 +43,11 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `priority` | não | Priority integers, comma-separated (max 20). |
 | `assetnum` | não | Asset numbers, comma-separated (max 20). |
 | `location` | não | Location codes, comma-separated (max 20). |
-| `persongroup` | não | Crew/person group codes, comma-separated (max 20). |
+| `persongroup` | não | Person group (work group) codes, comma-separated (max 20). |
+| `crewid` | não | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
 | `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
-| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, reportdate, actstart, actfinish. wonum and siteid are always included. |
+| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. |
 | `page` | não | Page number, starting at 1 (default 1). |
 | `page_size` | não | Items per page, 1 to 500 (default 100). |
 
@@ -92,7 +93,7 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
 
 - [x] Toda variável vira parâmetro; nenhum parâmetro é obrigatório no schema;
       tudo `string`; Description (≤100) vira a descrição da ferramenta. (OAS 2026-10-22)
-- [ ] Ferramenta aparece no MCP com 14 parâmetros, sem caracteres invisíveis.
+- [ ] Ferramenta aparece no MCP com 16 parâmetros, sem caracteres invisíveis.
 - [ ] Parâmetro omitido usa o padrão `*` (ou o schema obriga todos?).
 - [ ] Origem dos parâmetros (log `param sources`: variable, body ou query).
 - [ ] `request.getUserInfo()` existe no caminho MCP e é o dono da `apikey`.
@@ -106,5 +107,7 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
 - [ ] Usuário sem permissão READ em WOTRACK recebe `not_authorized`.
 - [ ] Página profunda (ex.: página 50 de 100) com tempo aceitável.
 - [ ] Valores com acento (ex.: equipe) funcionam.
+- [ ] `crewid` (2026-11-16, pedido da Itambé): filtro `ELETRICA,INSTRUM,PCM-ELE` traz
+      OS dessas equipes; campo `crewid` volta preenchido no padrão de `fields`.
 - [ ] `text` com palavra de descrição conhecida acha a OS; `text` = `a` dá
       `invalid_text`; `text` sem datas dá `required`.

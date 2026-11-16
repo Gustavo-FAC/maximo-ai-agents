@@ -74,7 +74,7 @@ Clicar **Next**.
 
 ### Passo 2 do wizard – variáveis
 
-Criar **15 linhas** (New Row). Em todas:
+Criar **16 linhas** (New Row). Em todas:
 
 - **Variable Type:** `IN`
 - **Binding Type:** `LITERAL`
@@ -95,7 +95,8 @@ resto).
 | `priority` | Priority integers, comma-separated (max 20). |
 | `assetnum` | Asset numbers, comma-separated (max 20). |
 | `location` | Location codes, comma-separated (max 20). |
-| `persongroup` | Crew/person group codes, comma-separated (max 20). |
+| `persongroup` | Person group (work group) codes, comma-separated (max 20). |
+| `crewid` | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
 | `text` | Words that must all appear in the description (max 5 words, 100 chars). |
 | `fields` | Fields to return, comma-separated. wonum and siteid always included. |
@@ -153,7 +154,7 @@ Na resposta, com Ctrl+F:
 - [ ] `script_queryworkorders` aparece.
 - [ ] **`u200b` não aparece em lugar nenhum.** Se aparecer, voltar ao passo 1.
 - [ ] `authapp` e `authsigoption` **não** aparecem.
-- [ ] 15 parâmetros no `requestBody` (com `text`).
+- [ ] 16 parâmetros no `requestBody` (com `text` e `crewid`).
 
 Me enviar o trecho de `/script_queryworkorders` se algo estiver diferente.
 

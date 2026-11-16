@@ -452,6 +452,7 @@ FIELD_TYPES = {
     "assetnum": "str",
     "location": "str",
     "persongroup": "str",
+    "crewid": "str",
     "lead": "str",
     "owner": "str",
     "reportedby": "str",
@@ -482,6 +483,7 @@ DEFAULT_FIELDS = (
     "assetnum",
     "location",
     "persongroup",
+    "crewid",
     "reportdate",
     "actstart",
     "actfinish",
@@ -497,6 +499,7 @@ LIST_FILTERS = (
     ("assetnum", "assetnum", "str", MAX_LIST_VALUES),
     ("location", "location", "str", MAX_LIST_VALUES),
     ("persongroup", "persongroup", "str", MAX_LIST_VALUES),
+    ("crewid", "crewid", "str", MAX_LIST_VALUES),
     ("worktype", "worktype", "str", MAX_LIST_VALUES),
 )
 
@@ -511,6 +514,7 @@ PARAM_NAMES = (
     "assetnum",
     "location",
     "persongroup",
+    "crewid",
     "worktype",
     "text",
     "fields",

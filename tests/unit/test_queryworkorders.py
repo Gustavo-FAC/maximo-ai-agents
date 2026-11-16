@@ -154,6 +154,17 @@ def test_injection_stays_in_binds():
     assert ("WORKORDER", "ASSETNUM", payload.upper()) in q["binds"]
 
 
+def test_crewid_filter_and_field():
+    # Itambé feedback (2026-11-16): crews live in CREWID; persongroup is empty.
+    q = query(crewid="eletrica, INSTRUM,pcm-ele,eletrica")
+    assert q["filters"] == {"crewid": ["ELETRICA", "INSTRUM", "PCM-ELE"]}
+    assert "crewid in (:3, :4, :5)" in q["where"]
+    assert ("WORKORDER", "CREWID", "PCM-ELE") in q["binds"]
+    assert "ELETRICA" not in q["where"]
+    assert "crewid" in q["fields"]
+    assert query(fields="crewid")["fields"] == ["wonum", "siteid", "crewid"]
+
+
 def test_accented_values():
     q = query(persongroup="mecânica,elétrica")
     assert q["filters"]["persongroup"] == ["MECÂNICA", "ELÉTRICA"]
