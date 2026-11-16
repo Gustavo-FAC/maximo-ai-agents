@@ -41,6 +41,7 @@ def test_itambe_status_classes():
     assert config.class_of("AMATER") == "open"
     assert config.corrective_worktypes == ("CO", "EM")
     assert config.currency == "BRL"
+    assert config.crew_field == "crewid"  # persongroup vazio na Itambé
 
 
 def test_class_from_internal_value_or_explicit():
@@ -49,6 +50,7 @@ def test_class_from_internal_value_or_explicit():
     assert config.name == "Teste"
     assert config.corrective_worktypes == ()  # opcional
     assert config.currency is None  # opcional
+    assert config.crew_field == "persongroup"  # padrão
 
 
 @pytest.mark.parametrize(
@@ -67,6 +69,8 @@ def test_class_from_internal_value_or_explicit():
         {"currency": "brl"},
         {"currency": "REAL"},
         {"currency": 986},
+        {"crew_field": "ownergroup"},
+        {"crew_field": "CREWID"},
     ],
 )
 def test_invalid_config(change):

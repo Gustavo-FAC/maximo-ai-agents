@@ -166,6 +166,7 @@ def test_backlog_fetches_only_open_statuses_with_sites():
     assert args["status"] == "APROG,EMAND"  # sem POSEXEC nem CONCL
     assert args["siteid"] == "FABRICA,MINERACAO"
     assert args["date_from"] == "2026-01-01"
+    assert args["fields"].split(",")[-1] == "persongroup"  # crew_field padrão
     # Sem since: começa no history_start.
     tool = FakeTool()
     run(fetch_backlog_work_orders(tool, CONFIG, D(2024, 2, 1)))

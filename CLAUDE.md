@@ -79,7 +79,8 @@ Cliente piloto: **Itambé Cimentos**.
 - Gateway de LLM (LangChain) em `llm/gateway.py` desde 2026-11-04.
 - 1ª análise (backlog de OS) em `analysis/` desde 2026-11-06: configuração por
   cliente (`analysis/clients/itambe.toml`), busca pelo MCP (`mcp/session.py`), contas
-  em pandas, CLI `uv run python -m maximo_agents.analysis backlog`.
+  em pandas, CLI `uv run python -m maximo_agents.analysis backlog`. Equipe pelo
+  `crew_field` do cliente (Itambé: `crewid`) desde 2026-11-16.
 - 2ª análise (reincidência de corretivas, por ativo e location) desde 2026-11-06:
   CLI `... analysis recurrence`; tipos corretivos por cliente (Itambé: CO, EM).
 - 3ª análise (tempo em status das OS concluídas no período, histórico completo por
@@ -101,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 374 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 376 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.

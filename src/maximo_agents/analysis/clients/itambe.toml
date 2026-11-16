@@ -13,6 +13,9 @@ history_start = "2006-01-01"
 corrective_worktypes = ["CO", "EM"]
 # Moeda dos custos (ISO 4217); o agente não deduz a moeda.
 currency = "BRL"
+# Equipe da OS: Itambé usa CREWID (ELETRICA, INSTRUM, PCM-ELE...); persongroup vazio
+# (feedback do cliente, 2026-11-16).
+crew_field = "crewid"
 
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação

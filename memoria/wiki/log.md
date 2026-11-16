@@ -540,3 +540,9 @@ filtro recusado pelo pod (schema antigo, 15 parâmetros) até o reload. Depois: 
 parâmetros; 3 equipes = 188 OS (142/32/14), minúsculo igual, inexistente 0, 21 valores
 `too_many_values`, `text=LUBRIFICAÇÃO` + equipes = 9. [[estado-do-projeto]],
 [[ferramentas-maximo]].
+
+## [2026-11-16] code | Backlog agrupa equipe por `crew_field`
+`crew_field` por cliente (`persongroup` padrão, Itambé `crewid`); relatório `by_crew` +
+`crew_field`; descrição de `analyze_work_order_backlog` ajustada. Rodado com dados
+reais: 7.045 abertas, soma das equipes bate; equipe LUBRIFIC com 1.135 (levar ao
+cliente). 376 testes. [[estado-do-projeto]].

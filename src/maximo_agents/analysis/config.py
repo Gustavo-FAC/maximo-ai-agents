@@ -18,6 +18,9 @@ CLOSED = "closed"
 CANCELLED = "cancelled"
 STATUS_CLASSES = (OPEN, EXECUTED, CLOSED, CANCELLED)
 
+# Atributo da OS que guarda a equipe: persongroup (padrão) ou crewid (ex.: Itambé).
+CREW_FIELDS = ("persongroup", "crewid")
+
 # Valor interno do domínio WOSTATUS (padrão do Maximo) -> classe.
 INTERNAL_STATUS_CLASS = {
     "WAPPR": OPEN,
@@ -46,6 +49,7 @@ class ClientConfig:
     status_classes: dict[str, str]  # status externo -> classe
     corrective_worktypes: tuple[str, ...] = ()
     currency: str | None = None  # ISO 4217 dos custos (ex.: BRL)
+    crew_field: str = "persongroup"  # um de CREW_FIELDS
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
@@ -113,6 +117,12 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
     ):
         raise ClientConfigError(f"{client_id}: 'currency' must be an ISO 4217 code (e.g. BRL).")
 
+    crew_field = data.get("crew_field", "persongroup")
+    if crew_field not in CREW_FIELDS:
+        raise ClientConfigError(
+            f"{client_id}: 'crew_field' must be one of: {', '.join(CREW_FIELDS)}."
+        )
+
     return ClientConfig(
         client_id=client_id,
         name=str(data.get("name", client_id)),
@@ -121,4 +131,5 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
         status_classes=status_classes,
         corrective_worktypes=tuple(corrective),
         currency=currency,
+        crew_field=crew_field,
     )

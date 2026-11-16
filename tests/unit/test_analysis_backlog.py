@@ -28,7 +28,7 @@ def wo(wonum, status, reportdate, statusdate=None, **extra):
         "wopriority": None,
         "assetnum": None,
         "location": None,
-        "persongroup": None,
+        "crewid": None,
     }
     record.update(extra)
     return record
@@ -70,7 +70,15 @@ def test_age_bucket_ranges_are_contiguous():
 
 def test_backlog_report():
     records = [
-        wo("1", "APROG", "2026-11-01T08:00:00", worktype="CO", wopriority=1, location="L1"),
+        wo(
+            "1",
+            "APROG",
+            "2026-11-01T08:00:00",
+            worktype="CO",
+            wopriority=1,
+            location="L1",
+            crewid="ELETRICA",
+        ),
         wo(
             "2",
             "APROG",
@@ -80,7 +88,7 @@ def test_backlog_report():
             wopriority=3,
             location="L1",
         ),
-        wo("3", "EMAND", "2009-08-13T00:00:00", worktype=None, location="L2"),
+        wo("3", "EMAND", "2009-08-13T00:00:00", worktype=None, location="L2", crewid="ELETRICA"),
         wo("4", "EMAND", "2026-10-06T23:59:59", worktype="", siteid="MINERACAO"),
         wo("5", "CONCL", "2026-01-01T00:00:00"),  # fechada: não deveria vir
         wo("6", "AAPROV", None),
@@ -125,6 +133,8 @@ def test_backlog_report():
     assert opened["by_worktype"] == {"(empty)": 3, "CO": 1, "MS": 1}
     assert opened["by_priority"] == {"(empty)": 3, "1": 1, "3": 1}
     assert opened["by_site"] == {"FABRICA": 4, "MINERACAO": 1}
+    assert report["crew_field"] == "crewid"
+    assert opened["by_crew"] == {"(empty)": 3, "ELETRICA": 2}
     assert opened["top_locations"] == {"(empty)": 2, "L1": 2, "L2": 1}
     assert [row["wonum"] for row in opened["oldest"]] == ["3", "2", "4", "1", "6"]
     assert opened["oldest"][0]["worktype"] is None  # nada de NaN
@@ -149,6 +159,7 @@ def test_text_report():
     records = [wo("3", "EMAND", "2009-08-13T00:00:00", description=None)]
     text = format_backlog_text(backlog_report(records, {">365": 5}, CONFIG, AS_OF))
     assert "ABERTAS: 1 OS" in text
+    assert "Equipe (crewid):" in text
     section = text.split("Status x idade", 1)[1]
     status_row = next(line for line in section.splitlines() if line.startswith("  EMAND"))
     assert status_row.split()[-5:] == ["0", "0", "0", "0", "1"]  # 0-30 ... >365

@@ -30,9 +30,8 @@ BACKLOG_FIELDS = (
     "wopriority",
     "assetnum",
     "location",
-    "persongroup",
     "reportdate",
-)
+)  # + config.crew_field
 
 
 class MaximoToolError(RuntimeError):
@@ -197,7 +196,7 @@ async def fetch_backlog_work_orders(
                 date_from=since or config.history_start,
                 date_to=as_of,
                 filters=filters,
-                fields=BACKLOG_FIELDS,
+                fields=(*BACKLOG_FIELDS, config.crew_field),
                 max_records=max_records - len(records),
             )
         )

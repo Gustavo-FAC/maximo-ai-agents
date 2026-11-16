@@ -3,6 +3,8 @@
 Funções puras sobre a lista de OS já buscada (fetch.py). A IA não faz contas: o
 relatório sai daqui pronto, serializável em JSON.
 
+Equipe = config.crew_field (persongroup ou crewid, por cliente).
+
 Idade = dias desde o reportdate (decisão do usuário, 2026-11-06). Dias no status =
 dias desde o statusdate.
 """
@@ -29,8 +31,9 @@ OLDEST = 10
 
 def to_frame(records: list[dict], config: ClientConfig, as_of: datetime.date) -> pd.DataFrame:
     columns = ["wonum", "siteid", "description", "status", "statusdate", "worktype"]
-    columns += ["wopriority", "assetnum", "location", "persongroup", "reportdate"]
+    columns += ["wopriority", "assetnum", "location", "reportdate", config.crew_field]
     frame = pd.DataFrame.from_records(records, columns=columns)
+    frame = frame.rename(columns={config.crew_field: "crew"})
     frame["status_class"] = frame["status"].map(config.class_of)
     as_of_ts = pd.Timestamp(as_of)
     for column, target in (("reportdate", "age_days"), ("statusdate", "days_in_status")):
@@ -121,7 +124,7 @@ def summarize(frame: pd.DataFrame) -> dict:
         "by_status": by_status,
         "by_worktype": counts(frame["worktype"]),
         "by_priority": counts(frame["wopriority"].astype("Int64")),
-        "by_persongroup": counts(frame["persongroup"]),
+        "by_crew": counts(frame["crew"]),
         "by_site": counts(frame["siteid"]),
         "top_locations": counts(frame["location"], TOP_LOCATIONS),
         "oldest": oldest_rows,
@@ -147,6 +150,7 @@ def backlog_report(
         "client": config.client_id,
         "as_of": as_of.isoformat(),
         "age_basis": "reportdate",
+        "crew_field": config.crew_field,
         "open": summarize(frame[frame["status_class"] == OPEN]),
         "executed": {
             "statuses": config.statuses_of(EXECUTED),
@@ -178,7 +182,7 @@ def format_backlog_text(report: dict) -> str:
             lines.append(f"  {status:<12}" + "".join(f"{ages[label]:>9}" for label in labels))
         lines += _table("Tipo de trabalho", part["by_worktype"])
         lines += _table("Prioridade", part["by_priority"])
-        lines += _table("Equipe", part["by_persongroup"])
+        lines += _table(f"Equipe ({report['crew_field']})", part["by_crew"])
         lines += _table("Site", part["by_site"])
         lines += _table(f"Locations (top {TOP_LOCATIONS})", part["top_locations"])
         lines += ["", f"Mais antigas (top {OLDEST}):"]

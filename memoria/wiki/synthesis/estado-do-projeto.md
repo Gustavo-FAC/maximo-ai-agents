@@ -26,10 +26,15 @@ tinha voltado para PT, BMXAA10147E, e a variável só apareceu no pod depois do 
 FABRICA, 01/08-16/11/2026: 3 equipes = 188 OS (ELETRICA 142, INSTRUM 32, PCM-ELE 14);
 minúsculo igual; inexistente = 0; 21 valores = `too_many_values`; com
 `text=LUBRIFICAÇÃO` = 9. Cliente pode refazer a pergunta (status "em aberto" da Itambé
-ainda com o consultor). **Aberto:** análise de backlog agrupa equipe
-por `persongroup` (vazio na Itambé): trocar para `crewid` ou campo por cliente no
-`itambe.toml`; outros scripts (`QUERYWOSTATUS`, `QUERYMATUSAGE`) também só filtram
-`persongroup`.
+ainda com o consultor). 
+
+**Backlog por equipe (feito, 2026-11-16):** `crew_field` por cliente em
+`analysis/clients/*.toml` (`persongroup` padrão ou `crewid`; Itambé `crewid`). Relatório
+com `crew_field` e `by_crew` (era `by_persongroup`); texto "Equipe (crewid)". Real:
+7.045 abertas, equipes somam 7.045 (ELETRICA 2.348, LUBRIFIC 1.135, CLINQUER 997,
+CIMENTO 863, OFICINA 627, INSTRUM 363, vazio 218...). Existe equipe **LUBRIFIC**:
+perguntar ao cliente se a pergunta de lubrificação deveria incluí-la. 376 testes.
+**Aberto:** `QUERYWOSTATUS` e `QUERYMATUSAGE` só filtram `persongroup` (sem `crewid`).
 
 ## Pendente de desenvolvimento (levantamento de 2026-11-10)
 
