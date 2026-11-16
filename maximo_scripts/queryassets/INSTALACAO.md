@@ -39,7 +39,7 @@ Automation Scripts → filtrar `QUERYASSETS` → desmarcar **Active?**, salvar,
 
 ### Passo 2 – variáveis
 
-Criar **13 linhas**. Em todas: Variable Type `IN`, Binding Type `LITERAL`, Literal
+Criar **14 linhas**. Em todas: Variable Type `IN`, Binding Type `LITERAL`, Literal
 Data Type `ALN`, Binding Value `*`. Nome digitado em minúsculas.
 
 | Variable | Description |
@@ -54,6 +54,7 @@ Data Type `ALN`, Binding Value `*`. Nome digitado em minúsculas.
 | `priority` | Priority integers, comma-separated (max 20). |
 | `failurecode` | Failure class codes, comma-separated (max 20). |
 | `text` | Words that must all appear in the description (max 5 words, 100 chars). |
+| `include_specs` | Y returns each asset's specifications (technical data sheet) under specs. Default N; max 50/page. |
 | `fields` | Fields to return, comma-separated. assetnum and siteid always included. |
 | `page` | Page number, starting at 1 (default 1). |
 | `page_size` | Items per page, 1 to 500 (default 100). |
@@ -91,7 +92,7 @@ Abrir o script (aba Main), colar `response_schema.json` em **Response Schema**, 
 - [ ] `script_queryassets` aparece.
 - [ ] `u200b` não aparece.
 - [ ] `authapp` e `authsigoption` não aparecem.
-- [ ] 13 parâmetros no `requestBody`.
+- [ ] 14 parâmetros no `requestBody` (com `include_specs`).
 
 ## 6. Conferir no MCP Server
 
@@ -127,4 +128,6 @@ Voltar **Log Level** para `ERROR`, salvar e avisar o commit instalado.
 
 Mesma tabela do [QUERYWORKORDERS](../queryworkorders/INSTALACAO.md#se-algo-der-errado).
 Específico daqui: `not_authorized` = usuário da `apikey` sem READ no app ASSET;
+`internal_error` com `include_specs` = conferir no log a relação `$QASSETSPECS`
+(ASSETSPEC) ou `$QASSETATTR` (ASSETATTRIBUTE);
 `internal_error` com `ancestor` = conferir no log o SQL do subselect em ASSETANCESTOR.

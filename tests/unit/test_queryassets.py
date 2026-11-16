@@ -154,7 +154,70 @@ def test_pagination():
 
 def test_params_cover_filters():
     filter_names = {name for name, _, _, _ in qa.LIST_FILTERS} | {"ancestor", "text"}
-    assert set(qa.PARAM_NAMES) == filter_names | {"fields", "page", "page_size"}
+    options = {"include_specs", "fields", "page", "page_size"}
+    assert set(qa.PARAM_NAMES) == filter_names | options
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    [(None, False), ("*", False), ("", False), ("Y", True), ("yes", True), ("N", False)],
+)
+def test_include_specs_flag(value, expected):
+    assert query(include_specs=value)["include_specs"] is expected
+
+
+def test_include_specs_invalid():
+    assert error_code(include_specs="talvez") == "invalid_flag"
+
+
+def test_include_specs_adds_assetuid_and_caps_page():
+    # Itambé feedback (2026-11-16): motor nameplate data lives in ASSETSPEC.
+    q = query(include_specs="Y", assetnums="MCA0957")
+    assert q["fields"][-1] == "assetuid"
+    assert q["page_size"] == qa.MAX_SPECS_PAGE_SIZE
+    assert error_code(include_specs="Y", page_size="51") == "out_of_range"
+    q = query(include_specs="Y", fields="description,assetuid")
+    assert q["fields"].count("assetuid") == 1
+    assert "assetuid" not in query()["fields"]
+    assert query(page_size="500")["page_size"] == 500  # no cap without specs
+
+
+def test_specs_read_through_owner_relationship():
+    # No caller value in the relationship where clauses: Maximo binds the owner.
+    assert qa.SPEC_RELATION.startswith("$")
+    assert qa.ATTR_RELATION.startswith("$")
+    assert qa.SPEC_RELATION_WHERE == "assetnum = :assetnum and siteid = :siteid"
+    q = qa.build_asset_query([7, 9])
+    assert q == {
+        "where": "assetuid in (:1, :2)",
+        "binds": [("ASSET", "ASSETUID", 7), ("ASSET", "ASSETUID", 9)],
+    }
+
+
+def test_spec_item_picks_filled_value():
+    row = {"assetattrid": "POTENCIA", "section": None, "numvalue": 250.0, "measureunitid": "KW"}
+    assert qa.spec_item(row, "Potência") == {
+        "attribute": "POTENCIA",
+        "description": "Potência",
+        "section": None,
+        "value": 250.0,
+        "unit": "KW",
+    }
+    assert qa.spec_item({"assetattrid": "FABR", "alnvalue": "BBC"}, None)["value"] == "BBC"
+    assert qa.spec_item({"assetattrid": "CARC", "tablevalue": "315M"}, None)["value"] == "315M"
+    assert qa.spec_item({"assetattrid": "NUMSERIE"}, None)["value"] is None  # not filled in
+
+
+def test_attach_specs_and_response():
+    items = [{"assetnum": "A1", "assetuid": 7}, {"assetnum": "A2", "assetuid": 9}]
+    specs = [{"attribute": "POTENCIA", "value": 250.0}]
+    qa.attach_specs(items, {7: specs})
+    assert items[0]["specs"] == specs
+    assert items[1]["specs"] == []
+    assert "specs_truncated" not in qa.build_response(query(), 1, [])
+    q = query(include_specs="Y")
+    assert qa.build_response(q, 1, [])["specs_truncated"] is False
+    assert qa.build_response(q, 1, [], True)["specs_truncated"] is True
 
 
 def test_collect_params():

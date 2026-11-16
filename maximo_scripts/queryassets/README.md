@@ -36,6 +36,7 @@ Todas: tipo **IN**, binding **Literal**, `literaldatatype` **ALN**, valor padrã
 | `priority` | Priority integers, comma-separated (max 20). |
 | `failurecode` | Failure class codes, comma-separated (max 20). |
 | `text` | Words that must all appear in the description (max 5 words, 100 chars). |
+| `include_specs` | Y returns each asset's specifications (technical data sheet) under specs. Default N; max 50/page. |
 | `fields` | Fields to return, comma-separated. assetnum and siteid always included. |
 | `page` | Page number, starting at 1 (default 1). |
 | `page_size` | Items per page, 1 to 500 (default 100). |
@@ -62,6 +63,14 @@ o guia da Itambé explicar o significado de cada um.
   `not_authorized`. Sem variáveis `authapp`/`authsigoption`.
 - Filtro de sites autorizados ao usuário sempre aplicado.
 - `count()` chamado uma vez para o `total`.
+- `include_specs=Y` (desde 2026-11-16, pedido da Itambé: dados de placa do motor):
+  cada ativo da página traz `specs` (ASSETSPEC: `attribute`, `description` do
+  ASSETATTRIBUTE, `section`, `value`, `unit`). `value` = o campo preenchido entre
+  `numvalue`, `alnvalue`, `tablevalue`, `datevalue`; `null` se vazio (a IA diz que
+  falta). Página de até 50 ativos; até 3000 specs por chamada, acima disso
+  `specs_truncated` = true. Lidas pelo ativo dono (relação ad hoc `$QASSETSPECS`,
+  lição do JOBTASK: filho sem dono dá NullPointerException); `assetuid` volta
+  junto. Descrição do atributo em cache por atributo/organização.
 
 ## Bloco comum
 
@@ -73,7 +82,7 @@ todos; `tests/unit/test_script_common.py` falha se divergir.
 
 Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
 
-- [x] Ferramenta aparece no MCP com 13 parâmetros, sem caracteres invisíveis.
+- [x] Ferramenta aparece no MCP com 13 parâmetros (14 com `include_specs`), sem caracteres invisíveis.
 - [x] Sem parâmetros: `total` = número de ativos dos sites do usuário (14709).
 - [x] `assetnums` com 2 ativos conhecidos → `total` 2.
 - [x] `text` com palavras de descrição conhecidas acha o ativo; acento precisa
@@ -87,4 +96,7 @@ Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
       devolve booleano, data ISO e número.
 - [x] Paginação (página 2), `unknown_field`, `invalid_integer` ok.
 - [ ] Usuário sem READ no app ASSET recebe `not_authorized`.
+- [ ] `include_specs=Y` com `assetnums=MCA0957`: `specs` com atributo, descrição,
+      valor e unidade (dados de placa); vazio vem `null`; `page_size=51` recusado.
+- [ ] `include_specs=Y` com página de 50 ativos: tempo aceitável.
 - [ ] Usuário **sem** acesso a um site não recebe ativos desse site.

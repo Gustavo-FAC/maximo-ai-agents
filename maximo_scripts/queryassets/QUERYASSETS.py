@@ -424,6 +424,10 @@ MAX_ASSETNUMS = 50
 MAX_LIST_VALUES = 20
 DEFAULT_PAGE_SIZE = 100
 MAX_PAGE_SIZE = 500
+# Specifications make each item large: smaller pages.
+MAX_SPECS_PAGE_SIZE = 50
+# Specifications read for one page of assets; above it, "specs_truncated" is true.
+MAX_SPECS = 3000
 
 # Attribute -> output type. Only these attributes can be selected. Standard ASSET
 # attributes only: client-specific ones (e.g. Itambe's cci_*) break other clients.
@@ -453,6 +457,7 @@ FIELD_TYPES = {
     "ytdcost": "float",
     "totdowntime": "float",
     "changedate": "date",
+    "assetuid": "int",
 }
 DEFAULT_FIELDS = (
     "assetnum",
@@ -490,10 +495,38 @@ PARAM_NAMES = (
     "priority",
     "failurecode",
     "text",
+    "include_specs",
     "fields",
     "page",
     "page_size",
 )
+
+FLAG_TRUE = ("Y", "YES", "TRUE", "1")
+FLAG_FALSE = ("N", "NO", "FALSE", "0")
+
+# Specifications (technical data sheet, ASSETSPEC) returned with include_specs.
+SPEC_FIELD_TYPES = {
+    "assetattrid": "str",
+    "section": "str",
+    "alnvalue": "str",
+    "numvalue": "float",
+    "tablevalue": "str",
+    "datevalue": "date",
+    "measureunitid": "str",
+    "orgid": "str",
+}
+SPEC_FIELDS = tuple(SPEC_FIELD_TYPES)
+# Value columns by preference; an attribute fills only the one of its data type.
+SPEC_VALUE_FIELDS = ("numvalue", "alnvalue", "tablevalue", "datevalue")
+
+# Ad hoc relationships (no dependency on the client's relationship names), bound by
+# Maximo from the owner, no caller value. Children are read through their owner: a
+# child set without owner fails (JOBTASK, homologation 2026-11-03).
+SPEC_RELATION = "$QASSETSPECS"
+SPEC_RELATION_WHERE = "assetnum = :assetnum and siteid = :siteid"
+SPEC_ORDER_BY = "displaysequence, assetattrid"
+ATTR_RELATION = "$QASSETATTR"
+ATTR_RELATION_WHERE = "assetattrid = :assetattrid and (orgid = :orgid or orgid is null)"
 
 # Assets anywhere below the given assets in the hierarchy (ASSETANCESTOR).
 # ASSETANCESTOR also holds a row of each asset with itself; excluded so that
@@ -505,6 +538,17 @@ ANCESTOR_WHERE = (
 )
 
 
+def parse_flag(name, raw):
+    if is_unset(raw):
+        return False
+    text = to_text(raw).strip().upper()
+    if text in FLAG_TRUE:
+        return True
+    if text in FLAG_FALSE:
+        return False
+    raise ParamError("invalid_flag", name, "%s must be Y or N." % name)
+
+
 def build_query(raw, userid):
     """Validate raw parameters and build the where clause with bind values.
 
@@ -512,9 +556,15 @@ def build_query(raw, userid):
     order; values never go into the where text. No filter is required: assets are
     master data and every response is capped by page_size, with "total" exact.
     """
+    include_specs = parse_flag("include_specs", raw.get("include_specs"))
+    max_page_size = MAX_SPECS_PAGE_SIZE if include_specs else MAX_PAGE_SIZE
     page = parse_int("page", raw.get("page"), 1, 1, 100000)
-    page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
+    page_size = parse_int(
+        "page_size", raw.get("page_size"), min(DEFAULT_PAGE_SIZE, max_page_size), 1, max_page_size
+    )
     fields = parse_fields(raw.get("fields"), FIELD_TYPES, DEFAULT_FIELDS, KEY_FIELDS)
+    if include_specs and "assetuid" not in fields:
+        fields.append("assetuid")  # reopens each asset to read its specifications
 
     binds = []
     clauses = []
@@ -547,17 +597,101 @@ def build_query(raw, userid):
         "order_by": "siteid, assetnum",
         "filters": filters,
         "fields": fields,
+        "include_specs": include_specs,
         "page": page,
         "page_size": page_size,
         "offset": (page - 1) * page_size,
     }
 
 
-def build_response(query, total, items):
+def build_asset_query(assetuids):
+    """Assets of one page, reopened to read their specifications (already authorized)."""
+    binds = []
+    placeholders = []
+    for value in assetuids:
+        binds.append((OBJECT_NAME, "ASSETUID", value))
+        placeholders.append(":%d" % len(binds))
+    return {"where": "assetuid in (%s)" % ", ".join(placeholders), "binds": binds}
+
+
+def spec_item(row, description):
+    """One specification: attribute, its description, section, value and unit."""
+    value = None
+    for field in SPEC_VALUE_FIELDS:
+        if row.get(field) is not None:
+            value = row[field]
+            break
+    return {
+        "attribute": row.get("assetattrid"),
+        "description": description,
+        "section": row.get("section"),
+        "value": value,
+        "unit": row.get("measureunitid"),
+    }
+
+
+def attach_specs(items, by_asset):
+    """Put each specification list under its asset ("specs", [] if none)."""
+    for item in items:
+        item["specs"] = by_asset.get(item["assetuid"], [])
+
+
+def build_response(query, total, items, specs_truncated=False):
     response = paging(query["page"], query["page_size"], total, len(items))
     response["filters"] = query["filters"]
+    if query["include_specs"]:
+        response["specs_truncated"] = specs_truncated
     response["items"] = items
     return response
+
+
+def attribute_description(spec, cache):
+    """Description of the spec's attribute (ASSETATTRIBUTE), cached by attribute/org."""
+    key = (spec.getString("assetattrid"), spec.getString("orgid"))
+    if key not in cache:
+        attrs = spec.getMboSet(ATTR_RELATION, "ASSETATTRIBUTE", ATTR_RELATION_WHERE)
+        attr = attrs.getMbo(0)
+        cache[key] = attr.getString("description") if attr is not None else None
+    return cache[key]
+
+
+def read_specs(user_info, assetuids):
+    """Specifications by assetuid, at most MAX_SPECS in all: (by_asset, truncated)."""
+    from java.text import SimpleDateFormat
+    from psdi.mbo import MboConstants
+    from psdi.server import MXServer
+
+    query = build_asset_query(assetuids)
+    assets = MXServer.getMXServer().getMboSet(OBJECT_NAME, user_info)
+    try:
+        assets.setFlag(MboConstants.DISCARDABLE, True)
+        assets.setWhere(format_where(user_info, query["where"], query["binds"]))
+        output_format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        by_asset = {}
+        descriptions = {}
+        read = 0
+        index = 0
+        asset = assets.getMbo(index)
+        while asset is not None:
+            specs = asset.getMboSet(SPEC_RELATION, "ASSETSPEC", SPEC_RELATION_WHERE)
+            specs.setOrderBy(SPEC_ORDER_BY)
+            found = []
+            spec_index = 0
+            spec = specs.getMbo(spec_index)
+            while spec is not None:
+                if read >= MAX_SPECS:
+                    return by_asset, True
+                row = read_item(spec, SPEC_FIELDS, SPEC_FIELD_TYPES, output_format)
+                found.append(spec_item(row, attribute_description(spec, descriptions)))
+                read += 1
+                spec_index += 1
+                spec = specs.getMbo(spec_index)
+            by_asset[asset.getInt("assetuid")] = found
+            index += 1
+            asset = assets.getMbo(index)
+        return by_asset, False
+    finally:
+        assets.cleanup()
 
 
 def run(user_info, raw):
@@ -569,7 +703,11 @@ def run(user_info, raw):
         )
     query = build_query(raw, user_info.getUserName())
     total, items = query_page(user_info, OBJECT_NAME, query, FIELD_TYPES)
-    return build_response(query, total, items)
+    truncated = False
+    if query["include_specs"] and items:
+        by_asset, truncated = read_specs(user_info, [item["assetuid"] for item in items])
+        attach_specs(items, by_asset)
+    return build_response(query, total, items, truncated)
 
 
 try:

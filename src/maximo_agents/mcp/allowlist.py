@@ -89,7 +89,9 @@ QUERY_ASSETS = ToolSpec(
         "No filter is required; optional filters accept comma-separated values. Use "
         "ancestor to get every asset below a given asset in the hierarchy, parent for "
         "direct children only, and text to find assets whose description contains all "
-        "the given words. Results are sorted by siteid and assetnum and paged. The "
+        "the given words. Use include_specs Y for the technical data sheet "
+        "(specifications: nameplate data such as power, voltage, speed, bearings). "
+        "Results are sorted by siteid and assetnum and paged. The "
         "response field 'total' is the exact number of matching assets across all "
         "pages: use it for counts and never count the items of one page. If 'has_more' "
         "is true, request the next page or narrow the filters. Only sites the user is "
@@ -118,16 +120,22 @@ QUERY_ASSETS = ToolSpec(
             "accents must match), separated by spaces, max 5 words of 2+ characters. "
             "No % or _."
         ),
+        "include_specs": (
+            "Y to return each asset's specifications (technical data sheet) under "
+            "'specs': attribute, description, section, value, unit; value is null when "
+            "not filled in. Default N. With Y, page_size is at most 50 and assetuid is "
+            "returned; if 'specs_truncated' is true, use a smaller page_size."
+        ),
         "fields": (
             "Fields to return, comma-separated. Default: assetnum, siteid, description, "
             "status, location, parent, assettype, priority, isrunning. Also accepted: "
             "statusdate, children, failurecode, classstructureid, itemnum, manufacturer, "
             "vendor, serialnum, assettag, installdate, purchaseprice, replacecost, "
-            "totalcost, ytdcost, totdowntime, changedate. assetnum and siteid are always "
-            "included."
+            "totalcost, ytdcost, totdowntime, changedate, assetuid. assetnum and siteid "
+            "are always included."
         ),
         "page": "Page number, starting at 1 (default 1).",
-        "page_size": "Items per page, 1 to 500 (default 100).",
+        "page_size": "Items per page, 1 to 500 (default 100); at most 50 with include_specs.",
     },
 )
 
