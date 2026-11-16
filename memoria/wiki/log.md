@@ -533,3 +533,10 @@ Feedback da Itambé (teste no claude.ai): equipe fica em `WORKORDER.crewid`
 (também no padrão) e filtro de lista; allowlist, teste novo (374), README e
 INSTALACAO (16 variáveis). Falta reinstalar em homologação e validar via MCP.
 [[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-11-16] test | `crewid` validado via MCP
+Reinstalado em homologação. Primeiro BMXAA10147E (usuário da chave voltou para PT) e
+filtro recusado pelo pod (schema antigo, 15 parâmetros) até o reload. Depois: 16
+parâmetros; 3 equipes = 188 OS (142/32/14), minúsculo igual, inexistente 0, 21 valores
+`too_many_values`, `text=LUBRIFICAÇÃO` + equipes = 9. [[estado-do-projeto]],
+[[ferramentas-maximo]].

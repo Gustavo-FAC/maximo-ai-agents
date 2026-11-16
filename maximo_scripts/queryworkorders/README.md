@@ -107,7 +107,9 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
 - [ ] Usuário sem permissão READ em WOTRACK recebe `not_authorized`.
 - [ ] Página profunda (ex.: página 50 de 100) com tempo aceitável.
 - [ ] Valores com acento (ex.: equipe) funcionam.
-- [ ] `crewid` (2026-11-16, pedido da Itambé): filtro `ELETRICA,INSTRUM,PCM-ELE` traz
-      OS dessas equipes; campo `crewid` volta preenchido no padrão de `fields`.
+- [x] `crewid` (2026-11-16, pedido da Itambé): 16 parâmetros no MCP. FABRICA,
+      01/08-16/11/2026: `ELETRICA,INSTRUM,PCM-ELE` = 188 OS (142/32/14), só essas
+      equipes; minúsculo igual; código inexistente = 0; 21 valores = `too_many_values`;
+      com `text=LUBRIFICAÇÃO` = 9 OS. Campo `crewid` volta preenchido.
 - [ ] `text` com palavra de descrição conhecida acha a OS; `text` = `a` dá
       `invalid_text`; `text` sem datas dá `required`.

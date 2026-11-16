@@ -21,9 +21,12 @@ PCM-ELE: a equipe na Itambé fica em **`WORKORDER.crewid`**, não em `persongrou
 - Allowlist com `crewid`; `persongroup` descrito como grupo de trabalho.
 - Teste `test_crewid_filter_and_field` (374 testes). `README.md` e `INSTALACAO.md`.
 
-**Falta:** reinstalar em homologação (colar o script + variável `crewid` IN/LITERAL/ALN
-`*`), esperar ~10 min o pod e validar via MCP; depois o cliente refaz a pergunta das
-OS de lubrificação em aberto por equipe. **Aberto:** análise de backlog agrupa equipe
+**Validado via MCP em 2026-11-16** (reinstalado em homologação; antes, usuário da chave
+tinha voltado para PT, BMXAA10147E, e a variável só apareceu no pod depois do reload).
+FABRICA, 01/08-16/11/2026: 3 equipes = 188 OS (ELETRICA 142, INSTRUM 32, PCM-ELE 14);
+minúsculo igual; inexistente = 0; 21 valores = `too_many_values`; com
+`text=LUBRIFICAÇÃO` = 9. Cliente pode refazer a pergunta (status "em aberto" da Itambé
+ainda com o consultor). **Aberto:** análise de backlog agrupa equipe
 por `persongroup` (vazio na Itambé): trocar para `crewid` ou campo por cliente no
 `itambe.toml`; outros scripts (`QUERYWOSTATUS`, `QUERYMATUSAGE`) também só filtram
 `persongroup`.
