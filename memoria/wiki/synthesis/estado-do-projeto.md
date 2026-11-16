@@ -4,12 +4,29 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-13
+updated: 2026-11-16
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
+
+## Hoje (2026-11-16): `crewid` no `QUERYWORKORDERS` (feedback da Itambé)
+
+Cliente, testando o MCP direto no claude.ai, pediu OS das equipes ELETRICA, INSTRUM e
+PCM-ELE: a equipe na Itambé fica em **`WORKORDER.crewid`**, não em `persongroup`
+(vazio). A consulta recusou `crewid` ("campo desconhecido"). Feito no repo:
+- `crewid` em `FIELD_TYPES`, no padrão de `fields` e como filtro de lista
+  (`LIST_FILTERS`, até 20 valores, bind); 16 parâmetros.
+- Allowlist com `crewid`; `persongroup` descrito como grupo de trabalho.
+- Teste `test_crewid_filter_and_field` (374 testes). `README.md` e `INSTALACAO.md`.
+
+**Falta:** reinstalar em homologação (colar o script + variável `crewid` IN/LITERAL/ALN
+`*`), esperar ~10 min o pod e validar via MCP; depois o cliente refaz a pergunta das
+OS de lubrificação em aberto por equipe. **Aberto:** análise de backlog agrupa equipe
+por `persongroup` (vazio na Itambé): trocar para `crewid` ou campo por cliente no
+`itambe.toml`; outros scripts (`QUERYWOSTATUS`, `QUERYMATUSAGE`) também só filtram
+`persongroup`.
 
 ## Pendente de desenvolvimento (levantamento de 2026-11-10)
 

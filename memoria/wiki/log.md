@@ -526,3 +526,10 @@ Sem chave de API: sessão principal como roteador (prompt real), `handoff` = sub
 ambígua, injection) e 3 com dados (reincidência, pedido misto, continuação de MTTR),
 números conferidos com a CLI. Histórico limpo validado. Tabela em
 [[assistente-geral-roteador]].
+
+## [2026-11-16] code | `crewid` no QUERYWORKORDERS
+Feedback da Itambé (teste no claude.ai): equipe fica em `WORKORDER.crewid`
+(ELETRICA, INSTRUM, PCM-ELE), não em `persongroup`. Script ganhou campo `crewid`
+(também no padrão) e filtro de lista; allowlist, teste novo (374), README e
+INSTALACAO (16 variáveis). Falta reinstalar em homologação e validar via MCP.
+[[estado-do-projeto]], [[ferramentas-maximo]].
