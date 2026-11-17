@@ -11,7 +11,56 @@ updated: 2026-11-17
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Hoje (2026-11-17), tarde: descrição longa da OS no `QUERYWORKORDERS`
+## Hoje (2026-11-17), noite: preventivas (MP) no código, falta instalar
+
+Pedido do usuário após o guia (perguntas 1-3). Sem commit ainda. 416 testes, Ruff limpo.
+- `QUERYWORKORDERS`: filtro `pmnum` (variável nova, **17 parâmetros**) e campos
+  `pmnum`, `pmduedate`, `jpnum`. Campo do cliente `modalidade` (OS e PM têm o
+  atributo, visto no `apischema` MXAPIWO/MXAPIPM): lista curada `CLIENT_FIELDS`,
+  conferida em execução no dicionário de dados (`getMaximoDD`); cliente sem o atributo
+  recebe `unknown_field`; nunca no padrão. Extensão por cliente prevista em
+  [[ferramentas-maximo]] ("só atributos padrão", salvo campo explicado pelo guia).
+- `QUERYPMS` novo (15 parâmetros): cadastro de PM, status padrão ACTIVE
+  (synonymdomain PMSTATUS), `due_from`/`due_to` opcionais e independentes sobre
+  `coalesce(extdate, nextdate)`, `due_date` em cada item, site explícito, `text`,
+  longdescription (máx 50). Fora: PMMETER, PMSEQUENCE, PMFORECAST, paradas de rota.
+- Allowlist (`QUERY_PMS` nos agentes), receita regra 13 (PM × OS da PM; semana do
+  cliente), contexto do cliente com `preventive_worktypes` (MPV, MPR, INSP, IL, MS) e
+  `week_start` (domingo) em `itambe.toml`; subagente regenerado.
+- Achado no `apischema`: OS tem `fornecedor` (próprio), útil para manutenção externa
+  (perguntas 15-17); e `estlabhrs` para backlog em HH.
+- **Teste via MCP (2026-11-17):** `QUERYPMS` **funcionando** (15 parâmetros; 7037 PMs
+  ativas; `due_from`/`due_to`, só `due_to`, `assetnum` VAP0010 = 3 PMs, `location`,
+  `modalidade` preenchida (ex.: `IRO`), `invalid_status` e `invalid_range` ok).
+  `QUERYWORKORDERS` **funcionando via MCP** com 17 parâmetros (reteste 2026-11-17):
+  `pmnum=MSA0_100` traz só a OS 1633892 (`pmduedate` 17/11, `jpnum` PTCTS7,
+  `modalidade` PF); lista de PMs ok; PM inexistente = 0; sem datas = `required`;
+  corretivas (CO/EM) com `pmnum` nulo.
+- **Achado (dados):** OS preventivas recentes (MPV, INSP) quase todas **sem `pmnum`**,
+  mesmo com `jpnum` (ex.: 4 de 5 MPV PTCTS7 de 17/11). Cumprimento de preventivas por
+  PM × OS só cobre parte; perguntar ao consultor como essas OS nascem (rota, geração
+  manual, app de checklist?).
+- `QUERYPMS`: `status` explícito compara o código do cliente (Itambé: `ATIVO`), então
+  `status=ACTIVE` retorna 0; o padrão (sem `status`) usa o valor interno e funciona.
+  Mesmo comportamento das outras ferramentas; risco de o LLM mandar `ACTIVE`.
+- **Achado (dados):** 4138 das 7037 PMs ativas com vencimento ≤ ontem, várias com
+  `nextdate` de 2007-2012 (ex.: MSFAB_20 com `lastcompdate` 2025 e `nextdate` 2012);
+  nenhuma vence na semana 16-22/11. Perguntar ao consultor: homologação desatualizada,
+  PMs abandonadas ativas ou geração fora do Maximo? "MPs vencidas" fica inútil sem isso.
+- **Pendente:** commit; análise de cumprimento de preventivas (depende das dúvidas do
+  guia e das OS sem `pmnum`).
+
+## 2026-11-17, noite: guia de levantamento recebido
+
+Guia da Fase 1 preenchido pelo cliente ([[guia-levantamento-fase1]]). 17 perguntas:
+5 e 9 já cobertas; 11-12 parciais; faltam preventivas (1-3: `QUERYPMS` + `pmnum`),
+atraso (4), designação (6), emitidas × executadas (7), modalidade (8, campo
+`MODALIDADE`), filtro por spec (10) e SS / manutenção externa (13-17). Fecha a escala
+de prioridade (1 Urgente 1 d ... 4 Baixo 30 d). Abre 10 dúvidas (backlog com CONCL
+"Sim", tolerância de atraso, campo do início previsto, fórmula do cumprimento,
+tipos CO/MS/MP fora da tabela...). Próximo: decidir ordem com o usuário.
+
+## 2026-11-17, tarde: descrição longa da OS no `QUERYWORKORDERS`
 
 Pedido do usuário: o script de OS também trazer a long description. Feito no código
 (sem commit ainda): campo `description_longdescription` aceito em `fields` (fora do

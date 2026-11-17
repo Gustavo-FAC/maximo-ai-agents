@@ -8,7 +8,7 @@ Catálogo de páginas. Atualizar a cada alteração.
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
   `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`, descrição
-  longa da OS no `QUERYWORKORDERS`).
+  longa da OS no `QUERYWORKORDERS`, `QUERYPMS` e campo do cliente `modalidade`).
 - [[prompts-de-teste]] – 40 perguntas: 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
@@ -42,6 +42,10 @@ Catálogo de páginas. Atualizar a cada alteração.
   filho (JOBTASK) só pelo dono; site explícito para usar índice (`QUERYWOSTATUS`).
 
 ## Fontes
+- [[guia-levantamento-fase1]] – guia da Itambé preenchido (2026-11-16): 17 perguntas
+  do gerente e cobertura, status × backlog, atraso (início previsto, 7 dias),
+  prioridades 1-4 com prazo, tipos preventivos, `MODALIDADE`, indicadores e 10
+  dúvidas para o consultor.
 - [[doc-mcp-server]] – doc IBM do MCP Server: registro de ferramenta, flags, auth.
 - [[guia-automation-scripts]] – IBM Autoscripting Guide: variáveis, REST, segurança.
   Errata: sem `isLoggingEnabled` no MAS 9.2.

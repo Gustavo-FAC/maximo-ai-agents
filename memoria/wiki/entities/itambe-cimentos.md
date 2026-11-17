@@ -4,10 +4,14 @@ type: entity
 sources: []
 related: [[mas-mcp-server]], [[chave-api-por-usuario]], [[automation-scripts-como-ferramentas]]
 created: 2026-10-21
-updated: 2026-11-06
+updated: 2026-11-17
 ---
 
 # Itambé Cimentos
+
+**Guia de levantamento preenchido (2026-11-16):** ver [[guia-levantamento-fase1]]
+(prioridades, tipos preventivos, status × backlog, regras de atraso e indicadores).
+Onde divergir das hipóteses abaixo, vale o guia, salvo as dúvidas listadas lá.
 
 Cliente piloto da plataforma. Tenant `itambe` (`TENANT_ID` no `.env`).
 

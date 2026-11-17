@@ -577,3 +577,30 @@ trocado para EN). CO de 1 ano = 812 OS, página padrão 50, texto com acento ok,
 texto `null`; `wonums` sem datas ok; `page_size=51` → `out_of_range`. Achado: texto
 das OS de checklist traz `Mel/Imp/Imi/Prio`, provável regra da escala de prioridade
 (confirmar com o consultor). [[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-11-17] ingest | Guia de levantamento da Fase 1 (Itambé)
+Original em `raw/guia-levantamento-fase1-itambe-2026-11-16.docx`. Resumo e cobertura
+das 17 perguntas em [[guia-levantamento-fase1]]; ponteiro em [[itambe-cimentos]];
+[[estado-do-projeto]]. Preventivas (perguntas 1-3) confirmam `QUERYPMS` + `pmnum`.
+
+## [2026-11-17] code | Preventivas: QUERYPMS e pmnum no QUERYWORKORDERS
+`QUERYPMS` novo (cadastro de PM, vencimento por `coalesce(extdate, nextdate)`, ativas
+por padrão); `QUERYWORKORDERS` com filtro `pmnum` (17 parâmetros), campos `pmnum`,
+`pmduedate`, `jpnum` e campo do cliente `modalidade` (checado no dicionário de dados).
+Config do cliente: `preventive_worktypes`, `week_start`. Receita regra 13. 416 testes.
+Falta instalar. [[estado-do-projeto]], [[ferramentas-maximo]].
+
+
+## [2026-11-17] test | Preventivas via MCP
+`QUERYPMS` funcionando (15 parâmetros, filtros, vencimento por `coalesce(extdate,
+nextdate)`, `modalidade`, erros `invalid_status`/`invalid_range`). `QUERYWORKORDERS`
+devolve `pmnum`, `pmduedate`, `jpnum`, `modalidade`, mas o MCP ainda lista 16
+parâmetros, sem o filtro `pmnum`. Achado: 4138 de 7037 PMs ativas vencidas (nextdate
+desde 2007); confirmar com consultor. [[estado-do-projeto]].
+
+## [2026-11-17] test | Filtro `pmnum` do QUERYWORKORDERS via MCP
+Reteste: ferramenta com 17 parâmetros. `pmnum=MSA0_100` traz só a OS 1633892
+(`pmduedate`, `jpnum` PTCTS7, `modalidade` PF); lista, PM inexistente e falta de datas
+ok; corretivas com `pmnum` nulo. Achado: OS preventivas recentes quase todas sem
+`pmnum`. `QUERYPMS` com `status=ACTIVE` explícito = 0 (código do cliente é `ATIVO`).
+Páginas: [[estado-do-projeto]], [[ferramentas-maximo]].

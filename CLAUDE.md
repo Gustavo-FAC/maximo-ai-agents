@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 389 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 416 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -110,7 +110,12 @@ Cliente piloto: **Itambé Cimentos**.
 - `QUERYWORKORDERS` com descrição longa (`description_longdescription` em `fields`,
   `page_size` máx 50) **funcionando via MCP** desde 2026-11-17. Texto das OS de
   checklist traz `Mel/Imp/Imi/Prio` (provável escala de prioridade, confirmar).
-- Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
+- **Preventivas** (2026-11-17): `QUERYPMS` e filtro `pmnum` do `QUERYWORKORDERS` **funcionando via MCP**. Script
+  `QUERYPMS` (cadastro de PM, vencimento) e `QUERYWORKORDERS` com `pmnum` (filtro, 17
+  parâmetros), `pmduedate`, `jpnum` e campo do cliente `modalidade` (`CLIENT_FIELDS`,
+  conferido no dicionário de dados). Config: `preventive_worktypes`, `week_start`.
+- Guia de levantamento da Fase 1 (Itambé) **recebido em 2026-11-17**: resumo, cobertura
+  das 17 perguntas e dúvidas em `memoria/wiki/sources/guia-levantamento-fase1.md`.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
 ## Memória do projeto

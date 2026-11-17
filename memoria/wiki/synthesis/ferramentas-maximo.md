@@ -26,13 +26,14 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 |---|---|---|---|---|---|
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | funcionando via MCP |
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
-| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16); `description_longdescription` em `fields` (máx 50 por página) funcionando via MCP (2026-11-17) |
+| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16); `description_longdescription` em `fields` (máx 50 por página) funcionando via MCP (2026-11-17); `pmnum` (filtro e campo), `pmduedate`, `jpnum` e `modalidade` (campo do cliente) funcionando via MCP (2026-11-17) |
 | 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
 | 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); MTBF/MTTR/disponibilidade em `analysis/reliability.py` (2026-11-10) | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
 | 5 | `QUERYJOBPLANS` | JOBPLAN, JOBTASK, JPASSETSPLINK | consultar_procedimentos | P1 | funcionando via MCP (2026-11-03); Itambé liga plano à location (2026-11-04) |
 | 6a | `QUERYWOMATERIALS` | WPMATERIAL (+ WORKORDER), INVBALANCES | verificar_materiais (planejado + saldo) | P2 | instalado (2026-11-04); erros ok; **fora dos agentes** (Itambé não planeja material no Maximo) |
 | 6b | `QUERYMATUSAGE` | MATUSETRANS (+ WORKORDER) | consumo real (baixas/devoluções); custo/consumo em `analysis/` | P2 | funcionando via MCP (2026-11-04) |
+| 8 | `QUERYPMS` | PM | preventivas: vencendo/vencidas, PM do ativo ou location, última geração (guia, perguntas 1-3) | P0 | no código (2026-11-17), falta instalar |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
 
 Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos` (conteúdo de anexos) não vira script:
@@ -94,6 +95,7 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
   dono (relação ad hoc `$QASSETSPECS`), página até 50, teto de 3000 specs com
   `specs_truncated`. Funcionando via MCP, `specs_truncated` incluso desde 2026-11-17
   (schema recolado, ver [[estado-do-projeto]]).
+- **Campo do cliente** (2026-11-17, `modalidade`): lista curada `CLIENT_FIELDS` no script, aceita em `fields` só se o atributo existe no Maximo (dicionário de dados, em execução); nunca no padrão; entra só depois que o guia do cliente explica o campo. Mesmo código para todos os clientes.
 - **Só atributos padrão** nos scripts. Itambé tem matriz de criticidade própria no
   ASSET (`cci_critic`, `cci_pontos`, `cci_prod`, `cci_custo`, `cci_qual`, `cci_ssma`,
   `cci_clas`, `cci_calif`, `cci_dt_crit`, visto no `apischema` MXAPIASSET). Útil para
