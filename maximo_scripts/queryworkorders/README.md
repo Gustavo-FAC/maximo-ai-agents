@@ -46,8 +46,9 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `persongroup` | não | Person group (work group) codes, comma-separated (max 20). |
 | `crewid` | não | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
+| `pmnum` | não | PM numbers, comma-separated (max 20): work orders generated from these PMs. |
 | `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
-| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. Also description_longdescription (max 50 per page). |
+| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. Also pmnum, pmduedate, jpnum, description_longdescription (max 50 per page) and modalidade (client field). |
 | `page` | não | Page number, starting at 1 (default 1). |
 | `page_size` | não | Items per page, 1 to 500 (default 100); max 50 with long description. |
 
@@ -82,6 +83,13 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
   Homologação (2026-11-04), 1 ano por `reportdate`, 37 páginas de 500: **202 s sem
   `siteid`**; com `siteid` informado a consulta fica rápida (usuário, 2026-11-06).
 - `count()` chamado uma vez para o `total`.
+- **Preventivas** (desde 2026-11-17, guia da Itambé): filtro `pmnum` (OS geradas
+  pelas PMs; variável nova, 17 parâmetros) e campos `pmnum`, `pmduedate` (vencimento
+  da PM para o qual a OS foi gerada) e `jpnum`. Cadastro das PMs no `QUERYPMS`.
+- **Campo do cliente** `modalidade` (Itambé, desde 2026-11-17): aceito em `fields`
+  só se o atributo existe neste Maximo (dicionário de dados, conferido em execução);
+  senão `unknown_field`. Nunca no padrão. Lista curada em `CLIENT_FIELDS`: campo
+  próprio só entra depois que o guia do cliente o explica.
 - **Descrição longa da OS** (desde 2026-11-17, pedido do usuário): campo
   `description_longdescription` em `fields` (até 32 mil caracteres, pode vir em rich
   text com `<!-- RICH TEXT -->`). Só vem quando pedido (fora do padrão); com ele,
@@ -122,3 +130,7 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
       página padrão 50; OS de checklist trazem o texto (texto puro, acentos ok); OS
       "FOLLOW UP..." trazem `null`. `wonums=1631605,1631535` sem datas: texto e `null`.
       `page_size=51` → `out_of_range` ("between 1 and 50"); sem o campo, 500 aceito.
+- [x] Preventivas (2026-11-17, via MCP): 17 parâmetros; `pmnum=MSA0_100` traz só a
+      OS 1633892; lista `MSA0_100,MSK1_65` ok; PM inexistente = 0; sem datas →
+      `required`; `fields=pmnum,pmduedate,jpnum,modalidade` preenchidos (PF);
+      `pmnum` nulo em corretiva (CO/EM).

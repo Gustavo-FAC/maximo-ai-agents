@@ -477,8 +477,17 @@ FIELD_TYPES = {
     "failurecode": "str",
     "problemcode": "str",
     "parent": "str",
+    "pmnum": "str",
+    "pmduedate": "date",
+    "jpnum": "str",
     LONG_DESCRIPTION: "str",
+    "modalidade": "str",
 }
+# Client attributes (not standard Maximo), added only after the client's survey
+# explains them. Accepted in fields only where this Maximo has the attribute (checked
+# in run); never in DEFAULT_FIELDS. modalidade: Itambe maintenance modality (survey
+# 2026-11-16).
+CLIENT_FIELDS = ("modalidade",)
 DEFAULT_FIELDS = (
     "wonum",
     "siteid",
@@ -507,6 +516,7 @@ LIST_FILTERS = (
     ("persongroup", "persongroup", "str", MAX_LIST_VALUES),
     ("crewid", "crewid", "str", MAX_LIST_VALUES),
     ("worktype", "worktype", "str", MAX_LIST_VALUES),
+    ("pmnum", "pmnum", "str", MAX_LIST_VALUES),
 )
 
 PARAM_NAMES = (
@@ -522,6 +532,7 @@ PARAM_NAMES = (
     "persongroup",
     "crewid",
     "worktype",
+    "pmnum",
     "text",
     "fields",
     "page",
@@ -638,6 +649,26 @@ def build_response(query, total, items):
     return response
 
 
+def missing_client_field(fields, client_fields, exists):
+    """First requested client field this Maximo does not have, or None."""
+    for field in fields:
+        if field in client_fields and not exists(field):
+            return field
+    return None
+
+
+def attribute_checker(object_name):
+    """exists(name): True if object_name has the attribute in this Maximo."""
+    from psdi.server import MXServer
+
+    info = MXServer.getMXServer().getMaximoDD().getMboSetInfo(object_name)
+
+    def exists(name):
+        return info.getMboValueInfo(name.upper()) is not None
+
+    return exists
+
+
 def run(user_info, raw):
     if not has_permission(user_info, PERMISSION_APP, PERMISSION_OPTION):
         return error_response(
@@ -650,6 +681,9 @@ def run(user_info, raw):
     if not sites:
         return error_response("not_authorized", "siteid", "User has no authorized site.")
     query = build_query(raw, userid, sites)
+    missing = missing_client_field(query["fields"], CLIENT_FIELDS, attribute_checker(OBJECT_NAME))
+    if missing is not None:
+        return error_response("unknown_field", "fields", "Unknown field: %s." % missing)
     total, items = query_page(user_info, OBJECT_NAME, query, FIELD_TYPES)
     return build_response(query, total, items)
 

@@ -37,3 +37,5 @@ Scripts:
 - [`querywomaterials/`](querywomaterials/README.md) – materiais planejados nas OS (WPMATERIAL), com saldo
   do almoxarifado sob pedido (INVBALANCES).
 - [`querymatusage/`](querymatusage/README.md) – consumo real de material: baixas e devoluções (MATUSETRANS).
+- [`querypms/`](querypms/README.md) – cadastro de preventivas (PM): vencimento, ativo,
+  location, plano, frequência, última geração e conclusão.

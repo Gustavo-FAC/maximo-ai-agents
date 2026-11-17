@@ -29,6 +29,7 @@ def test_scripts_found():
         "QUERYASSETDOWNTIME.py",
         "QUERYWOMATERIALS.py",
         "QUERYMATUSAGE.py",
+        "QUERYPMS.py",
     }
 
 

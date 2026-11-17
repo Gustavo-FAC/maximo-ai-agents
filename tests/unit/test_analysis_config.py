@@ -42,6 +42,8 @@ def test_itambe_status_classes():
     assert config.corrective_worktypes == ("CO", "EM")
     assert config.currency == "BRL"
     assert config.crew_field == "crewid"  # persongroup vazio na Itambé
+    assert config.preventive_worktypes == ("MPV", "MPR", "INSP", "IL", "MS")
+    assert config.week_start == "sunday"
 
 
 def test_class_from_internal_value_or_explicit():
@@ -51,6 +53,8 @@ def test_class_from_internal_value_or_explicit():
     assert config.corrective_worktypes == ()  # opcional
     assert config.currency is None  # opcional
     assert config.crew_field == "persongroup"  # padrão
+    assert config.preventive_worktypes == ()  # opcional
+    assert config.week_start is None  # opcional
 
 
 @pytest.mark.parametrize(
@@ -68,6 +72,8 @@ def test_class_from_internal_value_or_explicit():
         {"currency": "R$"},
         {"currency": "brl"},
         {"currency": "REAL"},
+        {"preventive_worktypes": "MPV"},
+        {"week_start": "friday"},
         {"currency": 986},
         {"crew_field": "ownergroup"},
         {"crew_field": "CREWID"},

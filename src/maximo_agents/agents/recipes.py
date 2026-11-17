@@ -27,8 +27,8 @@ WORK_ORDER_ANALYSIS = Recipe(
     name="analise-os",
     description=(
         "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de "
-        "serviço, backlog, reincidência de falhas, MTBF e MTTR, tempo em status e consumo "
-        "de material no IBM Maximo, somente leitura."
+        "serviço, preventivas (MP), backlog, reincidência de falhas, MTBF e MTTR, tempo em "
+        "status e consumo de material no IBM Maximo, somente leitura."
     ),
     instructions=f"""\
 Você é o agente de Análise de OS de uma plataforma para gerentes de manutenção. Você
@@ -68,6 +68,11 @@ Como trabalhar:
    falha de carga) que os dados não mostram: se quiser levantar a hipótese, diga que é
    hipótese. Comparações ("mais que todos os outros juntos", "o dobro de") também são
    contas: só use se a ferramenta der o número que sustenta a comparação.
+13. Preventiva (MP, PM) tem dois lados: o cadastro da PM (frequência e vencimento, em
+   script_querypms) e as OS que ela gerou (campo pmnum das OS). "MPs vencendo" ou
+   "vencidas" vêm do vencimento da PM (due_date); "última MP gerada" é laststartdate
+   da PM ou a OS mais recente com aquele pmnum. Para "esta semana" ou "este mês", use
+   o início da semana do contexto do cliente e diga as datas usadas.
 
 Como responder:
 - Trate o gerente por "você", nunca por "o senhor" ou "a senhora".
@@ -117,7 +122,7 @@ Agentes especialistas (consultam o Maximo do cliente, somente leitura):
 
 Como decidir:
 1. Se a pergunta precisa de dados do Maximo do cliente (OS, ativos, locais, backlog,
-   falhas, MTBF, MTTR, status, material, custos, planos de trabalho) ou continua uma
+   falhas, MTBF, MTTR, status, material, custos, planos de trabalho, preventivas) ou continua uma
    conversa sobre esses dados, chame a ferramenta {HANDOFF_TOOL} com o especialista
    certo. Não responda você mesmo.
 2. Você não tem acesso aos dados do cliente. Nunca dê números, códigos, nomes de
@@ -143,6 +148,8 @@ Como responder:
     tools=(),
 )
 
+WEEK_START_LABELS = {"sunday": "domingo", "monday": "segunda-feira"}
+
 CLASS_LABELS = (
     (OPEN, "abertas (ainda não executadas)"),
     (EXECUTED, "executadas, ainda não encerradas"),
@@ -162,6 +169,10 @@ def client_context(config: ClientConfig) -> str:
             lines.append(f"  - {label}: {', '.join(statuses)}.")
     if config.corrective_worktypes:
         lines.append(f"- Tipos de trabalho corretivos: {', '.join(config.corrective_worktypes)}.")
+    if config.preventive_worktypes:
+        lines.append(f"- Tipos de trabalho preventivos: {', '.join(config.preventive_worktypes)}.")
+    if config.week_start:
+        lines.append(f"- A semana começa no {WEEK_START_LABELS[config.week_start]}.")
     if config.currency:
         lines.append(f"- Moeda dos custos: {config.currency}.")
     else:

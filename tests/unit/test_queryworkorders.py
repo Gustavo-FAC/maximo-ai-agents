@@ -304,6 +304,24 @@ def test_long_description_caps_page():
     assert q["date_from"] is None and qwo.LONG_DESCRIPTION in q["fields"]
 
 
+def test_pm_filter_and_fields():
+    q = query(pmnum="pm1, PM2", fields="pmnum,pmduedate,jpnum")
+    assert q["filters"]["pmnum"] == ["PM1", "PM2"]
+    assert "pmnum in (:3, :4)" in q["where"]
+    assert q["fields"] == ["wonum", "siteid", "pmnum", "pmduedate", "jpnum"]
+    many = ",".join(f"PM{i}" for i in range(qwo.MAX_LIST_VALUES + 1))
+    assert error_code(**BASE, pmnum=many) == "too_many_values"
+
+
+def test_client_fields():
+    assert not set(qwo.CLIENT_FIELDS) & set(qwo.DEFAULT_FIELDS)
+    assert set(qwo.CLIENT_FIELDS) <= set(qwo.FIELD_TYPES)
+    fields = query(fields="modalidade")["fields"]
+    assert qwo.missing_client_field(fields, qwo.CLIENT_FIELDS, lambda name: False) == "modalidade"
+    assert qwo.missing_client_field(fields, qwo.CLIENT_FIELDS, lambda name: True) is None
+    assert qwo.missing_client_field(["wonum", "pmnum"], qwo.CLIENT_FIELDS, lambda n: False) is None
+
+
 def test_pagination():
     q = query(page="3", page_size="50")
     assert (q["page"], q["page_size"], q["offset"]) == (3, 50, 100)

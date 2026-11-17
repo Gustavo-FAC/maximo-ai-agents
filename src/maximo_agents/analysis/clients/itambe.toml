@@ -11,6 +11,12 @@ sites = ["FABRICA", "MINERACAO"]
 history_start = "2006-01-01"
 # Tipos de trabalho corretivos (reincidência): CO corretiva, EM emergencial.
 corrective_worktypes = ["CO", "EM"]
+# Tipos preventivos (guia de levantamento, 2026-11-16): MPV preventiva, MPR preditiva,
+# INSP inspeção, IL iluminação; MS entra na fórmula de cumprimento de preventivas do
+# cliente, embora fora da tabela de tipos (a confirmar com o consultor).
+preventive_worktypes = ["MPV", "MPR", "INSP", "IL", "MS"]
+# Semana do cliente começa no domingo (guia de levantamento, 2026-11-16).
+week_start = "sunday"
 # Moeda dos custos (ISO 4217); o agente não deduz a moeda.
 currency = "BRL"
 # Equipe da OS: Itambé usa CREWID (ELETRICA, INSTRUM, PCM-ELE...); persongroup vazio

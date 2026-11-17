@@ -25,6 +25,27 @@ mas é outro para o código.
   - `maximo_scripts/queryworkorders/response_schema.json`
 - Anotar o commit do repositório que está sendo instalado (`git log -1 --oneline`).
 
+## Atualizar instalação existente (2026-11-17: preventivas e modalidade)
+
+Inclui também a descrição longa (seção seguinte), se ainda não instalada.
+
+1. Abrir o script `QUERYWORKORDERS`. Log Level `DEBUG` durante o teste.
+2. Aba **Variables → New Row**, com os mesmos valores das outras (IN, LITERAL,
+   ALN, `*`). Variable `pmnum` (digitar), Description:
+   `PM numbers, comma-separated (max 20): work orders generated from these PMs.`
+3. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYWORKORDERS.py`
+   novo. **Save**. O `response_schema.json` não muda.
+4. Conferir no OAS (passo 5): **17** parâmetros, sem `u200b`. Esperar o MCP
+   recarregar (10 min; passo 6).
+5. Testes (trocar pelos números de uma PM e de uma OS dela):
+
+   ```json
+   {"date_from": "2025-11-17", "date_to": "2026-11-17", "pmnum": "<PM>", "fields": "pmnum,pmduedate,jpnum,modalidade", "page_size": "5"}
+   ```
+
+   Esperado: só OS da PM, com `pmnum`, `pmduedate`, `jpnum` e `modalidade`.
+6. Voltar o Log Level para `ERROR`. Me enviar as respostas e o commit instalado.
+
 ## Atualizar instalação existente (2026-11-17: descrição longa da OS)
 
 Só código: nenhuma variável nova (o campo entra pelo parâmetro `fields`, que já

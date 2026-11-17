@@ -103,3 +103,15 @@ def test_client_context_states_currency_or_forbids_guessing():
     without = client_context(replace(CONFIG, currency=None))
     assert "Moeda dos custos não informada" in without
     assert "BRL" not in without
+
+
+def test_client_context_preventive_types_and_week_start():
+    from dataclasses import replace
+
+    from maximo_agents.agents.recipes import client_context
+
+    text = client_context(CONFIG)
+    assert "- Tipos de trabalho preventivos: MPV, MPR, INSP, IL, MS." in text
+    assert "- A semana começa no domingo." in text
+    bare = client_context(replace(CONFIG, preventive_worktypes=(), week_start=None))
+    assert "preventivos" not in bare and "semana" not in bare

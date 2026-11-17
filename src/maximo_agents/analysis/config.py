@@ -21,6 +21,9 @@ STATUS_CLASSES = (OPEN, EXECUTED, CLOSED, CANCELLED)
 # Atributo da OS que guarda a equipe: persongroup (padrão) ou crewid (ex.: Itambé).
 CREW_FIELDS = ("persongroup", "crewid")
 
+# Dia em que a semana do cliente começa ("MPs desta semana").
+WEEK_STARTS = ("sunday", "monday")
+
 # Valor interno do domínio WOSTATUS (padrão do Maximo) -> classe.
 INTERNAL_STATUS_CLASS = {
     "WAPPR": OPEN,
@@ -50,6 +53,8 @@ class ClientConfig:
     corrective_worktypes: tuple[str, ...] = ()
     currency: str | None = None  # ISO 4217 dos custos (ex.: BRL)
     crew_field: str = "persongroup"  # um de CREW_FIELDS
+    preventive_worktypes: tuple[str, ...] = ()
+    week_start: str | None = None  # um de WEEK_STARTS
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
@@ -103,9 +108,14 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
     except (KeyError, ValueError) as e:
         raise ClientConfigError(f"{client_id}: 'history_start' must be YYYY-MM-DD.") from e
 
-    corrective = data.get("corrective_worktypes", [])
-    if not isinstance(corrective, list) or not all(isinstance(w, str) and w for w in corrective):
-        raise ClientConfigError(f"{client_id}: 'corrective_worktypes' must be a list of codes.")
+    corrective = _worktypes(client_id, data, "corrective_worktypes")
+    preventive = _worktypes(client_id, data, "preventive_worktypes")
+
+    week_start = data.get("week_start")
+    if week_start is not None and week_start not in WEEK_STARTS:
+        raise ClientConfigError(
+            f"{client_id}: 'week_start' must be one of: {', '.join(WEEK_STARTS)}."
+        )
 
     currency = data.get("currency")
     if currency is not None and not (
@@ -129,7 +139,16 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
         sites=tuple(sites),
         history_start=history_start,
         status_classes=status_classes,
-        corrective_worktypes=tuple(corrective),
+        corrective_worktypes=corrective,
         currency=currency,
         crew_field=crew_field,
+        preventive_worktypes=preventive,
+        week_start=week_start,
     )
+
+
+def _worktypes(client_id: str, data: dict, key: str) -> tuple[str, ...]:
+    codes = data.get(key, [])
+    if not isinstance(codes, list) or not all(isinstance(w, str) and w for w in codes):
+        raise ClientConfigError(f"{client_id}: '{key}' must be a list of codes.")
+    return tuple(codes)
