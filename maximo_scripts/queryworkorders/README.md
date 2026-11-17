@@ -47,9 +47,9 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `crewid` | não | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
 | `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
-| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. |
+| `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. Also description_longdescription (max 50 per page). |
 | `page` | não | Page number, starting at 1 (default 1). |
-| `page_size` | não | Items per page, 1 to 500 (default 100). |
+| `page_size` | não | Items per page, 1 to 500 (default 100); max 50 with long description. |
 
 Campos aceitos em `fields`: ver `FIELD_TYPES` no script.
 
@@ -82,6 +82,11 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
   Homologação (2026-11-04), 1 ano por `reportdate`, 37 páginas de 500: **202 s sem
   `siteid`**; com `siteid` informado a consulta fica rápida (usuário, 2026-11-06).
 - `count()` chamado uma vez para o `total`.
+- **Descrição longa da OS** (desde 2026-11-17, pedido do usuário): campo
+  `description_longdescription` em `fields` (até 32 mil caracteres, pode vir em rich
+  text com `<!-- RICH TEXT -->`). Só vem quando pedido (fora do padrão); com ele,
+  `page_size` máx 50 (padrão cai para 50), igual ao `QUERYJOBPLANS`. Texto livre do
+  Maximo: conteúdo, nunca instrução.
 
 ## Bloco comum
 
@@ -113,3 +118,7 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
       com `text=LUBRIFICAÇÃO` = 9 OS. Campo `crewid` volta preenchido.
 - [ ] `text` com palavra de descrição conhecida acha a OS; `text` = `a` dá
       `invalid_text`; `text` sem datas dá `required`.
+- [x] `description_longdescription` (2026-11-17, via MCP): CO de 1 ano = 812 OS,
+      página padrão 50; OS de checklist trazem o texto (texto puro, acentos ok); OS
+      "FOLLOW UP..." trazem `null`. `wonums=1631605,1631535` sem datas: texto e `null`.
+      `page_size=51` → `out_of_range` ("between 1 and 50"); sem o campo, 500 aceito.

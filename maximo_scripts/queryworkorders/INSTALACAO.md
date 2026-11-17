@@ -25,6 +25,26 @@ mas é outro para o código.
   - `maximo_scripts/queryworkorders/response_schema.json`
 - Anotar o commit do repositório que está sendo instalado (`git log -1 --oneline`).
 
+## Atualizar instalação existente (2026-11-17: descrição longa da OS)
+
+Só código: nenhuma variável nova (o campo entra pelo parâmetro `fields`, que já
+existe) e o `response_schema.json` não muda.
+
+1. Abrir o script `QUERYWORKORDERS`. Log Level `DEBUG` durante o teste.
+2. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYWORKORDERS.py`
+   novo. **Save**.
+3. Testar pelo MCP (parâmetros não mudaram; se o campo não vier, esperar 10 min), trocando
+   pelos números de OS conhecidas, uma com e outra sem descrição longa:
+
+   ```json
+   {"wonums": "<OS1>,<OS2>", "fields": "description,description_longdescription"}
+   ```
+
+   Esperado: `page_size` = 50; OS com texto traz `description_longdescription`
+   preenchido (pode começar com `<!-- RICH TEXT -->`); OS sem texto traz `null`.
+   Depois, com `"page_size": "51"` → `{"error": {"code": "out_of_range", ...}}`.
+4. Voltar o Log Level para `ERROR`. Me enviar as respostas e o commit instalado.
+
 ## Atualizar instalação existente (2026-10-30: parâmetro `text` e bloco comum)
 
 Se o `QUERYWORKORDERS` já está instalado e funcionando, não precisa apagar e

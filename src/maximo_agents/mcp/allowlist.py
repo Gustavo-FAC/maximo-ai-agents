@@ -74,10 +74,15 @@ QUERY_WORK_ORDERS = ToolSpec(
             "reportdate, actstart, actfinish. Also accepted: statusdate, lead, owner, reportedby, "
             "targstartdate, targcompdate, schedstart, schedfinish, changedate, estdur, "
             "actlabhrs, actlabcost, actmatcost, acttotalcost, failurecode, problemcode, "
-            "parent. wonum and siteid are always included."
+            "parent, description_longdescription. wonum and siteid are always included. "
+            "description_longdescription is the full work order text (what was reported "
+            "or done), may be long; page_size at most 50. Request it only when the "
+            "details are needed, usually with wonums."
         ),
         "page": "Page number, starting at 1 (default 1).",
-        "page_size": "Items per page, 1 to 500 (default 100).",
+        "page_size": (
+            "Items per page, 1 to 500 (default 100); at most 50 with description_longdescription."
+        ),
     },
 )
 

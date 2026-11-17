@@ -426,7 +426,12 @@ MAX_WONUMS = 50
 MAX_LIST_VALUES = 20
 DEFAULT_PAGE_SIZE = 100
 MAX_PAGE_SIZE = 500
+# Long descriptions make each item large: smaller pages (same as QUERYJOBPLANS).
+MAX_DETAIL_PAGE_SIZE = 50
 MAX_AUTHORIZED_SITES = 200
+
+# Full work order text, up to 32000 characters (may hold rich text). Only on request.
+LONG_DESCRIPTION = "description_longdescription"
 
 DATE_FIELDS = (
     "reportdate",
@@ -472,6 +477,7 @@ FIELD_TYPES = {
     "failurecode": "str",
     "problemcode": "str",
     "parent": "str",
+    LONG_DESCRIPTION: "str",
 }
 DEFAULT_FIELDS = (
     "wonum",
@@ -575,9 +581,12 @@ def build_query(raw, userid, authorized_sites=None):
             "date_field must be one of: %s." % ", ".join(DATE_FIELDS),
         )
 
-    page = parse_int("page", raw.get("page"), 1, 1, 100000)
-    page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
     fields = parse_fields(raw.get("fields"), FIELD_TYPES, DEFAULT_FIELDS, KEY_FIELDS)
+    max_page_size = MAX_DETAIL_PAGE_SIZE if LONG_DESCRIPTION in fields else MAX_PAGE_SIZE
+    page = parse_int("page", raw.get("page"), 1, 1, 100000)
+    page_size = parse_int(
+        "page_size", raw.get("page_size"), min(DEFAULT_PAGE_SIZE, max_page_size), 1, max_page_size
+    )
 
     binds = []
     clauses = [BASE_WHERE]

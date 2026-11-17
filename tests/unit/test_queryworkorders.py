@@ -292,6 +292,18 @@ def test_fields():
     assert error_code(**BASE, fields="wonum,password") == "unknown_field"
 
 
+def test_long_description_caps_page():
+    assert qwo.LONG_DESCRIPTION not in qwo.DEFAULT_FIELDS
+    q = query(fields="description_longdescription")
+    assert q["fields"] == ["wonum", "siteid", "description_longdescription"]
+    assert q["page_size"] == qwo.MAX_DETAIL_PAGE_SIZE
+    assert error_code(**BASE, fields=qwo.LONG_DESCRIPTION, page_size="51") == "out_of_range"
+    assert query(page_size="500")["page_size"] == 500
+    # Lookup by number with the full text, no dates.
+    q = qwo.build_query({"wonums": "1001", "fields": qwo.LONG_DESCRIPTION}, "GERENTE1")
+    assert q["date_from"] is None and qwo.LONG_DESCRIPTION in q["fields"]
+
+
 def test_pagination():
     q = query(page="3", page_size="50")
     assert (q["page"], q["page_size"], q["offset"]) == (3, 50, 100)
