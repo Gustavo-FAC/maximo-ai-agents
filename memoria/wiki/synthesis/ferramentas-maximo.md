@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[automation-scripts-como-ferramentas]], [[allowlist-somente-leitura]], [[estado-do-projeto]], [[itambe-cimentos]]
 created: 2026-10-29
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Ferramentas de dados – plano
@@ -26,7 +26,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 |---|---|---|---|---|---|
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR | buscar_ativos, histórico do ativo (cadastro) | P0 | funcionando via MCP |
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
-| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16) |
+| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16); `description_longdescription` em `fields` (máx 50 por página) funcionando via MCP (2026-11-17) |
 | 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
 | 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); MTBF/MTTR/disponibilidade em `analysis/reliability.py` (2026-11-10) | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |

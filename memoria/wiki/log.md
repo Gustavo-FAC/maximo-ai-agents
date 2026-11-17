@@ -564,3 +564,16 @@ apareceu de novo em log colado: troca recomendada, não confirmada. README do sc
 false`. Schema recolado resolveu; confirmada a filtragem pelo response schema
 ([[mas-mcp-server]]). Pendência fechada em CLAUDE.md, [[estado-do-projeto]],
 [[ferramentas-maximo]] e README do script.
+
+## [2026-11-17] code | Descrição longa da OS no QUERYWORKORDERS
+Pedido do usuário. `description_longdescription` aceito em `fields` (fora do padrão);
+com ele `page_size` máx 50, igual ao `QUERYJOBPLANS`. Sem variável nova nem mudança
+de schema. Allowlist, teste, README e INSTALACAO (seção de atualização). 389 testes.
+Falta instalar e testar via MCP. [[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-11-17] test | Descrição longa da OS via MCP
+Reinstalado em homologação (antes, BMXAA10147E: usuário da chave em PT de novo,
+trocado para EN). CO de 1 ano = 812 OS, página padrão 50, texto com acento ok, OS sem
+texto `null`; `wonums` sem datas ok; `page_size=51` → `out_of_range`. Achado: texto
+das OS de checklist traz `Mel/Imp/Imi/Prio`, provável regra da escala de prioridade
+(confirmar com o consultor). [[estado-do-projeto]], [[ferramentas-maximo]].

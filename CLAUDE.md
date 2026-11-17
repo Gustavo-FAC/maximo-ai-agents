@@ -102,11 +102,14 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 376 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 389 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
   (após recolar `response_schema.json` na MCP Tool).
+- `QUERYWORKORDERS` com descrição longa (`description_longdescription` em `fields`,
+  `page_size` máx 50) **funcionando via MCP** desde 2026-11-17. Texto das OS de
+  checklist traz `Mel/Imp/Imi/Prio` (provável escala de prioridade, confirmar).
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

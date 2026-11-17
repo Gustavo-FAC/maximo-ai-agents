@@ -7,7 +7,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[ferramentas-maximo]] – plano dos automation scripts, o que fica em
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
-  `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`).
+  `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`, descrição
+  longa da OS no `QUERYWORKORDERS`).
 - [[prompts-de-teste]] – 40 perguntas: 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.

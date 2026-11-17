@@ -11,7 +11,28 @@ updated: 2026-11-17
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Hoje (2026-11-17): `specs_truncated` resolvido
+## Hoje (2026-11-17), tarde: descrição longa da OS no `QUERYWORKORDERS`
+
+Pedido do usuário: o script de OS também trazer a long description. Feito no código
+(sem commit ainda): campo `description_longdescription` aceito em `fields` (fora do
+padrão), `page_size` máx 50 com ele (padrão cai para 50), mesmo padrão do
+`QUERYJOBPLANS`. Sem variável nova e sem mudança no `response_schema.json` (items é
+objeto genérico): reinstalar só o código (`INSTALACAO.md`, seção 2026-11-17).
+Allowlist (`fields`, `page_size`), teste `test_long_description_caps_page`, README.
+389 testes, Ruff limpo. **Instalado e funcionando via MCP** (2026-11-17, após
+BMXAA10147E: usuário da chave voltou para PT de novo, trocado para EN): CO de 1 ano
+= 812 OS, página padrão 50; OS sem texto → `null`; busca por `wonums` ok;
+`page_size=51` → `out_of_range`; sem o campo, 500 aceito.
+
+Achado nos dados: a descrição longa das OS de checklist (`NÃO CONFORME: ...`) traz as
+respostas do inspetor em formato fixo: `[EQUIPE=...]`, melhoria, impacto na parada,
+iminente e `| Mel=SIM/NAO Imp=SIM/NAO Imi=SIM/NAO Prio=1..4`. Parece ser a regra da
+**escala de prioridade** (pendente com o consultor): Imp+Imi = 1, Imp sem Imi = 2,
+sem impacto = 3, melhoria = 4 (inferido das amostras, confirmar). Há resposta fora
+do padrão (1631537: `IMINENTE...=Elétrica`). As OS "FOLLOW UP WORK ORDER FOR
+INSPECTION" e "... = SIM" vêm sem descrição longa.
+
+## 2026-11-17, manhã: `specs_truncated` resolvido
 
 Retestado via MCP com MCA6477 (motor SIEMENS 1LA9083-4HB90, 23 specs, location
 `N1M09M1`): `"specs_truncated": false` agora chega. Recolar o `response_schema.json`
