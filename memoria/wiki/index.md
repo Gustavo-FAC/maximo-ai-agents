@@ -7,7 +7,7 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[ferramentas-maximo]] – plano dos automation scripts, o que fica em
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
-  `QUERYASSETDOWNTIME`).
+  `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`).
 - [[prompts-de-teste]] – 40 perguntas: 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
@@ -20,8 +20,9 @@ Catálogo de páginas. Atualizar a cada alteração.
   paradas (ASSETSTATUS) na homologação; sem material planejado (WPMATERIAL vazio),
   5241 baixas/devoluções em 366 dias.
 - [[mas-mcp-server]] – servidor MCP do MAS 9.2, ferramentas expostas, notas do SDK.
-  BMXAA10147E: usuário da chave precisa estar em EN (2 ocorrências). Cliente sem
-  descrição de parâmetro.
+  BMXAA10147E: usuário da chave precisa estar em EN (várias ocorrências). Cliente sem
+  descrição de parâmetro. Resposta parece filtrada pelo response schema instalado;
+  `apischema` só aceita estrutura de objeto; `apikey` no log do pod.
 
 ## Conceitos
 - [[assistente-geral-roteador]] – 2º agente: roteador com `handoff` para os

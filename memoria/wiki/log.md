@@ -546,3 +546,21 @@ parâmetros; 3 equipes = 188 OS (142/32/14), minúsculo igual, inexistente 0, 21
 `crew_field`; descrição de `analyze_work_order_backlog` ajustada. Rodado com dados
 reais: 7.045 abertas, soma das equipes bate; equipe LUBRIFIC com 1.135 (levar ao
 cliente). 376 testes. [[estado-do-projeto]].
+
+## [2026-11-16] test | `include_specs` do QUERYASSETS via MCP
+Dados de placa (ASSETSPEC) com `include_specs=Y` (commits `7eff378`, `46ba17c`).
+MCA0957 → 24 specs com unidade e nulos; página de 50 ok; `page_size=51` →
+`out_of_range`; sem a opção, sem `assetuid`/`specs`. **Pendente:** `specs_truncated`
+não chega (schema da MCP Tool no Maximo provavelmente anterior a `46ba17c`; recolar e
+retestar). `apischema` com nome `ROUTERESP_*` dá 500 (`mosInfo` null): só aceita
+estrutura de objeto. Usuário da chave voltou para PT (BMXAA10147E), corrigido. Chave
+apareceu de novo em log colado: troca recomendada, não confirmada. README do script
+(checklist), [[estado-do-projeto]], [[ferramentas-maximo]], [[mas-mcp-server]].
+
+
+## [2026-11-17] test | `specs_truncated` chega via MCP
+`script_queryassets` com MCA6477 e `include_specs=Y`: 23 specs (SIEMENS
+1LA9083-4HB90, 1710 rpm, 1,6 A, IP55, rolamentos 6004 ZZ C3) e `"specs_truncated":
+false`. Schema recolado resolveu; confirmada a filtragem pelo response schema
+([[mas-mcp-server]]). Pendência fechada em CLAUDE.md, [[estado-do-projeto]],
+[[ferramentas-maximo]] e README do script.

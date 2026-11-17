@@ -4,12 +4,50 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-16
+updated: 2026-11-17
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
+
+## Hoje (2026-11-17): `specs_truncated` resolvido
+
+Retestado via MCP com MCA6477 (motor SIEMENS 1LA9083-4HB90, 23 specs, location
+`N1M09M1`): `"specs_truncated": false` agora chega. Recolar o `response_schema.json`
+na MCP Tool resolveu; confirma que o MCP só repassa chaves declaradas no schema
+([[mas-mcp-server]]). Pendência 1 abaixo fechada; 2 (troca da chave) segue aberta.
+
+## 2026-11-16, tarde: `include_specs` no `QUERYASSETS` (dados de placa)
+
+Pedido da Itambé: dados de placa do motor (ficha técnica, ASSETSPEC). Feito e com push:
+- `7eff378`: parâmetro `include_specs` (Y/N, padrão N; 14 parâmetros). Cada ativo
+  traz `specs` (`attribute`, `description`, `section`, `value`, `unit`; `value` null se
+  vazio); `assetuid` volta junto; página até 50; até 3000 specs por chamada, acima
+  disso `specs_truncated` = true. Allowlist, testes, README e INSTALACAO.
+- `46ba17c`: `specs_truncated` declarado no `response_schema.json` (+ teste).
+
+**Validado via MCP (2026-11-16):** MCA0957 → 24 specs (BROWN BOVERI, RSOM 630 HA6,
+2380 CV, 6600 V, rolamentos), unidades e nulos certos; página de 50 ativos ok (resposta
+rápida, tempo não medido); `page_size=51` → `out_of_range`; sem `include_specs` não vem
+`assetuid` nem `specs` (página 100).
+
+**Onde paramos / pendente:**
+1. ~~**`specs_truncated` não chega pelo MCP**~~ Resolvido em 2026-11-17 (schema
+   recolado). Histórico: (ausente nas respostas com `include_specs=Y`).
+   O script instalado emite o campo (já em `7eff378`); o MCP parece montar a resposta
+   pelo response schema instalado e descartar chave não declarada. Hipótese: schema da
+   MCP Tool QUERYASSETS no Maximo ainda é o anterior a `46ba17c`. **Ação do usuário:**
+   colar o `response_schema.json` atual na ferramenta e retestar (esperado
+   `"specs_truncated": false`). Se já colado: log do MCP/Manage de uma chamada
+   `script_queryassets` (com `apikey` apagada) para ver se o campo sai do Maximo.
+   Não dá para conferir pelo `apischema` (ver [[mas-mcp-server]]).
+2. **Trocar a chave de API**: apareceu de novo em log do MCP colado na conversa
+   (2026-11-16). Recomendado gerar nova, revogar e atualizar `.env`; usuário não
+   confirmou.
+3. Usuário da chave voltou para PT (BMXAA10147E) no meio dos testes; corrigido para EN.
+4. Checklist do README do QUERYASSETS: marcados os 2 itens de `include_specs`;
+   `specs_truncated` via MCP marcado em 2026-11-17.
 
 ## Hoje (2026-11-16): `crewid` no `QUERYWORKORDERS` (feedback da Itambé)
 

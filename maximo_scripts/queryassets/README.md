@@ -15,8 +15,13 @@ aqui; OS do ativo lá, com filtro `assetnum`).
 ## Descrição da ferramenta (colar no campo Description)
 
 ```text
-Read-only asset search: filters, hierarchy, description words, paging, total.
+Read-only asset search: filters, hierarchy, words, paging, total. Nameplate specs: include_specs=Y.
 ```
+
+Até 100 caracteres. É o **único** texto que um cliente MCP externo (ex.: claude.ai)
+recebe: descrições de variáveis não chegam. Por isso cita `include_specs` (em
+2026-11-17 o claude.ai do cliente tentou `fields=assetspec` e não achou as
+especificações).
 
 ## Variáveis (aba Variables)
 
@@ -96,7 +101,10 @@ Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
       devolve booleano, data ISO e número.
 - [x] Paginação (página 2), `unknown_field`, `invalid_integer` ok.
 - [ ] Usuário sem READ no app ASSET recebe `not_authorized`.
-- [ ] `include_specs=Y` com `assetnums=MCA0957`: `specs` com atributo, descrição,
+- [x] `include_specs=Y` com `assetnums=MCA0957`: `specs` com atributo, descrição,
       valor e unidade (dados de placa); vazio vem `null`; `page_size=51` recusado.
-- [ ] `include_specs=Y` com página de 50 ativos: tempo aceitável.
+      (2026-11-16: 24 specs, `out_of_range` no 51.)
+- [x] `include_specs=Y` com página de 50 ativos: tempo aceitável (2026-11-16).
+- [x] `specs_truncated` presente na resposta MCP com `include_specs=Y` (2026-11-17:
+      `false` com MCA6477, após recolar `response_schema.json` na MCP Tool).
 - [ ] Usuário **sem** acesso a um site não recebe ativos desse site.

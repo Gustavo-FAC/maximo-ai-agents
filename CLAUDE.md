@@ -104,6 +104,9 @@ Cliente piloto: **Itambé Cimentos**.
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
 - 376 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
+- `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
+  **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
+  (após recolar `response_schema.json` na MCP Tool).
 - Guia de levantamento da Fase 1 (Itambé) em preenchimento pelo consultor funcional.
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 

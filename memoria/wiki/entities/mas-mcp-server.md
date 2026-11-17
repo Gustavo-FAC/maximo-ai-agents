@@ -4,7 +4,7 @@ type: entity
 sources: []
 related: [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[itambe-cimentos]]
 created: 2026-10-21
-updated: 2026-10-29
+updated: 2026-11-16
 ---
 
 # MCP Server do MAS 9.2
@@ -59,6 +59,24 @@ Assim, considere modificar para um usuário com base em inglês
   funcionaram. Na prática, **idioma EN é pré-requisito** do usuário da chave;
   conferir sempre que trocar chave ou usuário.
 
+- **2026-11-16:** de novo em PT no meio dos testes do `include_specs` (BMXAA10147E nas
+  duas chamadas a `script_queryassets`); trocado para EN, voltou a funcionar.
+
+## `apischema` não lê schema de ferramenta, 2026-11-16
+
+`apischema` recebe nome de **estrutura de objeto** (ex.: `MXAPIASSET`). Com nome de
+schema do OpenAPI (`ROUTERESP_POST_SCRIPT_QUERYASSETS`) dá HTTP 500
+`Cannot read field "mosInfo" because "this" is null` (estrutura inexistente). Para ver
+o response schema instalado de uma MCP Tool, usar o documento OpenAPI do Maximo.
+
+## Resposta filtrada pelo response schema (confirmado), 2026-11-16/17
+
+Chaves vêm na ordem do schema e, quando o JSON não chega, todas `null` (2026-10-29).
+`specs_truncated`, emitido pelo script mas ausente do schema instalado, não aparece na
+resposta. Conclusão provisória: **o MCP só repassa chaves declaradas no response
+schema**; mudou a resposta do script, recolar o schema na MCP Tool. **Confirmado em
+2026-11-17:** após recolar o schema do QUERYASSETS, `specs_truncated` passou a chegar.
+
 ## Risco: MCP Server grava a `apikey` em log, 2026-10-29
 
 O pod do MCP Server loga em **INFO** os headers de cada chamada, com a `apikey`
@@ -72,6 +90,8 @@ antiga** (risco aceito, 2026-10-29).
 - Mitigar antes de qualquer chave real: nível de log do pod acima de INFO e/ou
   correção da IBM; restringir acesso aos logs do pod. **Não decidido.**
 - Ao pedir log do MCP ao usuário: pedir para apagar `apikey` antes de colar.
+- 2026-11-16: aconteceu de novo (log do `apischema` colado com a chave). Recomendado
+  trocar e revogar; usuário não confirmou. Risco segue sem mitigação no pod.
 
 ## Confirmado no log do MCP, 2026-10-29
 

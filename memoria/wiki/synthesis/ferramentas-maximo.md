@@ -89,6 +89,11 @@ exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).
   `total` é exato. Exceção à regra "intervalo de datas obrigatório" **confirmada
   pelo usuário** (2026-10-29): datas obrigatórias só em consultas de movimento;
   `CLAUDE.md` atualizado.
+- **Ficha técnica no `QUERYASSETS`** (2026-11-16, pedido da Itambé: dados de placa
+  do motor): opção `include_specs=Y` em vez de script novo. Lê ASSETSPEC pelo ativo
+  dono (relação ad hoc `$QASSETSPECS`), página até 50, teto de 3000 specs com
+  `specs_truncated`. Funcionando via MCP, `specs_truncated` incluso desde 2026-11-17
+  (schema recolado, ver [[estado-do-projeto]]).
 - **Só atributos padrão** nos scripts. Itambé tem matriz de criticidade própria no
   ASSET (`cci_critic`, `cci_pontos`, `cci_prod`, `cci_custo`, `cci_qual`, `cci_ssma`,
   `cci_clas`, `cci_calif`, `cci_dt_crit`, visto no `apischema` MXAPIASSET). Útil para

@@ -31,7 +31,7 @@ Automation Scripts → filtrar `QUERYASSETS` → desmarcar **Active?**, salvar,
 | Campo | Valor |
 |---|---|
 | Script | `QUERYASSETS` (digitar) |
-| Description | `Read-only asset search: filters, hierarchy, description words, paging, total.` |
+| Description | `Read-only asset search: filters, hierarchy, words, paging, total. Nameplate specs: include_specs=Y.` |
 | Script Language | `python` (ou `jython`) |
 | Log Level | `DEBUG` (só durante a validação; voltar para `ERROR` no passo 8) |
 | Active? | marcado |
