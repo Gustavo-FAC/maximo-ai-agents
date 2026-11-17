@@ -11,9 +11,28 @@ updated: 2026-11-17
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Hoje (2026-11-17), noite: preventivas (MP) no código, falta instalar
+## Onde paramos (fim de 2026-11-17)
 
-Pedido do usuário após o guia (perguntas 1-3). Sem commit ainda. 416 testes, Ruff limpo.
+Preventivas (MP) **funcionando via MCP e commitadas** (`f9e2391` código, `624b49d`
+docs; push feito pelo usuário, `main` = `origin/main`). 416 testes, Ruff limpo.
+Árvore limpa. Último passo: usuário escolher o próximo trabalho.
+
+**Pendente:**
+1. **Consultor (bloqueia cumprimento de preventivas):** por que OS preventivas vêm
+   quase todas sem `pmnum`; 4138 PMs ativas vencidas (algumas 2007-2012): abandonadas,
+   homologação velha ou geração fora do Maximo; regra `Mel/Imp/Imi` → `Prio` do
+   checklist (inferida, ver abaixo); as 10 dúvidas do [[guia-levantamento-fase1]].
+2. **Análise de cumprimento de preventivas** em `analysis/` (depois do item 1).
+3. **Perguntas do guia ainda sem ferramenta:** atraso (4), designação (6), emitidas ×
+   executadas (7), filtro por spec (10), SS e manutenção externa (13-17; OS tem
+   `fornecedor`).
+4. `tests/evals/` com as perguntas reais do guia (não iniciado).
+5. Risco: LLM mandar `status=ACTIVE` no `QUERYPMS` (código do cliente é `ATIVO`).
+6. Com a chave do Claude: rodar o grafo real (agente e roteador).
+
+## 2026-11-17, noite: preventivas (MP)
+
+Pedido do usuário após o guia (perguntas 1-3). 416 testes, Ruff limpo.
 - `QUERYWORKORDERS`: filtro `pmnum` (variável nova, **17 parâmetros**) e campos
   `pmnum`, `pmduedate`, `jpnum`. Campo do cliente `modalidade` (OS e PM têm o
   atributo, visto no `apischema` MXAPIWO/MXAPIPM): lista curada `CLIENT_FIELDS`,
@@ -47,8 +66,6 @@ Pedido do usuário após o guia (perguntas 1-3). Sem commit ainda. 416 testes, R
   `nextdate` de 2007-2012 (ex.: MSFAB_20 com `lastcompdate` 2025 e `nextdate` 2012);
   nenhuma vence na semana 16-22/11. Perguntar ao consultor: homologação desatualizada,
   PMs abandonadas ativas ou geração fora do Maximo? "MPs vencidas" fica inútil sem isso.
-- **Pendente:** commit; análise de cumprimento de preventivas (depende das dúvidas do
-  guia e das OS sem `pmnum`).
 
 ## 2026-11-17, noite: guia de levantamento recebido
 

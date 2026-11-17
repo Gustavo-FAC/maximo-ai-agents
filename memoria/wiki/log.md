@@ -604,3 +604,9 @@ Reteste: ferramenta com 17 parâmetros. `pmnum=MSA0_100` traz só a OS 1633892
 ok; corretivas com `pmnum` nulo. Achado: OS preventivas recentes quase todas sem
 `pmnum`. `QUERYPMS` com `status=ACTIVE` explícito = 0 (código do cliente é `ATIVO`).
 Páginas: [[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-11-17] commit | Preventivas commitadas e fim de sessão
+`f9e2391` (QUERYPMS, filtro `pmnum`, allowlist, receita, config, testes) e `624b49d`
+(docs e wiki); push feito pelo usuário. [[estado-do-projeto]] ganhou seção "Onde
+paramos" com a lista de pendências (consultor, cumprimento de preventivas, perguntas
+do guia sem ferramenta, evals, grafo real).

@@ -143,13 +143,18 @@ páginas afetadas, índice e `memoria/wiki/log.md`.
    em 2026-11-06. Perguntas de gerente testadas no subagente `analise-os` em
    2026-11-06 (números batem, recusas certas). Status × idade no backlog e regras da
    receita (1 a 12, retestadas) feitos. Próximo sugerido: `tests/evals/` com as
-   perguntas 33-40 (não iniciado). Falta: escala de prioridade (consultor) e, com a chave do Claude,
+   perguntas 33-40 (não iniciado). Escala de prioridade veio no guia (1 Urgente 1 d ... 4 Baixo 30 d); falta
+   confirmar a regra `Mel/Imp/Imi` → `Prio` do checklist. Com a chave do Claude,
    rodar o grafo real (e validar a regra de não falar de implementação interna).
 8. Quando o guia da Itambé voltar: especificar e escrever os automation scripts
    e montar `tests/evals/` com as perguntas reais e respostas esperadas.
    Primeiro script genérico (`QUERYWORKORDERS`) funcionando desde 2026-10-29.
    Scripts prontos: `QUERYWORKORDERS`, `QUERYASSETS`, `QUERYJOBPLANS` (2026-11-03),
    `QUERYWOSTATUS` e `QUERYASSETDOWNTIME` (2026-11-04).
+9. Guia recebido (2026-11-17); preventivas prontas (`QUERYPMS`, `pmnum`). **Pendências
+   e ordem:** seção "Onde paramos" de `memoria/wiki/synthesis/estado-do-projeto.md`
+   (consultor: OS preventivas sem `pmnum` e PMs vencidas desde 2007; depois
+   cumprimento de preventivas; perguntas do guia sem ferramenta; `tests/evals/`).
 
 ## Referências
 
