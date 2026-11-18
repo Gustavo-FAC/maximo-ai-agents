@@ -4,12 +4,38 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-17
+updated: 2026-11-18
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
+
+## Onde paramos (2026-11-18): `tests/evals/`
+
+Evals montados (pedido do usuário; item 4 da lista abaixo). 449 testes, Ruff limpo.
+**Não commitado ainda.**
+- Motor em `src/maximo_agents/evals/` (`cases.py`, `checks.py`, `runner.py`, CLI
+  `uv run python -m maximo_agents.evals [--list] [--only ...] [--agent ...] [--today ...]`).
+  Roda o grafo real (LLM do gateway + MCP), grava chamadas e resposta pelo `astream`
+  com subgrafos (pega também as chamadas do especialista no roteador) e confere sem
+  LLM-juiz: ferramenta e argumentos (com padrão da ferramenta), argumentos proibidos
+  (`status=ACTIVE` no `QUERYPMS`), `no_tools`, especialista, regex na resposta e
+  **números ancorados** (todo número da resposta tem que vir da pergunta, argumentos
+  ou resultados; pega conta feita pelo LLM). Relatório JSON em `tests/evals/reports/`
+  (no `.gitignore`).
+- `tests/evals/cases.toml`: **30 casos**: p33-p40 de [[prompts-de-teste]], g01-g17 do
+  [[guia-levantamento-fase1]] (9 com `gap` = sem ferramenta, esperado não inventar
+  número) e r01-r05 do roteador. Sem números fixos (homologação muda).
+- `default` nos schemas das análises (`days`, `top`, `repeat_days`): o LLM vê o padrão
+  e o eval resolve argumento omitido.
+- **Ainda não rodou de verdade:** falta chave do LLM (`LLM_PROVIDER` vazio; CLI sai com
+  código 2 e mensagem clara). Servidor `maximo` do Claude Code também falhou ao
+  conectar nesta sessão (`'url' is not a valid URL`); o runner usa a sessão própria
+  (`.env`), não o `.mcp.json`.
+- Pontos a calibrar no 1º run real: expectativas rígidas (g01 `due_from` = domingo;
+  g05 `date_field=actfinish`) e falso alarme do `grounded_numbers` (limite de inteiros
+  pequenos = 12).
 
 ## Onde paramos (fim de 2026-11-17)
 
@@ -26,7 +52,8 @@ docs; push feito pelo usuário, `main` = `origin/main`). 416 testes, Ruff limpo.
 3. **Perguntas do guia ainda sem ferramenta:** atraso (4), designação (6), emitidas ×
    executadas (7), filtro por spec (10), SS e manutenção externa (13-17; OS tem
    `fornecedor`).
-4. `tests/evals/` com as perguntas reais do guia (não iniciado).
+4. ~~`tests/evals/` com as perguntas reais do guia~~ Feito em 2026-11-18 (falta rodar
+   com LLM real).
 5. Risco: LLM mandar `status=ACTIVE` no `QUERYPMS` (código do cliente é `ATIVO`).
 6. Com a chave do Claude: rodar o grafo real (agente e roteador).
 

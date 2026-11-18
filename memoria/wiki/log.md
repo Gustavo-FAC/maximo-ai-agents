@@ -610,3 +610,10 @@ Páginas: [[estado-do-projeto]], [[ferramentas-maximo]].
 (docs e wiki); push feito pelo usuário. [[estado-do-projeto]] ganhou seção "Onde
 paramos" com a lista de pendências (consultor, cumprimento de preventivas, perguntas
 do guia sem ferramenta, evals, grafo real).
+
+## [2026-11-18] feature | `tests/evals/` e motor de evals
+`src/maximo_agents/evals/` (casos TOML, conferência determinística, runner sobre o
+grafo real, CLI) e `tests/evals/cases.toml` com 30 casos (p33-p40, guia 1-17, roteador).
+Checagem de números ancorados nos resultados das ferramentas. `default` nos schemas das
+análises. 449 testes. Falta rodar com LLM real. [[estado-do-projeto]],
+[[prompts-de-teste]].

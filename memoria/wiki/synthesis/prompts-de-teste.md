@@ -4,14 +4,14 @@ type: synthesis
 sources: []
 related: [[ferramentas-maximo]], [[allowlist-somente-leitura]], [[itambe-cimentos]], [[estado-do-projeto]]
 created: 2026-10-30
-updated: 2026-11-10
+updated: 2026-11-18
 ---
 
 # Prompts de teste (OS e ativos)
 
 Roteiro de perguntas para testar `QUERYWORKORDERS` e `QUERYASSETS` pelo Claude Code
-(conector MCP do Maximo). Ponto de partida para `tests/evals/`, que ainda depende
-das perguntas reais do guia da Itambé. Trocar `[SITE]`, `[ASSETNUM]`, `[LOCATION]`,
+(conector MCP do Maximo). As perguntas 33-40 viraram casos em `tests/evals/cases.toml`
+(2026-11-18), junto com as 17 do [[guia-levantamento-fase1]]. Trocar `[SITE]`, `[ASSETNUM]`, `[LOCATION]`,
 `[CREW]` e `[WOx]` por valores da homologação.
 
 **Atenção:** no Claude Code quem conta é o LLM. Nos prompts de contagem ou

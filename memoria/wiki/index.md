@@ -9,7 +9,7 @@ Catálogo de páginas. Atualizar a cada alteração.
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
   `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`, descrição
   longa da OS no `QUERYWORKORDERS`, `QUERYPMS` e campo do cliente `modalidade`).
-- [[prompts-de-teste]] – 40 perguntas: 32 para OS e ativos via MCP (filtros,
+- [[prompts-de-teste]] – 40 perguntas (33-40 em `tests/evals/`): 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
 
