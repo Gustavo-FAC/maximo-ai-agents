@@ -636,3 +636,12 @@ Idioma EN de volta. 2336 OS nos status AGINSP/AGEXEC/EMAND: 2049 atrasadas (87,7
 2031 além de 7 dias, mediana 288 d. `targstartdate` 90% preenchido × `schedstart` 42%:
 mantido `targstartdate`. OS 949366 e 1002188 conferidas à mão. Dúvida ao consultor:
 MS em EMAND há meses. [[estado-do-projeto]].
+
+## [2026-11-18] code | Análise de OS emitidas × executadas (pergunta 7 do guia)
+`analysis/issued_executed.py` + `fetch_issued_and_finished` + ferramenta
+`analyze_issued_vs_executed` + CLI `issued-executed`. Coorte (emitidas no mês pelo
+`reportdate`: executadas hoje e no próprio mês) e fluxo (terminadas no mês pelo
+`actfinish`), por equipe ou tipo. Canceladas fora (PREVCAN tem `actfinish`). Validado
+com dado real (out/2026: 546 emitidas, 130 executadas, 24,0%). Evals `g07` e `g07b`.
+484 testes. Dúvida ao consultor: qual leitura o BI usa. Ver [[estado-do-projeto]],
+[[guia-levantamento-fase1]].

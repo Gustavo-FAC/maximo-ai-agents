@@ -4,7 +4,7 @@ type: source
 sources: [raw/guia-levantamento-fase1-itambe-2026-11-16.docx]
 related: [[itambe-cimentos]], [[ferramentas-maximo]], [[prompts-de-teste]], [[estado-do-projeto]]
 created: 2026-11-17
-updated: 2026-11-17
+updated: 2026-11-18
 ---
 
 # Guia de levantamento – Fase 1 (Itambé)
@@ -30,7 +30,7 @@ Cimento; ~3000 OS/mês; usa Maximo há 20 anos.
 | 4 | OS vencidas por equipe, setor, ativo ou posição | semanal | Power BI | `analyze_overdue_work_orders` (2026-11-18; com e sem tolerância; falta dado real); "setor" = qual campo? |
 | 5 | Última OS executada para ativo/posição | mensal | Maximo | ok: `QUERYWORKORDERS` por `actfinish` |
 | 6 | OS designadas para um colaborador | semanal | Power BI | **falta**: filtro `lead` ou designação (ASSIGNMENT)? |
-| 7 | % OS emitidas × executadas no mês por equipe | mensal | Power BI | **falta**: análise nova (equipe = `crewid`) |
+| 7 | % OS emitidas × executadas no mês por equipe | mensal | Power BI | `analyze_issued_vs_executed` (2026-11-18; coorte e fluxo; validado com dado real); qual leitura o BI usa? |
 | 8 | % OS executadas por modalidade | mensal | Power BI | **falta**: campo `MODALIDADE` (customizado) |
 | 9 | Dados de especificação de um equipamento | esporádica | Maximo | ok: `QUERYASSETS include_specs` |
 | 10 | Quantos equipamentos com tal especificação (motor 50 CV) | esporádica | Maximo | **falta**: filtro por spec no `QUERYASSETS` |

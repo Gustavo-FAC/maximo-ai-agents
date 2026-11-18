@@ -11,7 +11,32 @@ updated: 2026-11-18
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-18, fim da tarde): análise de OS atrasadas
+## Onde paramos (2026-11-18, noite): OS emitidas × executadas
+
+Pergunta 7 do [[guia-levantamento-fase1]] (pedido do usuário). 484 testes, Ruff limpo.
+Ainda **sem commit**. **Validado com dados reais** (set–nov 2026, 987 OS emitidas +
+324 terminadas, 5 s); outubro conferido contra consulta direta: 546 emitidas, 5
+canceladas, 411 abertas, 130 executadas (24,0%), 118 terminadas no próprio mês, fluxo
+164 terminadas em outubro (46 emitidas em setembro).
+- `analysis/issued_executed.py`, por mês calendário e por equipe (`crewid`) ou tipo
+  de trabalho. **Duas leituras** (guia não diz qual): **coorte** (das emitidas no mês
+  pelo `reportdate`, quantas executadas hoje e quantas com `actfinish` no próprio mês)
+  e **fluxo** (terminadas no mês pelo `actfinish`, de qualquer mês de emissão, contra as
+  emitidas; pode passar de 100%). Executada = classe executed ou closed hoje.
+  Canceladas fora do percentual: **PREVCAN e CANCEL têm `actfinish`** (dado real), por
+  isso a classe decide, não a data.
+- Busca: `fetch_issued_and_finished` (2 buscas por site, `date_field` reportdate e
+  actfinish). Ferramenta `analyze_issued_vs_executed` (`month` AAAA-MM, padrão mês
+  anterior completo; `months` 1-12; `group_by` crew|worktype); mês corrente sai
+  `partial`. CLI `... analysis issued-executed [--month] [--months] [--group-by]`.
+  Subagente regerado. Evals: `g07` sem `gap`, caso novo `g07b`. 32 casos.
+- Homologação: poucas OS antes de set/2026 (202 em jun–ago), então "emitidas antes"
+  = 0 em setembro. Volume real ~500/mês (guia diz ~3000 em produção).
+- **Levar ao consultor:** qual leitura o Power BI usa (coorte ou fluxo; mês de
+  emissão)? 126 OS de outubro sem `crewid`, todas abertas (APROG/AGENV sem equipe
+  ainda?): contam para qual equipe?
+
+## 2026-11-18 (fim da tarde): análise de OS atrasadas
 
 Pergunta 4 do [[guia-levantamento-fase1]] (pedido do usuário). 473 testes, Ruff limpo.
 **Validado com dados reais** (2026-11-18; idioma do usuário da chave voltou a EN após
@@ -83,7 +108,8 @@ docs; push feito pelo usuário, `main` = `origin/main`). 416 testes, Ruff limpo.
    checklist (inferida, ver abaixo); as 10 dúvidas do [[guia-levantamento-fase1]].
 2. **Análise de cumprimento de preventivas** em `analysis/` (depois do item 1).
 3. **Perguntas do guia ainda sem ferramenta:** ~~atraso (4)~~ (feito 2026-11-18, falta
-   dado real), designação (6), emitidas × executadas (7, próximo sugerido), filtro por spec (10), SS e manutenção externa (13-17; OS tem
+   dado real), designação (6), ~~emitidas × executadas (7)~~ (feito 2026-11-18),
+   filtro por spec (10), SS e manutenção externa (13-17; OS tem
    `fornecedor`).
 4. ~~`tests/evals/` com as perguntas reais do guia~~ Feito em 2026-11-18 (falta rodar
    com LLM real).
