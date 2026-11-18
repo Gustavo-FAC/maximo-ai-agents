@@ -14,7 +14,8 @@ class Settings(BaseSettings):
     llm_provider: str = ""
     llm_model: str = ""
     llm_base_url: str = ""
-    llm_temperature: float = 0.0
+    # None = não envia (padrão do provedor). Modelos Claude recentes recusam valor fixo.
+    llm_temperature: float | None = None
     llm_max_tokens: int = 4096
     llm_timeout_seconds: float = 120.0
     maximo_mcp_url: str = ""

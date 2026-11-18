@@ -27,13 +27,16 @@ def _anthropic(settings: Settings) -> BaseChatModel:
 
     if not settings.anthropic_api_key.get_secret_value():
         raise LLMConfigError("Preencha ANTHROPIC_API_KEY no .env para LLM_PROVIDER=anthropic.")
+    optional = {}
+    if settings.llm_temperature is not None:
+        optional["temperature"] = settings.llm_temperature
     return ChatAnthropic(
         model=settings.llm_model,
         api_key=settings.anthropic_api_key,
-        temperature=settings.llm_temperature,
         max_tokens=settings.llm_max_tokens,
         timeout=settings.llm_timeout_seconds,
         max_retries=2,
+        **optional,
     )
 
 

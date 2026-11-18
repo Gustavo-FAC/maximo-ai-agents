@@ -30,10 +30,22 @@ def test_anthropic_usa_configuracao():
     )
     assert isinstance(model, ChatAnthropic)
     assert model.model == "claude-sonnet-5-5"
-    assert model.temperature == 0.0
+    assert model.temperature is None  # não envia: Claude recente recusa valor fixo
     assert model.max_tokens == 1000
     assert model.anthropic_api_key.get_secret_value() == SECRET
     assert SECRET not in repr(model) + str(model)
+
+
+def test_anthropic_temperatura_configurada():
+    model = create_chat_model(
+        settings(
+            llm_provider="anthropic",
+            llm_model="claude-haiku-5-5",
+            anthropic_api_key=SECRET,
+            llm_temperature=0.0,
+        )
+    )
+    assert model.temperature == 0.0
 
 
 def test_anthropic_sem_chave():
