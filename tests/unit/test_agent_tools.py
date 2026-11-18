@@ -90,6 +90,31 @@ def test_material_analysis_runs_with_period():
     assert maximo.calls[1][1]["wonums"] == "100"
 
 
+def test_overdue_analysis_with_tolerance():
+    maximo = FakeMaximo(
+        {
+            WORK_ORDER_TOOL: [
+                {
+                    "wonum": "1",
+                    "siteid": "FABRICA",
+                    "status": "AGEXEC",
+                    "crewid": "ELETRICA",
+                    "targstartdate": "2026-11-01T08:00:00",
+                }
+            ]
+        }
+    )
+    result = run(toolbox(maximo).run("analyze_overdue_work_orders", {}))
+    assert result["rule"]["tolerance_days"] == 7  # padrão do cliente
+    assert result["overdue"]["total"] == 1
+    assert result["overdue"]["by_crew"]["ELETRICA"]["max_days_late"] == 5  # hoje = 11-06
+    assert result["overdue"]["beyond_tolerance"] == 0
+    result = run(toolbox(maximo).run("analyze_overdue_work_orders", {"tolerance_days": "0"}))
+    assert result["overdue"]["beyond_tolerance"] == 1
+    error = run(toolbox(maximo).run("analyze_overdue_work_orders", {"tolerance_days": 400}))
+    assert error["error"]["code"] == "invalid_argument"
+
+
 def test_reliability_analysis_for_one_asset():
     maximo = FakeMaximo(
         {

@@ -136,7 +136,19 @@ id = "g04-os-atrasadas-equipe"
 source = "guia 4"
 agent = "analise-os"
 question = "Quais OS estão atrasadas, por equipe?"
-gap = "análise de atraso (início previsto e tolerância a confirmar com o consultor)"
+[cases.expect]
+calls = [{ tool = "analyze_overdue_work_orders" }]
+forbidden_args = [{ tool = "analyze_overdue_work_orders", args = { tolerance_days = "0" } }]
+answer_all = ['(?i)toler[âa]ncia']
+
+[[cases]]
+id = "g04b-atrasadas-sem-tolerancia"
+source = "guia 4 e 7"
+agent = "analise-os"
+question = "Quantas OS estão atrasadas sem considerar tolerância nenhuma? Quais ativos mais aparecem?"
+[cases.expect]
+calls = [{ tool = "analyze_overdue_work_orders", args = { tolerance_days = "0" } }]
+forbidden_tools = ["analyze_work_order_backlog"]
 
 [[cases]]
 id = "g05-ultima-os-executada"

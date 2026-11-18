@@ -24,6 +24,11 @@ CREW_FIELDS = ("persongroup", "crewid")
 # Dia em que a semana do cliente começa ("MPs desta semana").
 WEEK_STARTS = ("sunday", "monday")
 
+# Data de previsão da OS que define o atraso ("início previsto" ou fim previsto).
+OVERDUE_DATE_FIELDS = ("targstartdate", "schedstart", "targcompdate", "schedfinish")
+DEFAULT_OVERDUE_DATE_FIELD = "targstartdate"
+MAX_TOLERANCE_DAYS = 365
+
 # Valor interno do domínio WOSTATUS (padrão do Maximo) -> classe.
 INTERNAL_STATUS_CLASS = {
     "WAPPR": OPEN,
@@ -55,10 +60,19 @@ class ClientConfig:
     crew_field: str = "persongroup"  # um de CREW_FIELDS
     preventive_worktypes: tuple[str, ...] = ()
     week_start: str | None = None  # um de WEEK_STARTS
+    # Atraso: OS nesses status (vazio = todos os abertos) com a data de previsão antes
+    # de hoje; além da tolerância conta à parte.
+    overdue_statuses: tuple[str, ...] = ()
+    overdue_date_field: str = DEFAULT_OVERDUE_DATE_FIELD  # um de OVERDUE_DATE_FIELDS
+    overdue_tolerance_days: int = 0
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
         return sorted(s for s, c in self.status_classes.items() if c in classes)
+
+    def overdue_status_list(self) -> list[str]:
+        """Status que podem estar atrasados: os configurados ou todos os abertos."""
+        return sorted(self.overdue_statuses) or self.statuses_of(OPEN)
 
     def class_of(self, status: str | None) -> str | None:
         return self.status_classes.get(status) if status else None
@@ -133,6 +147,8 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
             f"{client_id}: 'crew_field' must be one of: {', '.join(CREW_FIELDS)}."
         )
 
+    overdue = _overdue(client_id, data.get("overdue", {}), status_classes)
+
     return ClientConfig(
         client_id=client_id,
         name=str(data.get("name", client_id)),
@@ -144,7 +160,39 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
         crew_field=crew_field,
         preventive_worktypes=preventive,
         week_start=week_start,
+        **overdue,
     )
+
+
+def _overdue(client_id: str, data, status_classes: dict[str, str]) -> dict:
+    if not isinstance(data, dict):
+        raise ClientConfigError(f"{client_id}: [overdue] must be a table.")
+    statuses = _worktypes(client_id, data, "statuses")
+    unknown = [s for s in statuses if status_classes.get(s) != OPEN]
+    if unknown:
+        raise ClientConfigError(
+            f"{client_id}: overdue statuses must be open statuses: {', '.join(unknown)}."
+        )
+    date_field = data.get("date_field", DEFAULT_OVERDUE_DATE_FIELD)
+    if date_field not in OVERDUE_DATE_FIELDS:
+        raise ClientConfigError(
+            f"{client_id}: overdue 'date_field' must be one of: {', '.join(OVERDUE_DATE_FIELDS)}."
+        )
+    tolerance = data.get("tolerance_days", 0)
+    if (
+        isinstance(tolerance, bool)
+        or not isinstance(tolerance, int)
+        or not 0 <= tolerance <= MAX_TOLERANCE_DAYS
+    ):
+        raise ClientConfigError(
+            f"{client_id}: overdue 'tolerance_days' must be an integer from 0 to "
+            f"{MAX_TOLERANCE_DAYS}."
+        )
+    return {
+        "overdue_statuses": statuses,
+        "overdue_date_field": date_field,
+        "overdue_tolerance_days": tolerance,
+    }
 
 
 def _worktypes(client_id: str, data: dict, key: str) -> tuple[str, ...]:

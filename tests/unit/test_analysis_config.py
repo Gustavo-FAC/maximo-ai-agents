@@ -77,11 +77,33 @@ def test_class_from_internal_value_or_explicit():
         {"currency": 986},
         {"crew_field": "ownergroup"},
         {"crew_field": "CREWID"},
+        {"overdue": "A"},
+        {"overdue": {"statuses": ["B"]}},  # executada, não aberta
+        {"overdue": {"statuses": ["X"]}},  # status desconhecido
+        {"overdue": {"date_field": "reportdate"}},
+        {"overdue": {"tolerance_days": -1}},
+        {"overdue": {"tolerance_days": 366}},
+        {"overdue": {"tolerance_days": "7"}},
+        {"overdue": {"tolerance_days": True}},
     ],
 )
 def test_invalid_config(change):
     with pytest.raises(ClientConfigError):
         parse_client_config("t", {**VALID, **change})
+
+
+def test_overdue_defaults_and_values():
+    config = parse_client_config("t", VALID)
+    assert config.overdue_status_list() == ["A"]  # sem regra: todos os abertos
+    assert config.overdue_date_field == "targstartdate"
+    assert config.overdue_tolerance_days == 0
+    config = parse_client_config(
+        "t",
+        {**VALID, "overdue": {"statuses": ["A"], "date_field": "schedstart", "tolerance_days": 3}},
+    )
+    assert config.overdue_statuses == ("A",)
+    assert config.overdue_date_field == "schedstart"
+    assert config.overdue_tolerance_days == 3
 
 
 def test_missing_history_start():

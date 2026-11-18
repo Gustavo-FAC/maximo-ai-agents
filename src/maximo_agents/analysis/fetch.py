@@ -188,19 +188,77 @@ async def fetch_backlog_work_orders(
     statuses = config.statuses_of(OPEN)
     if not statuses:
         raise ValueError(f"{config.client_id}: no open status configured.")
+    return await fetch_work_orders_in_statuses(
+        call_tool,
+        config,
+        statuses,
+        (*BACKLOG_FIELDS, config.crew_field),
+        date_from=since or config.history_start,
+        date_to=as_of,
+        max_records=max_records,
+    )
+
+
+async def fetch_work_orders_in_statuses(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    statuses: list[str],
+    fields: Iterable[str],
+    *,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """OS dos status pedidos nos sites do cliente, pelo reportdate (todas as páginas)."""
     records: list[dict] = []
     for filters in status_filters(config, statuses):
         records.extend(
             await fetch_work_orders(
                 call_tool,
-                date_from=since or config.history_start,
-                date_to=as_of,
+                date_from=date_from,
+                date_to=date_to,
                 filters=filters,
-                fields=(*BACKLOG_FIELDS, config.crew_field),
+                fields=tuple(fields),
                 max_records=max_records - len(records),
             )
         )
     return records
+
+
+OVERDUE_FIELDS = (
+    "wonum",
+    "siteid",
+    "description",
+    "status",
+    "worktype",
+    "wopriority",
+    "assetnum",
+    "location",
+    "reportdate",
+)  # + config.crew_field e config.overdue_date_field
+
+
+async def fetch_overdue_candidates(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    as_of: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """OS nos status que podem estar atrasados, com a data de previsão do cliente.
+
+    Busca pelo reportdate (desde history_start), não pela data de previsão: assim as OS
+    sem previsão também vêm e o relatório conta quantas são.
+    """
+    fields = (*OVERDUE_FIELDS, config.crew_field, config.overdue_date_field)
+    return await fetch_work_orders_in_statuses(
+        call_tool,
+        config,
+        config.overdue_status_list(),
+        fields,
+        date_from=config.history_start,
+        date_to=as_of,
+        max_records=max_records,
+    )
 
 
 CORRECTIVE_FIELDS = (

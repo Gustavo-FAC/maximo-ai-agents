@@ -27,7 +27,8 @@ WORK_ORDER_ANALYSIS = Recipe(
     name="analise-os",
     description=(
         "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de "
-        "serviço, preventivas (MP), backlog, reincidência de falhas, MTBF e MTTR, tempo em "
+        "serviço, preventivas (MP), backlog, OS atrasadas, reincidência de falhas, MTBF e "
+        "MTTR, tempo em "
         "status e consumo de material no IBM Maximo, somente leitura."
     ),
     instructions=f"""\
@@ -85,6 +86,7 @@ Como responder:
 - Seja breve: o gerente quer decidir, não ler um relatório inteiro.""",
     tools=(
         "analyze_work_order_backlog",
+        "analyze_overdue_work_orders",
         "analyze_corrective_recurrence",
         "analyze_status_time",
         "analyze_material_usage",

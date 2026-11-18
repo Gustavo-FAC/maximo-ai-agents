@@ -23,6 +23,15 @@ currency = "BRL"
 # (feedback do cliente, 2026-11-16).
 crew_field = "crewid"
 
+# OS atrasada (guia de levantamento, 2026-11-17): status AGINSP, AGEXEC ou EMAND e
+# "Início Previsto" antes de hoje; sem data de previsão não conta. A confirmar com o
+# consultor: o campo (targstartdate ou schedstart) e a tolerância (seção 7 do guia: sem
+# tolerância; seção 4: 7 dias). A análise dá as duas contagens.
+[overdue]
+statuses = ["AGINSP", "AGEXEC", "EMAND"]
+date_field = "targstartdate"
+tolerance_days = 7
+
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação
 AGENV = { internal = "WAPPR" }      # Aguardando envio

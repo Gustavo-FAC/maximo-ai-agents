@@ -2,6 +2,8 @@
 
 uv run python -m maximo_agents.analysis backlog [--client itambe] [--as-of AAAA-MM-DD]
     [--since AAAA-MM-DD] [--json]
+uv run python -m maximo_agents.analysis overdue [--client itambe] [--as-of AAAA-MM-DD]
+    [--tolerance-days 7] [--top 20] [--json]
 uv run python -m maximo_agents.analysis recurrence [--client itambe] [--as-of AAAA-MM-DD]
     [--days 365] [--repeat-days 30] [--top 20] [--json]
 uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of AAAA-MM-DD]
@@ -29,9 +31,11 @@ from maximo_agents.analysis.fetch import (
     fetch_corrective_work_orders,
     fetch_downtime_histories,
     fetch_material_usage,
+    fetch_overdue_candidates,
     fetch_work_orders_by_number,
 )
 from maximo_agents.analysis.material import format_material_text, material_report
+from maximo_agents.analysis.overdue import format_overdue_text, overdue_report
 from maximo_agents.analysis.recurrence import (
     DEFAULT_REPEAT_DAYS,
     DEFAULT_TOP,
@@ -57,6 +61,13 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     backlog = sub.add_parser("backlog", help="OS abertas e executadas (idade pelo reportdate)")
     common(backlog)
     backlog.add_argument("--since", type=datetime.date.fromisoformat, default=None)
+
+    overdue = sub.add_parser("overdue", help="OS atrasadas (regra do cliente)")
+    common(overdue)
+    overdue.add_argument(
+        "--tolerance-days", type=int, default=None, help="Padrão: tolerância do cliente"
+    )
+    overdue.add_argument("--top", type=int, default=DEFAULT_TOP)
 
     recurrence = sub.add_parser("recurrence", help="Reincidência de corretivas")
     common(recurrence)
@@ -111,6 +122,21 @@ async def run_backlog(args: argparse.Namespace) -> int:
     elapsed = time.perf_counter() - start
     report = backlog_report(records, executed_by_age, config, as_of)
     print_report(args, report, format_backlog_text(report), records, elapsed)
+    return 0
+
+
+async def run_overdue(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    as_of = args.as_of or datetime.date.today()
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        records = await fetch_overdue_candidates(
+            call_tool, config, as_of, max_records=args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = overdue_report(records, config, as_of, args.tolerance_days, args.top)
+    print_report(args, report, format_overdue_text(report), records, elapsed)
     return 0
 
 
@@ -207,6 +233,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
     runners = {
         "backlog": run_backlog,
+        "overdue": run_overdue,
         "recurrence": run_recurrence,
         "status-time": run_status_time,
         "material": run_material,

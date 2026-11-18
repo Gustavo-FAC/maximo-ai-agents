@@ -13,7 +13,7 @@ from collections.abc import Awaitable, Callable, Iterable
 from dataclasses import dataclass
 
 from maximo_agents.analysis.backlog import backlog_report
-from maximo_agents.analysis.config import ClientConfig
+from maximo_agents.analysis.config import MAX_TOLERANCE_DAYS, ClientConfig
 from maximo_agents.analysis.fetch import (
     MAX_LIST_VALUES,
     MaximoToolError,
@@ -24,9 +24,11 @@ from maximo_agents.analysis.fetch import (
     fetch_corrective_work_orders,
     fetch_downtime_histories,
     fetch_material_usage,
+    fetch_overdue_candidates,
     fetch_work_orders_by_number,
 )
 from maximo_agents.analysis.material import material_report
+from maximo_agents.analysis.overdue import overdue_report
 from maximo_agents.analysis.recurrence import recurrence_report
 from maximo_agents.analysis.reliability import reliability_report
 from maximo_agents.analysis.status_time import status_time_report
@@ -160,6 +162,15 @@ async def _backlog(ctx: ToolContext, arguments: dict) -> dict:
     return backlog_report(records, executed, ctx.config, ctx.today)
 
 
+async def _overdue(ctx: ToolContext, arguments: dict) -> dict:
+    tolerance = _int(
+        arguments, "tolerance_days", ctx.config.overdue_tolerance_days, 0, MAX_TOLERANCE_DAYS
+    )
+    top = _int(arguments, "top", 20, 1, MAX_TOP)
+    records = await fetch_overdue_candidates(ctx.call_tool, ctx.config, ctx.today)
+    return overdue_report(records, ctx.config, ctx.today, tolerance, top)
+
+
 async def _recurrence(ctx: ToolContext, arguments: dict) -> dict:
     date_from, date_to = _period(arguments, ctx, 365, 730)
     repeat_days = _int(arguments, "repeat_days", 30, 1, 365)
@@ -217,8 +228,8 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 "'crew_field' names the Maximo attribute used: persongroup or crewid), site, "
                 "top locations, and the oldest ones. 'executed' counts the work orders "
                 "executed but not closed (executed status class) by age bucket. Use it for "
-                "questions about backlog, pending or late work, and its age. Takes up to "
-                "a minute." + COMMON_NOTE
+                "questions about backlog, pending work, and its age (for work past its "
+                "due date, use analyze_overdue_work_orders). Takes up to a minute." + COMMON_NOTE
             ),
             input_schema=_schema(
                 since={
@@ -230,6 +241,36 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 }
             ),
             run=_backlog,
+        ),
+        AnalysisTool(
+            name="analyze_overdue_work_orders",
+            description=(
+                "Overdue work orders as of today, by the client's rule ('rule' in the "
+                "result): work orders in the rule's statuses whose due date "
+                "('due_date_field', the planned start) is before today. Work orders "
+                "without a due date are never overdue and are counted apart "
+                "('without_due_date'). 'overdue' gives the total, its share of the work "
+                "orders in those statuses, how many are beyond the tolerance "
+                "('beyond_tolerance', more than tolerance_days late) and within it, median "
+                "and max days late, counts by days late, and per crew ('by_crew'; "
+                "'crew_field' names the Maximo attribute), status, work type, priority, "
+                "site, top assets and top locations: overdue, beyond_tolerance and "
+                "max_days_late each; plus the most overdue work orders. Always say the "
+                "rule used (statuses, date field, tolerance). Use it for late or overdue "
+                "work orders by crew, asset or location. Takes up to a minute." + COMMON_NOTE
+            ),
+            input_schema=_schema(
+                tolerance_days={
+                    "type": "integer",
+                    "description": (
+                        "Days late allowed before a work order counts as beyond tolerance. "
+                        "Default: the client's tolerance (see 'rule' in the result). Use 0 "
+                        "only if asked for no tolerance."
+                    ),
+                },
+                top=TOP,
+            ),
+            run=_overdue,
         ),
         AnalysisTool(
             name="analyze_corrective_recurrence",
