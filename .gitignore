@@ -32,3 +32,6 @@ Thumbs.db
 memoria/raw/*
 !memoria/raw/.gitkeep
 .mempalace/
+
+# Relatórios dos evals: respostas e argumentos com dados do cliente
+tests/evals/reports/

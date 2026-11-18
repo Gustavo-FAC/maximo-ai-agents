@@ -133,12 +133,14 @@ def _days(default: int, maximum: int) -> dict:
         "type": "integer",
         "description": f"Length of the period in days, ending at date_to. Default {default}, "
         f"max {maximum}.",
+        "default": default,
     }
 
 
 TOP = {
     "type": "integer",
     "description": f"How many rows each ranking returns. Default 20, max {MAX_TOP}.",
+    "default": 20,
 }
 
 COMMON_NOTE = (
@@ -249,6 +251,7 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                         "A failure counts as a repeat when it comes at most this many "
                         "days after the previous one on the same object. Default 30."
                     ),
+                    "default": 30,
                 },
                 top=TOP,
             ),
