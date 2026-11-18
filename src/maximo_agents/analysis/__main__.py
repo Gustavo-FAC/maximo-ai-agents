@@ -4,6 +4,8 @@ uv run python -m maximo_agents.analysis backlog [--client itambe] [--as-of AAAA-
     [--since AAAA-MM-DD] [--json]
 uv run python -m maximo_agents.analysis overdue [--client itambe] [--as-of AAAA-MM-DD]
     [--tolerance-days 7] [--top 20] [--json]
+uv run python -m maximo_agents.analysis issued-executed [--client itambe] [--as-of AAAA-MM-DD]
+    [--month AAAA-MM] [--months 1] [--group-by crew|worktype] [--json]
 uv run python -m maximo_agents.analysis recurrence [--client itambe] [--as-of AAAA-MM-DD]
     [--days 365] [--repeat-days 30] [--top 20] [--json]
 uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of AAAA-MM-DD]
@@ -30,10 +32,17 @@ from maximo_agents.analysis.fetch import (
     fetch_completed_histories,
     fetch_corrective_work_orders,
     fetch_downtime_histories,
+    fetch_issued_and_finished,
     fetch_material_usage,
     fetch_overdue_candidates,
     fetch_work_orders_by_number,
 )
+from maximo_agents.analysis.issued_executed import (
+    GROUP_BY,
+    format_issued_executed_text,
+    issued_executed_report,
+)
+from maximo_agents.analysis.issued_executed import period as issued_period
 from maximo_agents.analysis.material import format_material_text, material_report
 from maximo_agents.analysis.overdue import format_overdue_text, overdue_report
 from maximo_agents.analysis.recurrence import (
@@ -68,6 +77,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "--tolerance-days", type=int, default=None, help="Padrão: tolerância do cliente"
     )
     overdue.add_argument("--top", type=int, default=DEFAULT_TOP)
+
+    issued = sub.add_parser("issued-executed", help="OS emitidas x executadas por mês")
+    common(issued)
+    issued.add_argument("--month", default=None, help="Último mês AAAA-MM (padrão: o anterior)")
+    issued.add_argument("--months", type=int, default=1, help="Quantos meses até --month")
+    issued.add_argument("--group-by", choices=GROUP_BY, default="crew")
 
     recurrence = sub.add_parser("recurrence", help="Reincidência de corretivas")
     common(recurrence)
@@ -137,6 +152,30 @@ async def run_overdue(args: argparse.Namespace) -> int:
     elapsed = time.perf_counter() - start
     report = overdue_report(records, config, as_of, args.tolerance_days, args.top)
     print_report(args, report, format_overdue_text(report), records, elapsed)
+    return 0
+
+
+async def run_issued_executed(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    as_of = args.as_of or datetime.date.today()
+    if args.month:
+        last_month = datetime.date.fromisoformat(f"{args.month}-01")
+    else:
+        last_month = as_of.replace(day=1) - datetime.timedelta(days=1)
+    date_from, date_to = issued_period(last_month, args.months, as_of)
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        issued, finished = await fetch_issued_and_finished(
+            call_tool, config, date_from, date_to, max_records=args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = issued_executed_report(
+        issued, finished, config, last_month, args.months, as_of, args.group_by
+    )
+    print_report(args, report, format_issued_executed_text(report), issued, elapsed)
+    if not args.json:
+        print(f"({len(finished)} OS terminadas no período lidas do Maximo)")
     return 0
 
 
@@ -234,6 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     runners = {
         "backlog": run_backlog,
         "overdue": run_overdue,
+        "issued-executed": run_issued_executed,
         "recurrence": run_recurrence,
         "status-time": run_status_time,
         "material": run_material,

@@ -23,10 +23,17 @@ from maximo_agents.analysis.fetch import (
     fetch_completed_histories,
     fetch_corrective_work_orders,
     fetch_downtime_histories,
+    fetch_issued_and_finished,
     fetch_material_usage,
     fetch_overdue_candidates,
     fetch_work_orders_by_number,
 )
+from maximo_agents.analysis.issued_executed import (
+    GROUP_BY,
+    MAX_MONTHS,
+    issued_executed_report,
+)
+from maximo_agents.analysis.issued_executed import period as issued_period
 from maximo_agents.analysis.material import material_report
 from maximo_agents.analysis.overdue import overdue_report
 from maximo_agents.analysis.recurrence import recurrence_report
@@ -171,6 +178,36 @@ async def _overdue(ctx: ToolContext, arguments: dict) -> dict:
     return overdue_report(records, ctx.config, ctx.today, tolerance, top)
 
 
+def _month(arguments: dict, name: str, today: datetime.date) -> datetime.date | None:
+    value = arguments.get(name)
+    if value is None or value == "":
+        return None
+    try:
+        month = datetime.date.fromisoformat(f"{str(value).strip()}-01")
+    except ValueError as e:
+        raise ToolArgumentError(f"Parameter '{name}' must be a month YYYY-MM.") from e
+    if month > today:
+        raise ToolArgumentError(f"Parameter '{name}' cannot be in the future.")
+    return month
+
+
+async def _issued_executed(ctx: ToolContext, arguments: dict) -> dict:
+    last_month = _month(arguments, "month", ctx.today) or (
+        ctx.today.replace(day=1) - datetime.timedelta(days=1)
+    )
+    months = _int(arguments, "months", 1, 1, MAX_MONTHS)
+    group_by = arguments.get("group_by") or "crew"
+    if group_by not in GROUP_BY:
+        raise ToolArgumentError(f"Parameter 'group_by' must be one of: {', '.join(GROUP_BY)}.")
+    date_from, date_to = issued_period(last_month, months, ctx.today)
+    issued, finished = await fetch_issued_and_finished(
+        ctx.call_tool, ctx.config, date_from, date_to
+    )
+    return issued_executed_report(
+        issued, finished, ctx.config, last_month, months, ctx.today, group_by
+    )
+
+
 async def _recurrence(ctx: ToolContext, arguments: dict) -> dict:
     date_from, date_to = _period(arguments, ctx, 365, 730)
     repeat_days = _int(arguments, "repeat_days", 30, 1, 365)
@@ -271,6 +308,47 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 top=TOP,
             ),
             run=_overdue,
+        ),
+        AnalysisTool(
+            name="analyze_issued_vs_executed",
+            description=(
+                "Work orders issued vs executed per calendar month, per crew ('by_crew'; "
+                "'crew_field' names the Maximo attribute) or per work type ('by_worktype'), "
+                "with 'totals' per month. Issued = reportdate in the month. Executed = now "
+                "in an executed or closed status ('rule' lists them); cancelled ones never "
+                "count as executed and are left out of the percentages. Two readings, "
+                "always say which one you quote: cohort ('executed_now' and "
+                "'pct_executed_now': of the work orders issued in the month, how many are "
+                "executed today; 'executed_same_month' and its pct: finished (actfinish) "
+                "in that same month) and flow ('executed_in_month': finished in the month "
+                "whatever the issue month, 'executed_in_month_issued_before' of them from "
+                "earlier months, 'pct_executed_in_month_vs_issued' can exceed 100). "
+                "'partial' marks a month not over yet. Use it for 'issued vs executed', "
+                "execution rate or productivity per crew or month." + COMMON_NOTE
+            ),
+            input_schema=_schema(
+                month={
+                    "type": "string",
+                    "description": (
+                        "Last month of the period, YYYY-MM. Default: the last complete "
+                        "month. For 'this month', pass the current month (partial)."
+                    ),
+                },
+                months={
+                    "type": "integer",
+                    "description": (
+                        f"How many months, ending at month. Default 1, max {MAX_MONTHS}."
+                    ),
+                    "default": 1,
+                },
+                group_by={
+                    "type": "string",
+                    "enum": list(GROUP_BY),
+                    "description": "Group per crew (default) or per work type.",
+                    "default": "crew",
+                },
+            ),
+            run=_issued_executed,
         ),
         AnalysisTool(
             name="analyze_corrective_recurrence",

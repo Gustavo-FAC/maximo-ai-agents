@@ -115,6 +115,59 @@ def test_overdue_analysis_with_tolerance():
     assert error["error"]["code"] == "invalid_argument"
 
 
+def test_issued_vs_executed_defaults_to_last_complete_month():
+    maximo = FakeMaximo(
+        {
+            WORK_ORDER_TOOL: [
+                {
+                    "wonum": "1",
+                    "siteid": "FABRICA",
+                    "status": "FECHAR",
+                    "worktype": "MPV",
+                    "crewid": "ELETRICA",
+                    "reportdate": "2026-10-02T08:00:00",
+                    "actfinish": "2026-10-03T08:00:00",
+                }
+            ]
+        }
+    )
+    result = run(toolbox(maximo).run("analyze_issued_vs_executed", {}))
+    (month,) = result["months"]
+    assert month["month"] == "2026-10"  # hoje = 2026-11-06
+    assert month["by_crew"]["ELETRICA"]["pct_executed_same_month"] == 100.0
+    assert [args["date_field"] for _, args in maximo.calls] == ["reportdate", "actfinish"]
+    assert maximo.calls[0][1]["date_to"] == "2026-10-31"
+
+    maximo.calls.clear()
+    result = run(
+        toolbox(maximo).run(
+            "analyze_issued_vs_executed",
+            {"month": "2026-11", "months": "2", "group_by": "worktype"},
+        )
+    )
+    assert [m["month"] for m in result["months"]] == ["2026-10", "2026-11"]
+    assert result["months"][1]["partial"] is True
+    assert "by_worktype" in result["months"][0]
+    assert maximo.calls[0][1]["date_to"] == "2026-11-06"
+
+
+@pytest.mark.parametrize(
+    "arguments",
+    [
+        {"month": "2026-12"},  # futuro
+        {"month": "10/2026"},
+        {"month": "2026-10-01"},
+        {"months": 13},
+        {"group_by": "site"},
+    ],
+)
+def test_issued_vs_executed_invalid_arguments(arguments):
+    maximo = FakeMaximo()
+    result = run(toolbox(maximo).run("analyze_issued_vs_executed", arguments))
+    assert result["error"]["code"] == "invalid_argument"
+    assert maximo.calls == []
+
+
 def test_reliability_analysis_for_one_asset():
     maximo = FakeMaximo(
         {

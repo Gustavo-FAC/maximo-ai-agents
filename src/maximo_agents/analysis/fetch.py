@@ -261,6 +261,35 @@ async def fetch_overdue_candidates(
     )
 
 
+ISSUED_FIELDS = ("wonum", "siteid", "status", "worktype", "reportdate", "actfinish")
+
+
+async def fetch_issued_and_finished(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> tuple[list[dict], list[dict]]:
+    """OS emitidas (reportdate) e OS terminadas (actfinish) no período, qualquer status."""
+    filters = {"siteid": list(config.sites)}
+    fields = (*ISSUED_FIELDS, config.crew_field)
+    result = []
+    for date_field in ("reportdate", "actfinish"):
+        result.append(
+            await fetch_work_orders(
+                call_tool,
+                date_from=date_from,
+                date_to=date_to,
+                filters=filters,
+                fields=fields,
+                date_field=date_field,
+                max_records=max_records,
+            )
+        )
+    return result[0], result[1]
+
+
 CORRECTIVE_FIELDS = (
     "wonum",
     "siteid",

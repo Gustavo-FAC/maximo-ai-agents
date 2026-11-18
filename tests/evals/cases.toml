@@ -172,9 +172,20 @@ id = "g07-emitidas-executadas"
 source = "guia 7"
 agent = "analise-os"
 question = "Qual o percentual de OS emitidas versus executadas no mês passado, por equipe?"
-gap = "análise de emitidas x executadas"
 [cases.expect]
-answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
+calls = [{ tool = "analyze_issued_vs_executed" }]
+forbidden_args = [{ tool = "analyze_issued_vs_executed", args = { group_by = "worktype" } }]
+# A resposta diz qual leitura usa (coorte das emitidas ou fluxo do mês).
+answer_any = ['(?i)coorte|fluxo|pr[óo]prio m[êe]s|j[áa] (est[ãa]o )?executad|terminad|actfinish']
+
+[[cases]]
+id = "g07b-emitidas-executadas-tipo"
+source = "guia 7"
+agent = "analise-os"
+question = "Como ficou emitidas x executadas por tipo de trabalho nos últimos 3 meses?"
+[cases.expect]
+calls = [{ tool = "analyze_issued_vs_executed", args = { group_by = "worktype", months = "3" } }]
+forbidden_tools = ["analyze_work_order_backlog"]
 
 [[cases]]
 id = "g08-executadas-modalidade"
