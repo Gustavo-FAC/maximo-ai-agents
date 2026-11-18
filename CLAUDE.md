@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 484 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 491 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -133,6 +133,12 @@ Cliente piloto: **Itambé Cimentos**.
   `... analysis issued-executed [--month AAAA-MM] [--months N] [--group-by]`;
   ferramenta `analyze_issued_vs_executed`. **Funcionando com dados reais** (out/2026:
   546 emitidas, 24,0% executadas). Qual leitura o BI usa: levar ao consultor.
+  Por modalidade (pergunta 8) desde 2026-11-18: `modality_field` na config do cliente
+  (Itambé: `modalidade`, vazio em 49% das OS), `group_by=modality`.
+- Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
+  1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
+  "setor" não existe; designação = mão de obra planejada; medida de emitidas ×
+  executadas e base do cumprimento de preventivas foram suposições nossas).
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
 ## Memória do projeto

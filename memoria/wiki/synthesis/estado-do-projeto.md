@@ -11,10 +11,45 @@ updated: 2026-11-18
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-18, noite): OS emitidas × executadas
+## Onde paramos (2026-11-18, fim da noite): respostas do consultor
+
+Consultor respondeu 1 a 14 no doc ([[perguntas-consultor]], tabela "Respostas
+recebidas"); 15 a 22 em aberto, mais tolerância (2), período do cumprimento (7) e
+origem das HH (10). 491 testes, Ruff limpo. Ainda **sem commit**.
+- Aplicado: `targstartdate` confirmado; modalidade = campo; medida principal de
+  emitidas × executadas configurável (`[issued_executed] measure`, Itambé
+  `pct_executed_now`, **suposição nossa**), sai em `rule.primary_measure` e a
+  descrição da ferramenta manda começar por ela.
+- **Base:** cópia de produção de ~abr/2026; dados depois disso são teste. MS em EMAND
+  e PMs vencidas = processo antigo, que não fechava; processo novo entrando em produção.
+- **Destravado:** cumprimento de preventivas (fórmula concluídas ÷ (concluídas +
+  pendentes), pelos tipos preventivos, não por `pmnum`: suposição nossa).
+- **Novos trabalhos:** designação (Q6) = mão de obra planejada (filtro WPLABOR no
+  script); SS (Q13) = app SR padrão, `ownergroup`; fornecedor na ordem de compra;
+  especificação (Q10) em CV ou kW conforme a classificação; "setor" (Q4) não existe.
+
+## 2026-11-18 (fim da noite): modalidade e perguntas ao consultor
+
+Pedido do usuário: itens 1 (pergunta 8) e 2 (lista do consultor). 489 testes, Ruff
+limpo.
+- **Modalidade (Q8):** `modality_field` opcional na config do cliente (Itambé:
+  `modalidade`, validado na config), buscado em `fetch_issued_and_finished` e
+  `group_by=modality` em `analyze_issued_vs_executed` (recusa se o cliente não tem o
+  campo). CLI `--group-by modality`. Evals: `g08` sem `gap` (espera `group_by=modality`
+  e aviso de OS sem modalidade). Dado real: campo vazio em 49% das OS de 12 meses
+  (quase todas MS) e em 64% de out/2026; valores CORRET, PREVENT, ASSIST, IRO, SIG,
+  PF1/2/3, PREDIT, BLOQ / DESBLOQ, ...-GRC, ISO...
+- **Correção:** homologação tem volume alto de nov/2025 a mar/2026 (2 a 6 mil OS/mês);
+  só mai–ago/2026 quase vazio (202 OS). Nota abaixo ("poucas OS antes de set") estava
+  errada.
+- **Perguntas ao consultor consolidadas** (22, priorizadas) em [[perguntas-consultor]]
+  e num doc para enviar: <https://claude.ai/artifact/Ld4N1zJxc1MzwqgDBG39UU> (privado
+  até o usuário compartilhar; coluna Resposta para o consultor preencher).
+
+## 2026-11-18 (noite): OS emitidas × executadas
 
 Pergunta 7 do [[guia-levantamento-fase1]] (pedido do usuário). 484 testes, Ruff limpo.
-Ainda **sem commit**. **Validado com dados reais** (set–nov 2026, 987 OS emitidas +
+Commits `aee2375` e `06a43d7`. **Validado com dados reais** (set–nov 2026, 987 OS emitidas +
 324 terminadas, 5 s); outubro conferido contra consulta direta: 546 emitidas, 5
 canceladas, 411 abertas, 130 executadas (24,0%), 118 terminadas no próprio mês, fluxo
 164 terminadas em outubro (46 emitidas em setembro).

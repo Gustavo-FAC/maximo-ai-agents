@@ -12,6 +12,8 @@ Catálogo de páginas. Atualizar a cada alteração.
 - [[prompts-de-teste]] – 40 perguntas (33-40 em `tests/evals/`): 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.
+- [[perguntas-consultor]] – 22 dúvidas abertas ao consultor funcional (guia + achados
+  nos dados), priorizadas pelo que bloqueiam; doc para enviar com coluna Resposta.
 
 ## Entidades
 - [[itambe-cimentos]] – cliente piloto, homologação, chave MAXADMIN temporária;

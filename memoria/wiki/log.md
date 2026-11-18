@@ -645,3 +645,25 @@ MS em EMAND há meses. [[estado-do-projeto]].
 com dado real (out/2026: 546 emitidas, 130 executadas, 24,0%). Evals `g07` e `g07b`.
 484 testes. Dúvida ao consultor: qual leitura o BI usa. Ver [[estado-do-projeto]],
 [[guia-levantamento-fase1]].
+
+## [2026-11-18] code | Emitidas × executadas por modalidade (pergunta 8 do guia)
+`modality_field` opcional na config do cliente (Itambé: `modalidade`), buscado junto
+com as OS emitidas/terminadas; `group_by=modality` na ferramenta e na CLI. Dado real:
+campo vazio em 49% das OS de 12 meses (quase todas MS), 64% em out/2026. Eval `g08`
+sem `gap`. 489 testes. Correção: homologação só é quase vazia em mai–ago/2026.
+
+## [2026-11-18] synthesis | Perguntas ao consultor consolidadas
+Nova [[perguntas-consultor]]: 22 dúvidas (10 do guia + achados nos dados), em ordem do
+que bloqueiam. Doc para enviar (claude.ai, privado até compartilhar) com coluna
+Resposta. [[estado-do-projeto]], [[guia-levantamento-fase1]].
+
+## [2026-11-18] decision | Respostas do consultor (itens 1 a 14)
+Respostas no doc compartilhado, registradas em [[perguntas-consultor]]. Homologação =
+cópia de produção de ~abr/2026; `targstartdate` confirmado; MS em EMAND e PMs vencidas
+= processo antigo (fica no indicador); modalidade = campo; cumprimento de preventivas =
+concluídas ÷ (concluídas + pendentes); "setor" não existe; designação = mão de obra
+planejada; SR padrão com `ownergroup`; fornecedor na ordem de compra; specs em CV ou
+kW. Suposições nossas (consultor não soube): emitidas × executadas pela coorte
+(`[issued_executed] measure = "pct_executed_now"`) e cumprimento pelos tipos
+preventivos, não por `pmnum`. Abertos: tolerância, período do cumprimento, origem das
+HH, itens 15 a 22. 491 testes. [[estado-do-projeto]].

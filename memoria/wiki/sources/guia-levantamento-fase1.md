@@ -31,7 +31,7 @@ Cimento; ~3000 OS/mês; usa Maximo há 20 anos.
 | 5 | Última OS executada para ativo/posição | mensal | Maximo | ok: `QUERYWORKORDERS` por `actfinish` |
 | 6 | OS designadas para um colaborador | semanal | Power BI | **falta**: filtro `lead` ou designação (ASSIGNMENT)? |
 | 7 | % OS emitidas × executadas no mês por equipe | mensal | Power BI | `analyze_issued_vs_executed` (2026-11-18; coorte e fluxo; validado com dado real); qual leitura o BI usa? |
-| 8 | % OS executadas por modalidade | mensal | Power BI | **falta**: campo `MODALIDADE` (customizado) |
+| 8 | % OS executadas por modalidade | mensal | Power BI | `analyze_issued_vs_executed` `group_by=modality` (2026-11-18; campo `modalidade` vazio em 49%); campo × tipo a confirmar |
 | 9 | Dados de especificação de um equipamento | esporádica | Maximo | ok: `QUERYASSETS include_specs` |
 | 10 | Quantos equipamentos com tal especificação (motor 50 CV) | esporádica | Maximo | **falta**: filtro por spec no `QUERYASSETS` |
 | 11 | Última quebra/falha de um equipamento | esporádica | Maximo | parcial: OS corretivas do ativo (tipos a confirmar) |
@@ -116,6 +116,8 @@ quer expiração**; a empresa avisa saída de gerente.
   Equipamentos em Manutenção Externa (BI; 15-17). Exemplos ainda não enviados.
 
 ## Conflitos e dúvidas (levar ao consultor)
+
+Consolidadas com os achados nos dados em [[perguntas-consultor]] (2026-11-18).
 
 1. Backlog: CONCL, FECHAR e OSFILENC marcados "conta no backlog = Sim"; APROG (maior
    grupo aberto) "Não". Coluna entendida de outro jeito?
