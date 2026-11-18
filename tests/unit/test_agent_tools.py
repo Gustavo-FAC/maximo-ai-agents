@@ -183,6 +183,33 @@ def test_issued_vs_executed_modality_needs_client_field():
     assert maximo.calls == []
 
 
+def test_preventive_compliance_tool():
+    maximo = FakeMaximo(
+        {
+            WORK_ORDER_TOOL: [
+                {
+                    "wonum": "1",
+                    "siteid": "FABRICA",
+                    "status": "CONCL",
+                    "worktype": "MPV",
+                    "crewid": "ELETRICA",
+                    "reportdate": "2026-10-02T08:00:00",
+                }
+            ]
+        }
+    )
+    result = run(toolbox(maximo).run("analyze_preventive_compliance", {}))
+    (month,) = result["months"]
+    assert month["month"] == "2026-10"  # hoje = 2026-11-06
+    assert month["by_crew"]["ELETRICA"]["compliance_pct"] == 100.0
+    assert maximo.calls[0][1]["worktype"] == "MPV,MPR,INSP,IL,MS"
+    for bad in ({"group_by": "site"}, {"months": 0}, {"month": "2027-01"}):
+        maximo = FakeMaximo()
+        error = run(toolbox(maximo).run("analyze_preventive_compliance", bad))["error"]
+        assert error["code"] == "invalid_argument"
+        assert maximo.calls == []
+
+
 def test_reliability_analysis_for_one_asset():
     maximo = FakeMaximo(
         {

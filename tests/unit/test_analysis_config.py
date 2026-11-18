@@ -93,6 +93,10 @@ def test_class_from_internal_value_or_explicit():
         {"modality_field": 1},
         {"issued_executed": "pct_executed_now"},
         {"issued_executed": {"measure": "executed_now"}},
+        {"preventive_compliance": []},
+        {"preventive_compliance": {"done_statuses": ["A"]}},  # aberta, não concluída
+        {"preventive_compliance": {"pending_statuses": ["B"]}},  # executada
+        {"preventive_compliance": {"pending_statuses": ["X"]}},  # desconhecido
     ],
 )
 def test_invalid_config(change):

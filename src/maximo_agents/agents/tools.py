@@ -26,6 +26,7 @@ from maximo_agents.analysis.fetch import (
     fetch_issued_and_finished,
     fetch_material_usage,
     fetch_overdue_candidates,
+    fetch_preventive_work_orders,
     fetch_work_orders_by_number,
 )
 from maximo_agents.analysis.issued_executed import (
@@ -36,6 +37,8 @@ from maximo_agents.analysis.issued_executed import (
 from maximo_agents.analysis.issued_executed import period as issued_period
 from maximo_agents.analysis.material import material_report
 from maximo_agents.analysis.overdue import overdue_report
+from maximo_agents.analysis.preventive_compliance import GROUP_BY as COMPLIANCE_GROUP_BY
+from maximo_agents.analysis.preventive_compliance import compliance_report
 from maximo_agents.analysis.recurrence import recurrence_report
 from maximo_agents.analysis.reliability import reliability_report
 from maximo_agents.analysis.status_time import status_time_report
@@ -210,6 +213,23 @@ async def _issued_executed(ctx: ToolContext, arguments: dict) -> dict:
     )
 
 
+async def _preventive_compliance(ctx: ToolContext, arguments: dict) -> dict:
+    last_month = _month(arguments, "month", ctx.today) or (
+        ctx.today.replace(day=1) - datetime.timedelta(days=1)
+    )
+    months = _int(arguments, "months", 1, 1, MAX_MONTHS)
+    group_by = arguments.get("group_by") or "crew"
+    if group_by not in COMPLIANCE_GROUP_BY:
+        raise ToolArgumentError(
+            f"Parameter 'group_by' must be one of: {', '.join(COMPLIANCE_GROUP_BY)}."
+        )
+    if group_by == "modality" and not ctx.config.modality_field:
+        raise ToolArgumentError("This client has no maintenance modality field.")
+    date_from, date_to = issued_period(last_month, months, ctx.today)
+    records = await fetch_preventive_work_orders(ctx.call_tool, ctx.config, date_from, date_to)
+    return compliance_report(records, ctx.config, last_month, months, ctx.today, group_by)
+
+
 async def _recurrence(ctx: ToolContext, arguments: dict) -> dict:
     date_from, date_to = _period(arguments, ctx, 365, 730)
     repeat_days = _int(arguments, "repeat_days", 30, 1, 365)
@@ -358,6 +378,46 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 },
             ),
             run=_issued_executed,
+        ),
+        AnalysisTool(
+            name="analyze_preventive_compliance",
+            description=(
+                "Preventive maintenance compliance per calendar month, by the client's "
+                "rule ('rule' in the result): work orders of the preventive work types "
+                "issued in the month (reportdate), compliance_pct = done / (done + "
+                "pending), using the statuses they have today. Work orders in other "
+                "statuses (e.g. waiting to be scheduled, cancelled) are left out of the "
+                "formula and counted in 'excluded' ('excluded_by_status' in totals). "
+                "Per crew ('by_crew'), per work type ('by_worktype') or per maintenance "
+                "modality ('by_modality'), with 'totals'; 'partial' marks a month not "
+                "over yet. Based on work types, not on the PM records. Always say the "
+                "rule used (work types, done and pending statuses). Use it for preventive "
+                "compliance, adherence to preventive maintenance, 'cumprimento de "
+                "preventivas'." + COMMON_NOTE
+            ),
+            input_schema=_schema(
+                month={
+                    "type": "string",
+                    "description": (
+                        "Last month of the period, YYYY-MM. Default: the last complete "
+                        "month. For 'this month', pass the current month (partial)."
+                    ),
+                },
+                months={
+                    "type": "integer",
+                    "description": (
+                        f"How many months, ending at month. Default 1, max {MAX_MONTHS}."
+                    ),
+                    "default": 1,
+                },
+                group_by={
+                    "type": "string",
+                    "enum": list(COMPLIANCE_GROUP_BY),
+                    "description": "Group per crew (default), per work type or per modality.",
+                    "default": "crew",
+                },
+            ),
+            run=_preventive_compliance,
         ),
         AnalysisTool(
             name="analyze_corrective_recurrence",

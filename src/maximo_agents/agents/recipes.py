@@ -27,7 +27,8 @@ WORK_ORDER_ANALYSIS = Recipe(
     name="analise-os",
     description=(
         "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de "
-        "serviço, preventivas (MP), backlog, OS atrasadas, OS emitidas x executadas, "
+        "serviço, preventivas (MP) e seu cumprimento, backlog, OS atrasadas, OS emitidas "
+        "x executadas, "
         "reincidência de falhas, MTBF e "
         "MTTR, tempo em "
         "status e consumo de material no IBM Maximo, somente leitura."
@@ -89,6 +90,7 @@ Como responder:
         "analyze_work_order_backlog",
         "analyze_overdue_work_orders",
         "analyze_issued_vs_executed",
+        "analyze_preventive_compliance",
         "analyze_corrective_recurrence",
         "analyze_status_time",
         "analyze_material_usage",

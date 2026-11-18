@@ -6,6 +6,8 @@ uv run python -m maximo_agents.analysis overdue [--client itambe] [--as-of AAAA-
     [--tolerance-days 7] [--top 20] [--json]
 uv run python -m maximo_agents.analysis issued-executed [--client itambe] [--as-of AAAA-MM-DD]
     [--month AAAA-MM] [--months 1] [--group-by crew|worktype] [--json]
+uv run python -m maximo_agents.analysis preventive-compliance [--client itambe]
+    [--as-of AAAA-MM-DD] [--month AAAA-MM] [--months 1] [--group-by crew|worktype|modality]
 uv run python -m maximo_agents.analysis recurrence [--client itambe] [--as-of AAAA-MM-DD]
     [--days 365] [--repeat-days 30] [--top 20] [--json]
 uv run python -m maximo_agents.analysis status-time [--client itambe] [--as-of AAAA-MM-DD]
@@ -35,6 +37,7 @@ from maximo_agents.analysis.fetch import (
     fetch_issued_and_finished,
     fetch_material_usage,
     fetch_overdue_candidates,
+    fetch_preventive_work_orders,
     fetch_work_orders_by_number,
 )
 from maximo_agents.analysis.issued_executed import (
@@ -45,6 +48,11 @@ from maximo_agents.analysis.issued_executed import (
 from maximo_agents.analysis.issued_executed import period as issued_period
 from maximo_agents.analysis.material import format_material_text, material_report
 from maximo_agents.analysis.overdue import format_overdue_text, overdue_report
+from maximo_agents.analysis.preventive_compliance import GROUP_BY as COMPLIANCE_GROUP_BY
+from maximo_agents.analysis.preventive_compliance import (
+    compliance_report,
+    format_compliance_text,
+)
 from maximo_agents.analysis.recurrence import (
     DEFAULT_REPEAT_DAYS,
     DEFAULT_TOP,
@@ -83,6 +91,12 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     issued.add_argument("--month", default=None, help="Último mês AAAA-MM (padrão: o anterior)")
     issued.add_argument("--months", type=int, default=1, help="Quantos meses até --month")
     issued.add_argument("--group-by", choices=GROUP_BY, default="crew")
+
+    compliance = sub.add_parser("preventive-compliance", help="Cumprimento de preventivas")
+    common(compliance)
+    compliance.add_argument("--month", default=None, help="Último mês AAAA-MM")
+    compliance.add_argument("--months", type=int, default=1, help="Quantos meses até --month")
+    compliance.add_argument("--group-by", choices=COMPLIANCE_GROUP_BY, default="crew")
 
     recurrence = sub.add_parser("recurrence", help="Reincidência de corretivas")
     common(recurrence)
@@ -176,6 +190,29 @@ async def run_issued_executed(args: argparse.Namespace) -> int:
     print_report(args, report, format_issued_executed_text(report), issued, elapsed)
     if not args.json:
         print(f"({len(finished)} OS terminadas no período lidas do Maximo)")
+    return 0
+
+
+def last_month_of(args: argparse.Namespace, as_of: datetime.date) -> datetime.date:
+    if args.month:
+        return datetime.date.fromisoformat(f"{args.month}-01")
+    return as_of.replace(day=1) - datetime.timedelta(days=1)
+
+
+async def run_preventive_compliance(args: argparse.Namespace) -> int:
+    settings = get_settings()
+    config = load_client_config(args.client or settings.tenant_id)
+    as_of = args.as_of or datetime.date.today()
+    last_month = last_month_of(args, as_of)
+    date_from, date_to = issued_period(last_month, args.months, as_of)
+    start = time.perf_counter()
+    async with open_maximo_session(settings) as call_tool:
+        records = await fetch_preventive_work_orders(
+            call_tool, config, date_from, date_to, max_records=args.max_records
+        )
+    elapsed = time.perf_counter() - start
+    report = compliance_report(records, config, last_month, args.months, as_of, args.group_by)
+    print_report(args, report, format_compliance_text(report), records, elapsed)
     return 0
 
 
@@ -274,6 +311,7 @@ def main(argv: list[str] | None = None) -> int:
         "backlog": run_backlog,
         "overdue": run_overdue,
         "issued-executed": run_issued_executed,
+        "preventive-compliance": run_preventive_compliance,
         "recurrence": run_recurrence,
         "status-time": run_status_time,
         "material": run_material,

@@ -200,6 +200,17 @@ forbidden_args = [{ tool = "analyze_issued_vs_executed", args = { group_by = "wo
 answer_any = ['(?i)sem modalidade|n[ãa]o preenchid|vazi|\(empty\)']
 
 [[cases]]
+id = "i07-cumprimento-preventivas"
+source = "guia 7 (indicadores)"
+agent = "analise-os"
+question = "Qual foi o cumprimento de preventivas por equipe no mês passado?"
+[cases.expect]
+calls = [{ tool = "analyze_preventive_compliance" }]
+forbidden_tools = ["analyze_issued_vs_executed", "analyze_work_order_backlog"]
+# Diz a regra: concluídas sobre concluídas + pendentes, outros status fora.
+answer_any = ['(?i)pendente']
+
+[[cases]]
 id = "g09-especificacao"
 source = "guia 9"
 agent = "analise-os"

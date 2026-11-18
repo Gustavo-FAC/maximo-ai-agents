@@ -75,10 +75,20 @@ class ClientConfig:
     # Atributo da OS com a modalidade de manutenção (campo do cliente; None = não tem).
     modality_field: str | None = None
     issued_executed_measure: str = "pct_executed_now"  # um de ISSUED_EXECUTED_MEASURES
+    # Cumprimento de preventivas: concluídas ÷ (concluídas + pendentes). Vazio = classes
+    # executed e closed / classe open.
+    compliance_done_statuses: tuple[str, ...] = ()
+    compliance_pending_statuses: tuple[str, ...] = ()
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
         return sorted(s for s, c in self.status_classes.items() if c in classes)
+
+    def compliance_done_list(self) -> list[str]:
+        return sorted(self.compliance_done_statuses) or self.statuses_of(EXECUTED, CLOSED)
+
+    def compliance_pending_list(self) -> list[str]:
+        return sorted(self.compliance_pending_statuses) or self.statuses_of(OPEN)
 
     def overdue_status_list(self) -> list[str]:
         """Status que podem estar atrasados: os configurados ou todos os abertos."""
@@ -178,6 +188,7 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
             f"{', '.join(ISSUED_EXECUTED_MEASURES)}."
         )
 
+    compliance = _compliance(client_id, data.get("preventive_compliance", {}), status_classes)
     overdue = _overdue(client_id, data.get("overdue", {}), status_classes)
 
     return ClientConfig(
@@ -193,8 +204,24 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
         week_start=week_start,
         modality_field=modality_field,
         issued_executed_measure=measure,
+        **compliance,
         **overdue,
     )
+
+
+def _compliance(client_id: str, data, status_classes: dict[str, str]) -> dict:
+    if not isinstance(data, dict):
+        raise ClientConfigError(f"{client_id}: [preventive_compliance] must be a table.")
+    done = _worktypes(client_id, data, "done_statuses")
+    pending = _worktypes(client_id, data, "pending_statuses")
+    wrong_done = [s for s in done if status_classes.get(s) not in (EXECUTED, CLOSED)]
+    wrong_pending = [s for s in pending if status_classes.get(s) != OPEN]
+    if wrong_done or wrong_pending:
+        raise ClientConfigError(
+            f"{client_id}: preventive_compliance done_statuses must be executed or closed "
+            f"and pending_statuses open: {', '.join(wrong_done + wrong_pending)}."
+        )
+    return {"compliance_done_statuses": done, "compliance_pending_statuses": pending}
 
 
 def _overdue(client_id: str, data, status_classes: dict[str, str]) -> dict:

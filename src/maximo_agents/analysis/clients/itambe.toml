@@ -43,6 +43,15 @@ tolerance_days = 7
 [issued_executed]
 measure = "pct_executed_now"
 
+# Cumprimento de preventivas (guia, seção 7; fórmula confirmada pelo consultor em
+# 2026-11-18): OS dos tipos preventivos, concluídas ÷ (concluídas + pendentes). Outros
+# status (APROG, AGENV, canceladas...) ficam fora da conta. Mês = mês de abertura
+# (suposição nossa, a confirmar). Base pelos tipos, não pela PM: OS preventivas vêm sem
+# pmnum (suposição nossa; consultor não soube).
+[preventive_compliance]
+done_statuses = ["CONCL", "FECHAR"]
+pending_statuses = ["AGINSP", "AGEXEC", "EMAND"]
+
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação
 AGENV = { internal = "WAPPR" }      # Aguardando envio

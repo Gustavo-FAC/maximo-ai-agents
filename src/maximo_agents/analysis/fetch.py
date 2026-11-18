@@ -292,6 +292,30 @@ async def fetch_issued_and_finished(
     return result[0], result[1]
 
 
+async def fetch_preventive_work_orders(
+    call_tool: ToolCaller,
+    config: ClientConfig,
+    date_from: datetime.date,
+    date_to: datetime.date,
+    max_records: int = DEFAULT_MAX_RECORDS,
+) -> list[dict]:
+    """OS dos tipos preventivos do cliente emitidas no período (reportdate)."""
+    if not config.preventive_worktypes:
+        raise ValueError(f"{config.client_id}: no preventive_worktypes configured.")
+    filters = {"siteid": list(config.sites), "worktype": list(config.preventive_worktypes)}
+    fields = (*ISSUED_FIELDS, config.crew_field)
+    if config.modality_field:
+        fields += (config.modality_field,)
+    return await fetch_work_orders(
+        call_tool,
+        date_from=date_from,
+        date_to=date_to,
+        filters=filters,
+        fields=fields,
+        max_records=max_records,
+    )
+
+
 CORRECTIVE_FIELDS = (
     "wonum",
     "siteid",
