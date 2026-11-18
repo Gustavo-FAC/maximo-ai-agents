@@ -20,7 +20,7 @@ from maximo_agents.analysis.backlog import EMPTY
 from maximo_agents.analysis.config import CANCELLED, CLOSED, EXECUTED, OPEN, ClientConfig
 from maximo_agents.analysis.fetch import ISSUED_FIELDS
 
-GROUP_BY = ("crew", "worktype")
+GROUP_BY = ("crew", "worktype", "modality")  # modality: só com config.modality_field
 DONE = (EXECUTED, CLOSED)
 MAX_MONTHS = 12
 
@@ -55,9 +55,15 @@ def period(
 
 
 def to_frame(records: list[dict], config: ClientConfig) -> pd.DataFrame:
-    frame = pd.DataFrame.from_records(records, columns=[*ISSUED_FIELDS, config.crew_field])
-    frame = frame.rename(columns={config.crew_field: "crew"})
-    for column in ("crew", "worktype"):
+    columns = [*ISSUED_FIELDS, config.crew_field]
+    renames = {config.crew_field: "crew"}
+    if config.modality_field:
+        columns.append(config.modality_field)
+        renames[config.modality_field] = "modality"
+    frame = pd.DataFrame.from_records(records, columns=columns).rename(columns=renames)
+    if "modality" not in frame:
+        frame["modality"] = None
+    for column in ("crew", "worktype", "modality"):
         frame[column] = frame[column].astype("string").fillna(EMPTY).replace("", EMPTY)
     frame["cls"] = frame["status"].map(config.class_of)
     for column, target in (("reportdate", "report_month"), ("actfinish", "finish_month")):
@@ -102,6 +108,8 @@ def issued_executed_report(
     """issued_records: reportdate no período; finished_records: actfinish no período."""
     if group_by not in GROUP_BY:
         raise ValueError(f"group_by must be one of: {', '.join(GROUP_BY)}.")
+    if group_by == "modality" and not config.modality_field:
+        raise ValueError(f"{config.client_id}: no modality field configured.")
     issued = to_frame(issued_records, config)
     finished = to_frame(finished_records, config)
 
@@ -139,11 +147,13 @@ def issued_executed_report(
         "as_of": as_of.isoformat(),
         "group_by": group_by,
         "crew_field": config.crew_field,
+        "modality_field": config.modality_field,
         "rule": {
             "issued": "reportdate in the month",
             "executed_statuses": config.statuses_of(*DONE),
             "cancelled_statuses": config.statuses_of(CANCELLED),
             "finish_date_field": "actfinish",
+            "primary_measure": config.issued_executed_measure,
         },
         "months": result_months,
     }
@@ -152,9 +162,11 @@ def issued_executed_report(
 def format_issued_executed_text(report: dict) -> str:
     rule = report["rule"]
     key = f"by_{report['group_by']}"
-    title = (
-        f"Equipe ({report['crew_field']})" if report["group_by"] == "crew" else "Tipo de trabalho"
-    )
+    title = {
+        "crew": f"Equipe ({report['crew_field']})",
+        "worktype": "Tipo de trabalho",
+        "modality": f"Modalidade ({report['modality_field']})",
+    }[report["group_by"]]
     lines = [
         f"OS emitidas x executadas - {report['client']} - em {report['as_of']}",
         f"Emitida: reportdate no mês. Executada: status {', '.join(rule['executed_statuses'])}. "

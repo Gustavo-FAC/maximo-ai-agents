@@ -29,6 +29,13 @@ OVERDUE_DATE_FIELDS = ("targstartdate", "schedstart", "targcompdate", "schedfini
 DEFAULT_OVERDUE_DATE_FIELD = "targstartdate"
 MAX_TOLERANCE_DAYS = 365
 
+# Medida de emitidas × executadas que é o indicador do cliente (as outras vão de apoio).
+ISSUED_EXECUTED_MEASURES = (
+    "pct_executed_now",
+    "pct_executed_same_month",
+    "pct_executed_in_month_vs_issued",
+)
+
 # Valor interno do domínio WOSTATUS (padrão do Maximo) -> classe.
 INTERNAL_STATUS_CLASS = {
     "WAPPR": OPEN,
@@ -65,6 +72,9 @@ class ClientConfig:
     overdue_statuses: tuple[str, ...] = ()
     overdue_date_field: str = DEFAULT_OVERDUE_DATE_FIELD  # um de OVERDUE_DATE_FIELDS
     overdue_tolerance_days: int = 0
+    # Atributo da OS com a modalidade de manutenção (campo do cliente; None = não tem).
+    modality_field: str | None = None
+    issued_executed_measure: str = "pct_executed_now"  # um de ISSUED_EXECUTED_MEASURES
 
     def statuses_of(self, *classes: str) -> list[str]:
         """Status externos das classes pedidas, em ordem alfabética."""
@@ -147,6 +157,27 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
             f"{client_id}: 'crew_field' must be one of: {', '.join(CREW_FIELDS)}."
         )
 
+    modality_field = data.get("modality_field")
+    if modality_field is not None and not (
+        isinstance(modality_field, str)
+        and modality_field.isascii()
+        and modality_field.isidentifier()
+        and modality_field.islower()
+    ):
+        raise ClientConfigError(
+            f"{client_id}: 'modality_field' must be a lowercase attribute name."
+        )
+
+    issued = data.get("issued_executed", {})
+    if not isinstance(issued, dict):
+        raise ClientConfigError(f"{client_id}: [issued_executed] must be a table.")
+    measure = issued.get("measure", "pct_executed_now")
+    if measure not in ISSUED_EXECUTED_MEASURES:
+        raise ClientConfigError(
+            f"{client_id}: issued_executed 'measure' must be one of: "
+            f"{', '.join(ISSUED_EXECUTED_MEASURES)}."
+        )
+
     overdue = _overdue(client_id, data.get("overdue", {}), status_classes)
 
     return ClientConfig(
@@ -160,6 +191,8 @@ def parse_client_config(client_id: str, data: dict) -> ClientConfig:
         crew_field=crew_field,
         preventive_worktypes=preventive,
         week_start=week_start,
+        modality_field=modality_field,
+        issued_executed_measure=measure,
         **overdue,
     )
 

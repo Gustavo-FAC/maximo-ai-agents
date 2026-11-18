@@ -44,6 +44,7 @@ def test_itambe_status_classes():
     assert config.crew_field == "crewid"  # persongroup vazio na Itambé
     assert config.preventive_worktypes == ("MPV", "MPR", "INSP", "IL", "MS")
     assert config.week_start == "sunday"
+    assert config.modality_field == "modalidade"
 
 
 def test_class_from_internal_value_or_explicit():
@@ -55,6 +56,8 @@ def test_class_from_internal_value_or_explicit():
     assert config.crew_field == "persongroup"  # padrão
     assert config.preventive_worktypes == ()  # opcional
     assert config.week_start is None  # opcional
+    assert config.modality_field is None  # opcional
+    assert config.issued_executed_measure == "pct_executed_now"  # padrão
 
 
 @pytest.mark.parametrize(
@@ -85,6 +88,11 @@ def test_class_from_internal_value_or_explicit():
         {"overdue": {"tolerance_days": 366}},
         {"overdue": {"tolerance_days": "7"}},
         {"overdue": {"tolerance_days": True}},
+        {"modality_field": "MODALIDADE"},
+        {"modality_field": "modalidade; drop"},
+        {"modality_field": 1},
+        {"issued_executed": "pct_executed_now"},
+        {"issued_executed": {"measure": "executed_now"}},
     ],
 )
 def test_invalid_config(change):

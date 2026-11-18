@@ -274,6 +274,8 @@ async def fetch_issued_and_finished(
     """OS emitidas (reportdate) e OS terminadas (actfinish) no período, qualquer status."""
     filters = {"siteid": list(config.sites)}
     fields = (*ISSUED_FIELDS, config.crew_field)
+    if config.modality_field:
+        fields += (config.modality_field,)
     result = []
     for date_field in ("reportdate", "actfinish"):
         result.append(

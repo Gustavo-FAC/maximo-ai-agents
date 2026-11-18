@@ -192,9 +192,12 @@ id = "g08-executadas-modalidade"
 source = "guia 8"
 agent = "analise-os"
 question = "Qual o percentual de OS executadas por modalidade no mês passado?"
-gap = "análise por modalidade (campo modalidade x tipo de trabalho a confirmar)"
+# Modalidade = campo do cliente (modality_field), não tipo de trabalho (a confirmar com
+# o consultor). Metade das OS vem sem modalidade: a resposta tem que avisar.
 [cases.expect]
-answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
+calls = [{ tool = "analyze_issued_vs_executed", args = { group_by = "modality" } }]
+forbidden_args = [{ tool = "analyze_issued_vs_executed", args = { group_by = "worktype" } }]
+answer_any = ['(?i)sem modalidade|n[ãa]o preenchid|vazi|\(empty\)']
 
 [[cases]]
 id = "g09-especificacao"

@@ -199,6 +199,8 @@ async def _issued_executed(ctx: ToolContext, arguments: dict) -> dict:
     group_by = arguments.get("group_by") or "crew"
     if group_by not in GROUP_BY:
         raise ToolArgumentError(f"Parameter 'group_by' must be one of: {', '.join(GROUP_BY)}.")
+    if group_by == "modality" and not ctx.config.modality_field:
+        raise ToolArgumentError("This client has no maintenance modality field.")
     date_from, date_to = issued_period(last_month, months, ctx.today)
     issued, finished = await fetch_issued_and_finished(
         ctx.call_tool, ctx.config, date_from, date_to
@@ -313,8 +315,10 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
             name="analyze_issued_vs_executed",
             description=(
                 "Work orders issued vs executed per calendar month, per crew ('by_crew'; "
-                "'crew_field' names the Maximo attribute) or per work type ('by_worktype'), "
-                "with 'totals' per month. Issued = reportdate in the month. Executed = now "
+                "'crew_field' names the Maximo attribute), per work type ('by_worktype') or "
+                "per maintenance modality ('by_modality', the client's own field "
+                "'modality_field'; '(empty)' = not filled), with 'totals' per month. "
+                "Issued = reportdate in the month. Executed = now "
                 "in an executed or closed status ('rule' lists them); cancelled ones never "
                 "count as executed and are left out of the percentages. Two readings, "
                 "always say which one you quote: cohort ('executed_now' and "
@@ -323,6 +327,8 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 "in that same month) and flow ('executed_in_month': finished in the month "
                 "whatever the issue month, 'executed_in_month_issued_before' of them from "
                 "earlier months, 'pct_executed_in_month_vs_issued' can exceed 100). "
+                "'rule.primary_measure' is the client's own indicator: lead with it and "
+                "give the other readings only as support or when asked. "
                 "'partial' marks a month not over yet. Use it for 'issued vs executed', "
                 "execution rate or productivity per crew or month." + COMMON_NOTE
             ),
@@ -344,7 +350,10 @@ ANALYSIS_TOOLS: dict[str, AnalysisTool] = {
                 group_by={
                     "type": "string",
                     "enum": list(GROUP_BY),
-                    "description": "Group per crew (default) or per work type.",
+                    "description": (
+                        "Group per crew (default), per work type, or per maintenance "
+                        "modality (when the question says modality/modalidade)."
+                    ),
                     "default": "crew",
                 },
             ),

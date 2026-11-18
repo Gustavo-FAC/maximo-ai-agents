@@ -1,4 +1,5 @@
 import asyncio
+import dataclasses
 import datetime
 import json
 
@@ -164,6 +165,20 @@ def test_issued_vs_executed_defaults_to_last_complete_month():
 def test_issued_vs_executed_invalid_arguments(arguments):
     maximo = FakeMaximo()
     result = run(toolbox(maximo).run("analyze_issued_vs_executed", arguments))
+    assert result["error"]["code"] == "invalid_argument"
+    assert maximo.calls == []
+
+
+def test_issued_vs_executed_modality_needs_client_field():
+    maximo = FakeMaximo()
+    result = run(toolbox(maximo).run("analyze_issued_vs_executed", {"group_by": "modality"}))
+    assert "by_modality" in result["months"][0]
+    assert maximo.calls[0][1]["fields"].endswith(",modalidade")
+
+    maximo = FakeMaximo()
+    without = dataclasses.replace(CONFIG, modality_field=None)
+    box = Toolbox(maximo, without, WORK_ORDER_ANALYSIS.tools, today=TODAY)
+    result = run(box.run("analyze_issued_vs_executed", {"group_by": "modality"}))
     assert result["error"]["code"] == "invalid_argument"
     assert maximo.calls == []
 

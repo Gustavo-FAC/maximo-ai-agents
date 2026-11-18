@@ -1,4 +1,5 @@
 import asyncio
+import dataclasses
 import datetime
 import json
 
@@ -91,6 +92,7 @@ def test_cohort_and_flow():
     }
     assert "COMP" in report["rule"]["executed_statuses"]
     assert report["rule"]["cancelled_statuses"] == ["CANCEL", "PREVCAN"]
+    assert report["rule"]["primary_measure"] == "pct_executed_now"
     json.dumps(report)
 
 
@@ -114,6 +116,35 @@ def test_group_with_only_finished_and_several_months():
     assert "Tipo de trabalho" in text and "2026-11 (parcial)" in text
 
 
+def test_group_by_modality():
+    issued = [
+        {**wo("1", "FECHAR", "2026-10-02", "2026-10-03"), "modalidade": "PREVENT"},
+        {**wo("2", "EMAND", "2026-10-02"), "modalidade": "PREVENT"},
+        wo("3", "EMAND", "2026-10-02", worktype="MS"),  # sem modalidade
+    ]
+    report = issued_executed_report(
+        issued, [], CONFIG, D(2026, 10, 1), 1, AS_OF, group_by="modality"
+    )
+    groups = report["months"][0]["by_modality"]
+    assert list(groups) == ["PREVENT", "(empty)"]
+    assert groups["PREVENT"]["pct_executed_now"] == 50.0
+    assert groups["(empty)"]["issued"] == 1
+    assert report["modality_field"] == "modalidade"
+    assert "Modalidade (modalidade)" in format_issued_executed_text(report)
+
+    without = dataclasses.replace(CONFIG, modality_field=None)
+    with pytest.raises(ValueError):
+        issued_executed_report(issued, [], without, D(2026, 10, 1), 1, AS_OF, group_by="modality")
+    calls = []
+
+    async def call_tool(name, arguments):
+        calls.append(arguments)
+        return {"total": 0, "items": [], "has_more": False}
+
+    asyncio.run(fetch_issued_and_finished(call_tool, without, D(2026, 10, 1), D(2026, 10, 31)))
+    assert calls[0]["fields"].endswith(",crewid")
+
+
 def test_empty_and_invalid_group():
     report = issued_executed_report([], [], CONFIG, D(2026, 10, 1), 1, AS_OF)
     assert report["months"][0]["totals"]["issued"] == 0
@@ -135,5 +166,5 @@ def test_fetch_uses_both_date_fields():
     for name, args in calls:
         assert name == WORK_ORDER_TOOL
         assert args["siteid"] == "FABRICA,MINERACAO"
-        assert args["fields"].endswith(",crewid")
+        assert args["fields"].endswith(",crewid,modalidade")
         assert (args["date_from"], args["date_to"]) == ("2026-10-01", "2026-10-31")

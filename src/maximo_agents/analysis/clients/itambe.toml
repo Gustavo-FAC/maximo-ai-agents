@@ -22,15 +22,26 @@ currency = "BRL"
 # Equipe da OS: Itambé usa CREWID (ELETRICA, INSTRUM, PCM-ELE...); persongroup vazio
 # (feedback do cliente, 2026-11-16).
 crew_field = "crewid"
+# Modalidade de manutenção: campo do cliente na OS e na PM. Pergunta 8 do guia é pelo
+# campo, não pelo tipo de trabalho (consultor, 2026-11-18). Preenchido em 51% das OS de
+# nov/2025 a nov/2026; quase todas as vazias são MS.
+modality_field = "modalidade"
 
 # OS atrasada (guia de levantamento, 2026-11-17): status AGINSP, AGEXEC ou EMAND e
-# "Início Previsto" antes de hoje; sem data de previsão não conta. A confirmar com o
-# consultor: o campo (targstartdate ou schedstart) e a tolerância (seção 7 do guia: sem
-# tolerância; seção 4: 7 dias). A análise dá as duas contagens.
+# "Início Previsto" antes de hoje; sem data de previsão não conta. Campo = targstartdate
+# (consultor, 2026-11-18). Tolerância ainda a confirmar (seção 7 do guia: sem; seção 4:
+# 7 dias); a análise dá as duas contagens. OS de MS em EMAND (processo antigo) ficam no
+# indicador (consultor, 2026-11-18).
 [overdue]
 statuses = ["AGINSP", "AGEXEC", "EMAND"]
 date_field = "targstartdate"
 tolerance_days = 7
+
+# Emitidas × executadas (pergunta 7): indicador = das OS emitidas no mês (reportdate),
+# % já executadas. Suposição nossa (consultor não soube, 2026-11-18): é o cálculo de um
+# Power BI filtrado pela data de abertura.
+[issued_executed]
+measure = "pct_executed_now"
 
 [statuses]
 AAPROV = { internal = "WAPPR" }     # Aguardando Aprovação
