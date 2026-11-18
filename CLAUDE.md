@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 449 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 450 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -119,7 +119,9 @@ Cliente piloto: **Itambé Cimentos**.
 - **Evals** (2026-11-18): motor em `src/maximo_agents/evals/` e 30 casos em
   `tests/evals/cases.toml` (perguntas 33-40, guia 1-17, roteador); conferência sem
   LLM-juiz, com números da resposta ancorados nas ferramentas. CLI
-  `uv run python -m maximo_agents.evals [--list]`. **Falta rodar com LLM real.**
+  `uv run python -m maximo_agents.evals [--list]`. **Falta rodar com LLM real:** chave
+  do Claude válida, mas conta sem crédito (2026-11-18). `temperature` não é enviada
+  por padrão (Claude recente recusa valor fixo).
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
 ## Memória do projeto

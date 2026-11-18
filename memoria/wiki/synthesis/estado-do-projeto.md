@@ -13,7 +13,7 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-18): `tests/evals/`
 
-Evals montados (pedido do usuário; item 4 da lista abaixo). 449 testes, Ruff limpo.
+Evals montados (pedido do usuário; item 4 da lista abaixo). 450 testes, Ruff limpo.
 Commits `4a087ef` (código) e `0fb84ad` (docs); push pendente (usuário).
 - Motor em `src/maximo_agents/evals/` (`cases.py`, `checks.py`, `runner.py`, CLI
   `uv run python -m maximo_agents.evals [--list] [--only ...] [--agent ...] [--today ...]`).
@@ -29,10 +29,15 @@ Commits `4a087ef` (código) e `0fb84ad` (docs); push pendente (usuário).
   número) e r01-r05 do roteador. Sem números fixos (homologação muda).
 - `default` nos schemas das análises (`days`, `top`, `repeat_days`): o LLM vê o padrão
   e o eval resolve argumento omitido.
-- **Ainda não rodou de verdade:** falta chave do LLM (`LLM_PROVIDER` vazio; CLI sai com
-  código 2 e mensagem clara). Servidor `maximo` do Claude Code também falhou ao
-  conectar nesta sessão (`'url' is not a valid URL`); o runner usa a sessão própria
-  (`.env`), não o `.mcp.json`.
+- **1º run real (2026-11-18, tarde), bloqueado por crédito:** `ANTHROPIC_API_KEY`
+  preenchida e autentica, mas a conta está **sem crédito** (400 `credit balance is too
+  low`). Rodado com `LLM_PROVIDER=anthropic LLM_MODEL=claude-sonnet-5-5` por variável
+  de ambiente (o `.env` ainda não tem essas linhas). MCP do Maximo ok
+  (`check_connection`, 7 `script_*`). Achado e corrigido: `claude-sonnet-5-5` recusa
+  `temperature` fixa; `llm_temperature` agora é opcional (`None` = não envia;
+  `LLM_TEMPERATURE` no `.env` para fixar). 450 testes.
+  **Próximo:** usuário comprar crédito, pôr `LLM_PROVIDER`/`LLM_MODEL` no `.env` e rodar
+  `uv run python -m maximo_agents.evals --today <data>`.
 - Pontos a calibrar no 1º run real: expectativas rígidas (g01 `due_from` = domingo;
   g05 `date_field=actfinish`) e falso alarme do `grounded_numbers` (limite de inteiros
   pequenos = 12).

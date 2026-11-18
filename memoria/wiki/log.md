@@ -617,3 +617,9 @@ grafo real, CLI) e `tests/evals/cases.toml` com 30 casos (p33-p40, guia 1-17, ro
 Checagem de números ancorados nos resultados das ferramentas. `default` nos schemas das
 análises. 449 testes. Falta rodar com LLM real. [[estado-do-projeto]],
 [[prompts-de-teste]].
+
+## [2026-11-18] test | 1º run real dos evals: sem crédito na Anthropic
+Chave do Claude preenchida no `.env` e válida, mas conta sem crédito (400). Casos
+`p33-backlog` e `g01-mps-semana` com `claude-sonnet-5-5`: 0/2 por isso. Antes, erro do
+gateway: modelo recusa `temperature` fixa; `llm_temperature` virou opcional (`None` =
+não envia). MCP do Maximo ok. 450 testes. [[estado-do-projeto]].
