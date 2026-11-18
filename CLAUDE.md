@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 491 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 501 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -135,6 +135,12 @@ Cliente piloto: **Itambé Cimentos**.
   546 emitidas, 24,0% executadas). Qual leitura o BI usa: levar ao consultor.
   Por modalidade (pergunta 8) desde 2026-11-18: `modality_field` na config do cliente
   (Itambé: `modalidade`, vazio em 49% das OS), `group_by=modality`.
+- 8ª análise (cumprimento de preventivas) desde 2026-11-18: tipos preventivos emitidos
+  no mês, concluídas ÷ (concluídas + pendentes), status da regra em
+  `[preventive_compliance]` (Itambé: CONCL, FECHAR / AGINSP, AGEXEC, EMAND); por equipe,
+  tipo ou modalidade. CLI `... analysis preventive-compliance`; ferramenta
+  `analyze_preventive_compliance`. **Funcionando com dados reais** (mar/2026: 63,3%;
+  APROG fica fora da fórmula e é a maioria: levar ao consultor).
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×

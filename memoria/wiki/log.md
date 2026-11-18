@@ -667,3 +667,15 @@ kW. Suposições nossas (consultor não soube): emitidas × executadas pela coor
 (`[issued_executed] measure = "pct_executed_now"`) e cumprimento pelos tipos
 preventivos, não por `pmnum`. Abertos: tolerância, período do cumprimento, origem das
 HH, itens 15 a 22. 491 testes. [[estado-do-projeto]].
+
+## [2026-11-18] code | Cumprimento de preventivas (8ª análise)
+`analysis/preventive_compliance.py` + `fetch_preventive_work_orders` + ferramenta
+`analyze_preventive_compliance` + CLI `preventive-compliance`. Tipos preventivos
+emitidos no mês, concluídas ÷ (concluídas + pendentes), outros status fora; config
+`[preventive_compliance]`. Eval `i07`. 501 testes. Validação real bloqueada:
+`BMXAA10147E` (idioma do usuário da chave em PT). [[estado-do-projeto]].
+
+## [2026-11-18] test | Cumprimento de preventivas validado com dados reais
+Idioma da chave de volta em EN. Jan–mar/2026: 92,7%, 61,7%, 63,3%. Conferido no
+Maximo: mar 988 concluídas; ELETRICA 452 pendentes. APROG (2818 em mar) fica fora da
+fórmula: pergunta 23 nova ao consultor ([[perguntas-consultor]], também no doc).

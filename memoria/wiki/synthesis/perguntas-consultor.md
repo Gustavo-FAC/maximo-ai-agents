@@ -36,6 +36,13 @@ pediu para decidirmos.
 | 13 | SR padrão (Maximo/Mobile); grupo proprietário = `ownergroup`; fornecedor na ordem de compra; cadastro em Empresas | Script de SS pode usar o app padrão; manutenção externa passa pela ordem de compra. |
 | 14 | Alguns em CV, outros em kW, conforme a classificação | Filtro por especificação tem que tratar unidade por classificação (50 CV ≈ 36,8 kW). |
 
+## Novas (2026-11-18, depois das respostas)
+
+23. **Cumprimento de preventivas fora da conta:** pela fórmula do guia, OS em APROG
+    (aguardando programação) não entram. Em mar/2026 foram 2818 de 4605 preventivas
+    (63,3% de cumprimento sobre as 1562 que entram). Está certo deixá-las fora? COMP
+    (concluída pelo mobile) e POSEXEC (pós-execução) contam como concluídas?
+
 ## 0. Base de homologação
 
 1. **De quando é a cópia de produção?** Volume cai muito de mai/2026 a ago/2026

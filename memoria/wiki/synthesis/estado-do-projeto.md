@@ -11,11 +11,31 @@ updated: 2026-11-18
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-18, fim da noite): respostas do consultor
+## Onde paramos (2026-11-18, madrugada): cumprimento de preventivas
+
+8ª análise (pedido do usuário, destravada pelas respostas do consultor). 501 testes,
+Ruff limpo. **Validado com dados reais** (jan–mar/2026, 8268 OS em 37 s, depois de
+o usuário voltar o idioma da chave para EN; `BMXAA10147E` antes). Cumprimento: jan
+92,7% (quase tudo MS), fev 61,7%, mar 63,3%. Conferido no Maximo pelo `total`: mar
+988 concluídas; ELETRICA 452 pendentes (14,6%).
+**Levar ao consultor:** em mar/2026, 3043 preventivas fora da conta (APROG 2818),
+contra 1562 dentro: a fórmula do guia esconde as não programadas. COMP e POSEXEC
+(executadas) também ficam fora: contam como concluídas?
+- `analysis/preventive_compliance.py`: OS dos tipos preventivos emitidas no mês
+  (`reportdate`), `compliance_pct` = concluídas ÷ (concluídas + pendentes), status de
+  hoje; outros status fora da conta (`excluded_by_status`). Por equipe, tipo ou
+  modalidade. Config `[preventive_compliance] done_statuses` (Itambé CONCL, FECHAR) e
+  `pending_statuses` (AGINSP, AGEXEC, EMAND); padrão = classes executed+closed / open.
+- `fetch_preventive_work_orders` (filtro `worktype` = tipos preventivos). Ferramenta
+  `analyze_preventive_compliance` (`month`, `months`, `group_by`) na receita; CLI
+  `... analysis preventive-compliance`. Eval novo `i07`. 34 casos.
+- Suposições nossas (no TOML): mês = abertura; base pelos tipos, não por `pmnum`.
+
+## 2026-11-18 (fim da noite): respostas do consultor
 
 Consultor respondeu 1 a 14 no doc ([[perguntas-consultor]], tabela "Respostas
 recebidas"); 15 a 22 em aberto, mais tolerância (2), período do cumprimento (7) e
-origem das HH (10). 491 testes, Ruff limpo. Ainda **sem commit**.
+origem das HH (10). 491 testes. Commits `5777ec2` e `60d33d1`.
 - Aplicado: `targstartdate` confirmado; modalidade = campo; medida principal de
   emitidas × executadas configurável (`[issued_executed] measure`, Itambé
   `pct_executed_now`, **suposição nossa**), sai em `rule.primary_measure` e a
