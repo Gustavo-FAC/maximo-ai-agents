@@ -14,7 +14,7 @@ Ler no início de cada sessão. Atualizar no fim.
 ## Onde paramos (2026-11-18): `tests/evals/`
 
 Evals montados (pedido do usuário; item 4 da lista abaixo). 449 testes, Ruff limpo.
-**Não commitado ainda.**
+Commits `4a087ef` (código) e `0fb84ad` (docs); push pendente (usuário).
 - Motor em `src/maximo_agents/evals/` (`cases.py`, `checks.py`, `runner.py`, CLI
   `uv run python -m maximo_agents.evals [--list] [--only ...] [--agent ...] [--today ...]`).
   Roda o grafo real (LLM do gateway + MCP), grava chamadas e resposta pelo `astream`
