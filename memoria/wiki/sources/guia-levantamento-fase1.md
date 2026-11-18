@@ -27,7 +27,7 @@ Cimento; ~3000 OS/mês; usa Maximo há 20 anos.
 | 1 | MPs vencendo esta semana | semanal | Power BI | **falta**: `QUERYPMS` (`nextdate`) |
 | 2 | Existe MP para posição/ativo? | esporádica | Maximo | **falta**: `QUERYPMS` |
 | 3 | Última MP gerada para posição/ativo | esporádica | Maximo | **falta**: `pmnum` no `QUERYWORKORDERS` ou `QUERYPMS` (`laststartdate`) |
-| 4 | OS vencidas por equipe, setor, ativo ou posição | semanal | Power BI | **falta**: análise de atraso (regra na seção 7); "setor" = qual campo? |
+| 4 | OS vencidas por equipe, setor, ativo ou posição | semanal | Power BI | `analyze_overdue_work_orders` (2026-11-18; com e sem tolerância; falta dado real); "setor" = qual campo? |
 | 5 | Última OS executada para ativo/posição | mensal | Maximo | ok: `QUERYWORKORDERS` por `actfinish` |
 | 6 | OS designadas para um colaborador | semanal | Power BI | **falta**: filtro `lead` ou designação (ASSIGNMENT)? |
 | 7 | % OS emitidas × executadas no mês por equipe | mensal | Power BI | **falta**: análise nova (equipe = `crewid`) |

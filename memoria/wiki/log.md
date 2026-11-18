@@ -623,3 +623,16 @@ Chave do Claude preenchida no `.env` e válida, mas conta sem crédito (400). Ca
 `p33-backlog` e `g01-mps-semana` com `claude-sonnet-5-5`: 0/2 por isso. Antes, erro do
 gateway: modelo recusa `temperature` fixa; `llm_temperature` virou opcional (`None` =
 não envia). MCP do Maximo ok. 450 testes. [[estado-do-projeto]].
+
+## [2026-11-18] feature | Análise de OS atrasadas (guia 4)
+`analysis/overdue.py`, config `[overdue]` (status AGINSP/AGEXEC/EMAND, `targstartdate`
+a confirmar, tolerância 7), ferramenta `analyze_overdue_work_orders`, CLI `overdue`,
+evals `g04` e `g04b`. Dá total atrasado e além da tolerância (as duas leituras do
+guia). 473 testes. Sem dado real: Maximo voltou a recusar com BMXAA10147E (idioma PT
+do usuário da chave). [[estado-do-projeto]], [[guia-levantamento-fase1]].
+
+## [2026-11-18] test | Atrasadas com dados reais
+Idioma EN de volta. 2336 OS nos status AGINSP/AGEXEC/EMAND: 2049 atrasadas (87,7%),
+2031 além de 7 dias, mediana 288 d. `targstartdate` 90% preenchido × `schedstart` 42%:
+mantido `targstartdate`. OS 949366 e 1002188 conferidas à mão. Dúvida ao consultor:
+MS em EMAND há meses. [[estado-do-projeto]].

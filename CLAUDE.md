@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 450 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- 473 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -122,6 +122,11 @@ Cliente piloto: **Itambé Cimentos**.
   `uv run python -m maximo_agents.evals [--list]`. **Falta rodar com LLM real:** chave
   do Claude válida, mas conta sem crédito (2026-11-18). `temperature` não é enviada
   por padrão (Claude recente recusa valor fixo).
+- 6ª análise (OS atrasadas, pergunta 4 do guia) desde 2026-11-18: regra em `[overdue]`
+  do cliente (Itambé: AGINSP/AGEXEC/EMAND, `targstartdate` (90% preenchido; confirmar
+  com consultor), tolerância 7; dá total e além da tolerância); CLI `... analysis
+  overdue`; ferramenta `analyze_overdue_work_orders`. **Funcionando com dados reais**
+  (2049 de 2336 atrasadas, 87,7%; quase tudo MS em EMAND: levar ao consultor).
 - Detalhes e riscos: `memoria/wiki/synthesis/estado-do-projeto.md`.
 
 ## Memória do projeto

@@ -11,7 +11,35 @@ updated: 2026-11-18
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-18): `tests/evals/`
+## Onde paramos (2026-11-18, fim da tarde): análise de OS atrasadas
+
+Pergunta 4 do [[guia-levantamento-fase1]] (pedido do usuário). 473 testes, Ruff limpo.
+**Validado com dados reais** (2026-11-18; idioma do usuário da chave voltou a EN após
+recusa `BMXAA10147E`, ver [[mas-mcp-server]]). 2336 OS nos 3 status, lidas em 8 s:
+224 sem data, 62 no prazo, **2049 atrasadas (87,7%)**, 2031 além de 7 dias; mediana
+288 dias, máximo 1331. EMAND = 2008; tipo MS = 1823; equipe ELETRICA = 1443. Conferido
+à mão: OS 949366 (previsão 2023-03-28, 1331 d) e 1002188 (2024-01-18, 1035 d).
+Campo: `targstartdate` preenchido em 90% (sem data 224); `schedstart` só em 42% (sem
+data 1349, 973 atrasadas); `targcompdate` 386 sem data. Mantido `targstartdate`.
+**Levar ao consultor:** 87,7% atrasadas, quase tudo MS em EMAND há meses: OS de MS
+nunca fechadas na homologação ou processo real? (Pode inflar o indicador.)
+- `analysis/overdue.py`: OS nos status da regra com data de previsão antes de hoje.
+  Sem data não conta (contada à parte). Dá **as duas leituras do guia**: total
+  atrasado (seção 7, sem tolerância) e `beyond_tolerance` (seção 4, 7 dias). Por faixa
+  de dias de atraso, equipe (`crewid`), status, tipo, prioridade, site, top ativos e
+  locations (cada um com atrasadas, além da tolerância, maior atraso), mais atrasadas.
+- Busca pelo `reportdate` desde `history_start` (`fetch_overdue_candidates`), não pela
+  data de previsão: assim as OS sem previsão aparecem na contagem.
+- Config `[overdue]` no `itambe.toml`: `statuses` (AGINSP, AGEXEC, EMAND; padrão =
+  todos os abertos), `date_field` (`targstartdate`, a confirmar), `tolerance_days` 7.
+- Ferramenta `analyze_overdue_work_orders` (`tolerance_days`, `top`) na receita
+  `analise-os`; descrição do backlog manda "atraso" para ela. CLI
+  `... analysis overdue [--tolerance-days N]`. Subagente regerado.
+- Evals: `g04` sem `gap` (espera a ferramenta e citar a tolerância) e caso novo `g04b`
+  (sem tolerância → `tolerance_days=0`). 31 casos.
+- "Setor" da pergunta 4 continua dúvida do consultor (sem campo).
+
+## 2026-11-18: `tests/evals/`
 
 Evals montados (pedido do usuário; item 4 da lista abaixo). 450 testes, Ruff limpo.
 Commits `4a087ef` (código) e `0fb84ad` (docs); push pendente (usuário).
@@ -54,8 +82,8 @@ docs; push feito pelo usuário, `main` = `origin/main`). 416 testes, Ruff limpo.
    homologação velha ou geração fora do Maximo; regra `Mel/Imp/Imi` → `Prio` do
    checklist (inferida, ver abaixo); as 10 dúvidas do [[guia-levantamento-fase1]].
 2. **Análise de cumprimento de preventivas** em `analysis/` (depois do item 1).
-3. **Perguntas do guia ainda sem ferramenta:** atraso (4), designação (6), emitidas ×
-   executadas (7), filtro por spec (10), SS e manutenção externa (13-17; OS tem
+3. **Perguntas do guia ainda sem ferramenta:** ~~atraso (4)~~ (feito 2026-11-18, falta
+   dado real), designação (6), emitidas × executadas (7, próximo sugerido), filtro por spec (10), SS e manutenção externa (13-17; OS tem
    `fornecedor`).
 4. ~~`tests/evals/` com as perguntas reais do guia~~ Feito em 2026-11-18 (falta rodar
    com LLM real).
