@@ -30,6 +30,7 @@ def test_scripts_found():
         "QUERYWOMATERIALS.py",
         "QUERYMATUSAGE.py",
         "QUERYPMS.py",
+        "QUERYSRS.py",
     }
 
 

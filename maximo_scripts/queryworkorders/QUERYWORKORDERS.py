@@ -533,6 +533,7 @@ PARAM_NAMES = (
     "crewid",
     "worktype",
     "pmnum",
+    "laborcode",
     "text",
     "fields",
     "page",
@@ -543,6 +544,19 @@ PARAM_NAMES = (
 BASE_WHERE = (
     "woclass in (select value from synonymdomain where domainid = 'WOCLASS'"
     " and maxvalue in ('WORKORDER', 'ACTIVITY')) and istask = 0"
+)
+
+# Work orders with planned labor (WPLABOR) of these labor codes, on the work order
+# itself or on one of its tasks. Itambe: "designated worker" = planned labor
+# (consultant, 2026-11-18). Two exists, not "wonum = ... or wonum in (...)": the
+# "or" kept the database from using the WPLABOR index by work order; one month
+# took over 120 s (homologation 2026-11-19).
+LABOR_WHERE = (
+    "(exists (select 1 from wplabor wp where wp.siteid = workorder.siteid"
+    " and wp.wonum = workorder.wonum and wp.laborcode in (%s))"
+    " or exists (select 1 from workorder t, wplabor wp where t.siteid = workorder.siteid"
+    " and t.parent = workorder.wonum and t.istask = 1"
+    " and wp.siteid = t.siteid and wp.wonum = t.wonum and wp.laborcode in (%s)))"
 )
 
 
@@ -616,6 +630,19 @@ def build_query(raw, userid, authorized_sites=None):
         elif name == "siteid" and authorized_sites:
             # Not reported in filters: the caller did not ask for these sites.
             add_in_filter(clauses, binds, OBJECT_NAME, attribute, authorized_sites)
+
+    labor = parse_list("laborcode", raw.get("laborcode"), "str", MAX_LIST_VALUES)
+    if labor:
+        filters["laborcode"] = labor
+        # Each exists gets its own binds (placeholders are positional).
+        lists = []
+        for _ in range(2):
+            placeholders = []
+            for value in labor:
+                binds.append(("WPLABOR", "LABORCODE", value))
+                placeholders.append(":%d" % len(binds))
+            lists.append(", ".join(placeholders))
+        clauses.append(LABOR_WHERE % (lists[0], lists[1]))
 
     words = parse_text(raw.get("text"))
     if words:

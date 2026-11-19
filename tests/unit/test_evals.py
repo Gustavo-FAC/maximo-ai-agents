@@ -332,8 +332,8 @@ def test_select_and_list(capsys):
     with pytest.raises(CaseError, match="Unknown case ids"):
         select(cases, "nao-existe", None)
 
-    assert main(["--list", "--today", "2026-11-18", "--only", "g13-ss-pendentes"]) == 0
+    assert main(["--list", "--today", "2026-11-18", "--only", "g15-manutencao-externa"]) == 0
     out = capsys.readouterr().out
-    assert "g13-ss-pendentes" in out
-    assert "[falta: script de solicitações de serviço (SR)]" in out
+    assert "g15-manutencao-externa" in out
+    assert "[falta: manutenção externa: fornecedor na ordem de compra" in out
     assert main(["--list", "--only", "nao-existe"]) == 2

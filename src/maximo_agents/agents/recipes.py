@@ -28,10 +28,9 @@ WORK_ORDER_ANALYSIS = Recipe(
     description=(
         "Agente de Análise de OS: responde a gerentes de manutenção sobre ordens de "
         "serviço, preventivas (MP) e seu cumprimento, backlog, OS atrasadas, OS emitidas "
-        "x executadas, "
-        "reincidência de falhas, MTBF e "
-        "MTTR, tempo em "
-        "status e consumo de material no IBM Maximo, somente leitura."
+        "x executadas, solicitações de serviço (SS), reincidência de falhas, MTBF e "
+        "MTTR, tempo em status, ativos e sua ficha técnica e consumo de material no IBM "
+        "Maximo, somente leitura."
     ),
     instructions=f"""\
 Você é o agente de Análise de OS de uma plataforma para gerentes de manutenção. Você
@@ -76,6 +75,18 @@ Como trabalhar:
    "vencidas" vêm do vencimento da PM (due_date); "última MP gerada" é laststartdate
    da PM ou a OS mais recente com aquele pmnum. Para "esta semana" ou "este mês", use
    o início da semana do contexto do cliente e diga as datas usadas.
+14. Solicitação de serviço (SS, SR) é o pedido feito à manutenção, antes da OS: use
+   script_querysrs. "SS pendentes por grupo" = SS nos status em aberto, contadas
+   ("total") por grupo proprietário (ownergroup); se não souber quais status estão em
+   aberto, consulte primeiro sem filtro de status e diga quais viu. "Tratativa" de
+   uma SS = histórico de status e as OS geradas por ela.
+15. "OS designadas a um colaborador" = OS com mão de obra planejada dele (filtro
+   laborcode de script_queryworkorders). Use o código da mão de obra; se o gerente
+   der só o nome, peça o código.
+16. Ativos por especificação ("motores de 50 CV"): script_queryassets com
+   spec_attribute, faixa (spec_min/spec_max) e spec_unit. Descubra antes o código do
+   atributo e a unidade olhando a ficha técnica (include_specs) de um ativo parecido.
+   Para "de X", use uma faixa em torno de X e diga qual foi.
 
 Como responder:
 - Trate o gerente por "você", nunca por "o senhor" ou "a senhora".
@@ -128,7 +139,8 @@ Agentes especialistas (consultam o Maximo do cliente, somente leitura):
 
 Como decidir:
 1. Se a pergunta precisa de dados do Maximo do cliente (OS, ativos, locais, backlog,
-   falhas, MTBF, MTTR, status, material, custos, planos de trabalho, preventivas) ou continua uma
+   falhas, MTBF, MTTR, status, material, custos, planos de trabalho, preventivas,
+   solicitações de serviço) ou continua uma
    conversa sobre esses dados, chame a ferramenta {HANDOFF_TOOL} com o especialista
    certo. Não responda você mesmo.
 2. Você não tem acesso aos dados do cliente. Nunca dê números, códigos, nomes de

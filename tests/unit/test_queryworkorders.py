@@ -313,6 +313,24 @@ def test_pm_filter_and_fields():
     assert error_code(**BASE, pmnum=many) == "too_many_values"
 
 
+def test_laborcode_filter():
+    q = query(laborcode="joao, MARIA,joao", crewid="ELETRICA")
+    assert q["filters"]["laborcode"] == ["JOAO", "MARIA"]
+    # crewid (:3) comes from LIST_FILTERS; planned labor after it.
+    # Two exists (work order, then its tasks), each with its own binds; no "or" on
+    # wonum (slow in homologation, 2026-11-19).
+    assert "wp.wonum = workorder.wonum and wp.laborcode in (:4, :5))" in q["where"]
+    assert "t.parent = workorder.wonum and t.istask = 1" in q["where"]
+    assert "wp.wonum = t.wonum and wp.laborcode in (:6, :7)))" in q["where"]
+    assert "wp.wonum in (" not in q["where"]
+    labor_binds = [("WPLABOR", "LABORCODE", "JOAO"), ("WPLABOR", "LABORCODE", "MARIA")]
+    assert q["binds"][3:7] == labor_binds * 2
+    assert "laborcode" in qwo.PARAM_NAMES and "laborcode" not in q["fields"]
+    many = ",".join(f"L{i}" for i in range(qwo.MAX_LIST_VALUES + 1))
+    assert error_code(**BASE, laborcode=many) == "too_many_values"
+    assert "wplabor" not in query()["where"]
+
+
 def test_client_fields():
     assert not set(qwo.CLIENT_FIELDS) & set(qwo.DEFAULT_FIELDS)
     assert set(qwo.CLIENT_FIELDS) <= set(qwo.FIELD_TYPES)

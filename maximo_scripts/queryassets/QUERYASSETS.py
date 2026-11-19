@@ -495,6 +495,10 @@ PARAM_NAMES = (
     "priority",
     "failurecode",
     "text",
+    "spec_attribute",
+    "spec_min",
+    "spec_max",
+    "spec_unit",
     "include_specs",
     "fields",
     "page",
@@ -536,6 +540,122 @@ ANCESTOR_WHERE = (
     " where aa.siteid = asset.siteid and aa.assetnum <> aa.ancestor"
     " and aa.ancestor in (%s))"
 )
+
+# Specification filter (ASSETSPEC numeric value). Units of one quantity are compared
+# after conversion to its base unit (power: kW; voltage: V): Itambe registers motor
+# power in CV or kW depending on the class (consultant, 2026-11-18). Factor = base
+# units per unit. A unit outside this table is compared only with itself.
+UNIT_FACTORS = {
+    "power": (
+        ("KW", "1"),
+        ("W", "0.001"),
+        ("MW", "1000"),
+        ("CV", "0.73549875"),
+        ("HP", "0.745699872"),
+    ),
+    "voltage": (("V", "1"), ("KV", "1000")),
+}
+MAX_SPEC_ATTRIBUTES = 5
+MAX_SPEC_NUMBER = 1000000000.0
+# Bounds are bound as integers in thousandths (spec value * factor * 1000): no decimal
+# separator reaches SqlFormat, whose number parsing follows the user's locale.
+SPEC_SCALE = 1000
+SPEC_WHERE = (
+    "exists (select 1 from assetspec s where s.assetnum = asset.assetnum"
+    " and s.siteid = asset.siteid and s.assetattrid in (%s)%s)"
+)
+
+
+def unit_factors(unit):
+    """((unit, factor), ...) of the unit's quantity, or None outside UNIT_FACTORS."""
+    for units in UNIT_FACTORS.values():
+        if unit in dict(units):
+            return units
+    return None
+
+
+def parse_number(name, raw):
+    """Decimal number ("50", "36.8" or "36,8"), or None when unset."""
+    if is_unset(raw):
+        return None
+    text = to_text(raw).strip()
+    if "," in text and "." not in text:
+        text = text.replace(",", ".")
+    try:
+        value = float(text)
+    except ValueError:
+        raise ParamError("invalid_number", name, "%s must be a number." % name)
+    if value != value or abs(value) > MAX_SPEC_NUMBER:
+        raise ParamError("invalid_number", name, "%s must be a number." % name)
+    return value
+
+
+def build_spec_filter(raw, clauses, binds, filters):
+    """Assets with a specification of these attributes, optionally within bounds.
+
+    Without bounds: assets that have the attribute. With spec_min/spec_max: numeric
+    value within them (inclusive). With spec_unit, bounds are in that unit and every
+    unit of the same quantity is converted (50 CV = 36.77 kW); specs in other units or
+    without unit are left out. Without spec_unit, values are compared as registered.
+    """
+    attributes = parse_list("spec_attribute", raw.get("spec_attribute"), "str", MAX_SPEC_ATTRIBUTES)
+    low = parse_number("spec_min", raw.get("spec_min"))
+    high = parse_number("spec_max", raw.get("spec_max"))
+    unit_raw = raw.get("spec_unit")
+    unit = None if is_unset(unit_raw) else to_text(unit_raw).strip().upper()
+    if not attributes:
+        for name, value in (("spec_min", low), ("spec_max", high), ("spec_unit", unit)):
+            if value is not None:
+                raise ParamError(
+                    "requires_spec_attribute", name, "%s requires spec_attribute." % name
+                )
+        return
+    if low is not None and high is not None and high < low:
+        raise ParamError("invalid_range", "spec_max", "spec_max must be >= spec_min.")
+    if unit is not None and low is None and high is None:
+        raise ParamError("required", "spec_min", "spec_unit requires spec_min or spec_max.")
+    if unit is not None and not 0 < len(unit) <= 20:
+        raise ParamError("invalid_unit", "spec_unit", "spec_unit must be a unit code.")
+
+    placeholders = []
+    for value in attributes:
+        binds.append(("ASSETSPEC", "ASSETATTRID", value))
+        placeholders.append(":%d" % len(binds))
+    filters["spec_attribute"] = attributes
+
+    extra = ""
+    if low is not None or high is not None:
+        factor = 1.0
+        measure = "s.numvalue * %d" % SPEC_SCALE
+        units = unit_factors(unit) if unit is not None else None
+        if units is not None:
+            # Unit codes and factors in the SQL text come only from UNIT_FACTORS.
+            factor = float(dict(units)[unit])
+            cases = " ".join("when '%s' then %s" % (code, f) for code, f in units)
+            measure = "s.numvalue * (case upper(s.measureunitid) %s end) * %d" % (
+                cases,
+                SPEC_SCALE,
+            )
+            codes = [code for code, _ in units]
+            extra += " and upper(s.measureunitid) in (%s)" % ", ".join(
+                "'%s'" % code for code in codes
+            )
+            filters["spec_units_compared"] = codes
+        elif unit is not None:
+            binds.append(("ASSETSPEC", "MEASUREUNITID", unit))
+            extra += " and upper(s.measureunitid) = :%d" % len(binds)
+            filters["spec_units_compared"] = [unit]
+        if unit is not None:
+            filters["spec_unit"] = unit
+        extra += " and s.numvalue is not null"
+        for name, value, operator in (("spec_min", low, ">="), ("spec_max", high, "<=")):
+            if value is None:
+                continue
+            filters[name] = value
+            # Integer thousandths of the base unit: no decimal separator to parse.
+            binds.append(("ASSETSPEC", "NUMVALUE", "%d" % int(round(value * factor * SPEC_SCALE))))
+            extra += " and %s %s :%d" % (measure, operator, len(binds))
+    clauses.append(SPEC_WHERE % (", ".join(placeholders), extra))
 
 
 def parse_flag(name, raw):
@@ -588,6 +708,8 @@ def build_query(raw, userid):
     if words:
         filters["text"] = words
         add_text_filter(clauses, binds, OBJECT_NAME, words)
+
+    build_spec_filter(raw, clauses, binds, filters)
 
     add_site_auth(clauses, binds, userid)
 

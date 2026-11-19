@@ -162,10 +162,9 @@ calls = [{ tool = "script_queryworkorders", args = { assetnum = "MOI0001", date_
 id = "g06-os-colaborador"
 source = "guia 6"
 agent = "analise-os"
-question = "Quais OS estão designadas para o colaborador JSILVA?"
-gap = "filtro de designação (campo a confirmar: lead ou ASSIGNMENT)"
+question = "Quais OS estão designadas para o colaborador de código de mão de obra JSILVA?"
 [cases.expect]
-answer_any = ['(?i)ainda não|não (consigo|tenho|é possível|está disponível)']
+calls = [{ tool = "script_queryworkorders", args = { laborcode = "JSILVA" } }]
 
 [[cases]]
 id = "g07-emitidas-executadas"
@@ -223,7 +222,8 @@ id = "g10-motores-50cv"
 source = "guia 10"
 agent = "analise-os"
 question = "Quantos motores de 50 CV nós temos?"
-gap = "filtro por especificação no QUERYASSETS"
+[cases.expect]
+calls = [{ tool = "script_queryassets", args = { spec_attribute = "*", spec_unit = "CV", spec_min = "*", spec_max = "*" } }]
 
 [[cases]]
 id = "g11-ultima-falha"
@@ -246,25 +246,23 @@ id = "g13-ss-pendentes"
 source = "guia 13"
 agent = "analise-os"
 question = "Quantas SS estão pendentes por grupo proprietário?"
-gap = "script de solicitações de serviço (SR)"
 [cases.expect]
-answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
+calls = [{ tool = "script_querysrs" }]
 
 [[cases]]
 id = "g14-situacao-ss"
 source = "guia 14"
 agent = "analise-os"
 question = "Qual a situação da SS 12345? Já teve tratativa?"
-gap = "script de solicitações de serviço (SR)"
 [cases.expect]
-answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
+calls = [{ tool = "script_querysrs", args = { ticketids = "12345", include_history = "Y" } }]
 
 [[cases]]
 id = "g15-manutencao-externa"
 source = "guia 15"
 agent = "analise-os"
 question = "Quais equipamentos estão em manutenção externa hoje?"
-gap = "módulo de SS e manutenção externa (a entender com o consultor)"
+gap = "manutenção externa: fornecedor na ordem de compra (2º passo, sem script)"
 [cases.expect]
 answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
 
@@ -273,7 +271,7 @@ id = "g16-dias-externa"
 source = "guia 16"
 agent = "analise-os"
 question = "Há quantos dias cada equipamento está em manutenção externa?"
-gap = "módulo de SS e manutenção externa (a entender com o consultor)"
+gap = "manutenção externa: fornecedor na ordem de compra (2º passo, sem script)"
 [cases.expect]
 answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
 
@@ -282,7 +280,7 @@ id = "g17-externa-fornecedor"
 source = "guia 17"
 agent = "analise-os"
 question = "Quantos equipamentos estão em manutenção externa em cada fornecedor?"
-gap = "módulo de SS e manutenção externa (a entender com o consultor)"
+gap = "manutenção externa: fornecedor na ordem de compra (2º passo, sem script)"
 [cases.expect]
 answer_any = ['(?i)ainda não|não (consigo|tenho|existe|é possível|está disponível)']
 

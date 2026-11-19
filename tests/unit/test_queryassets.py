@@ -155,6 +155,7 @@ def test_pagination():
 
 def test_params_cover_filters():
     filter_names = {name for name, _, _, _ in qa.LIST_FILTERS} | {"ancestor", "text"}
+    filter_names |= {"spec_attribute", "spec_min", "spec_max", "spec_unit"}
     options = {"include_specs", "fields", "page", "page_size"}
     assert set(qa.PARAM_NAMES) == filter_names | options
 
@@ -247,3 +248,60 @@ def test_response():
     assert resp["returned"] == 1
     assert resp["filters"] == {"status": ["OPERATING"]}
     assert qa.build_response(q, 0, [])["total_pages"] == 0
+
+
+def test_spec_filter_converts_power_units():
+    q = query(spec_attribute="potencia", spec_min="45", spec_max="55", spec_unit="cv")
+    f = q["filters"]
+    assert f["spec_attribute"] == ["POTENCIA"]
+    assert (f["spec_min"], f["spec_max"], f["spec_unit"]) == (45.0, 55.0, "CV")
+    assert f["spec_units_compared"] == ["KW", "W", "MW", "CV", "HP"]
+    where = q["where"]
+    assert "exists (select 1 from assetspec s where s.assetnum = asset.assetnum" in where
+    assert "s.assetattrid in (:1)" in where
+    assert "case upper(s.measureunitid) when 'KW' then 1" in where
+    assert "when 'CV' then 0.73549875" in where
+    assert "upper(s.measureunitid) in ('KW', 'W', 'MW', 'CV', 'HP')" in where
+    # Bounds in thousandths of kW, as integer text: 45 CV = 33.097 kW.
+    assert q["binds"][:3] == [
+        ("ASSETSPEC", "ASSETATTRID", "POTENCIA"),
+        ("ASSETSPEC", "NUMVALUE", "33097"),
+        ("ASSETSPEC", "NUMVALUE", "40452"),
+    ]
+    assert "end) * 1000 >= :2" in where and "end) * 1000 <= :3" in where
+
+
+def test_spec_filter_in_kw_and_decimal_comma():
+    q = query(spec_attribute="POTENCIA,POT.NOM", spec_min="36,8", spec_unit="kW")
+    assert q["filters"]["spec_attribute"] == ["POTENCIA", "POT.NOM"]
+    assert q["binds"][2] == ("ASSETSPEC", "NUMVALUE", "36800")
+    assert "<=" not in q["where"].split("assetspec")[1].split(")")[0]
+
+
+def test_spec_filter_unit_outside_table_and_no_unit():
+    q = query(spec_attribute="ROTACAO", spec_min="1700", spec_max="1800", spec_unit="rpm")
+    assert q["binds"][1] == ("ASSETSPEC", "MEASUREUNITID", "RPM")
+    assert "upper(s.measureunitid) = :2" in q["where"]
+    assert "case" not in q["where"]
+    assert q["filters"]["spec_units_compared"] == ["RPM"]
+    q = query(spec_attribute="POLOS", spec_max="4")
+    assert "s.numvalue * 1000 <= :2" in q["where"]
+    assert "measureunitid" not in q["where"]
+    assert "spec_unit" not in q["filters"]
+
+
+def test_spec_filter_attribute_only():
+    q = query(spec_attribute="POTENCIA")
+    assert "s.assetattrid in (:1))" in q["where"]
+    assert "numvalue" not in q["where"]
+
+
+def test_spec_filter_errors():
+    assert error_code(spec_min="10") == "requires_spec_attribute"
+    assert error_code(spec_unit="CV") == "requires_spec_attribute"
+    assert error_code(spec_attribute="POTENCIA", spec_unit="CV") == "required"
+    assert error_code(spec_attribute="POTENCIA", spec_min="abc") == "invalid_number"
+    assert error_code(spec_attribute="POTENCIA", spec_min="nan") == "invalid_number"
+    assert error_code(spec_attribute="POTENCIA", spec_min="1e12") == "invalid_number"
+    assert error_code(spec_attribute="POTENCIA", spec_min="10", spec_max="5") == "invalid_range"
+    assert error_code(spec_attribute="A,B,C,D,E,F") == "too_many_values"
