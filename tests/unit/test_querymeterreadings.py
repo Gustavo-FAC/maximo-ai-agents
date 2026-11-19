@@ -216,6 +216,31 @@ def test_meter_and_point_lookups():
     assert qmr.keep_pairs(found, pairs) == [found[0], found[2]]
 
 
+def test_zero_limits_mean_no_limit():
+    # Found in homologation: lowerwarning 30, loweraction 24, upper limits stored as 0.
+    points = [
+        {
+            "pointnum": "2987",
+            "upperwarning": 0,
+            "lowerwarning": 30,
+            "upperaction": 0.0,
+            "loweraction": 24,
+        },
+        {"pointnum": "P2", "upperwarning": None, "lowerwarning": -5.5},
+    ]
+    assert qmr.clear_zero_limits(points) == [
+        {
+            "pointnum": "2987",
+            "upperwarning": None,
+            "lowerwarning": 30,
+            "upperaction": None,
+            "loweraction": 24,
+        },
+        {"pointnum": "P2", "upperwarning": None, "lowerwarning": -5.5},
+    ]
+    assert set(qmr.POINT_LIMITS) <= set(qmr.POINT_FIELD_TYPES)
+
+
 def test_every_parameter_is_read():
     raw, _ = qmr.collect_params(qmr.PARAM_NAMES, {}, None, None)
     assert set(raw) == set(qmr.PARAM_NAMES)

@@ -13,8 +13,8 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-19): instalação e validação das perguntas 6, 10, 13-14
 
-Também em 2026-11-19: `QUERYMETERREADINGS` funcionando via MCP (item 3 abaixo);
-falta recolar a correção de `key_fields`.
+Também em 2026-11-19: `QUERYMETERREADINGS` funcionando via MCP (item 3 abaixo),
+correção de `key_fields` recolada e conferida; falta recolar limite 0 → `null`.
 
 Usuário reinstalou `QUERYWORKORDERS`/`QUERYASSETS` e instalou `QUERYSRS`. Código
 commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
@@ -60,12 +60,17 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
    **Dados da Itambé (mai/2025–abr/2026):** 3581 leituras em MEASUREMENT, **zero em
    METERREADING** (sem horímetro/contador). Medidores vistos tipo `CALIBRE`: aferição
    de balança (`AFERFIN*`, kg, `ENS0001`, FABRICA) e resistência ôhmica de rotor
-   (`MROR60`, ohm, MINERACAO), lançados por inspetor (checklist). **Limites dos pontos
-   todos 0**: sem Monitoramento de Condições com faixa configurada, análise de
-   "fora do limite" não serve hoje.
+   (`MROR60`, ohm, MINERACAO), lançados por inspetor (checklist). **Limites: a maioria
+   0, mas não todos**: MCE393/MCE394 (comprimento de escova do `MCA0617`, mm) têm
+   lowerwarning 30 e loweraction 24, com upper 0. Maximo grava 0 para "sem limite";
+   comparar leitura com upper 0 daria alarme falso. Corrigido no código
+   (`clear_zero_limits`: limite 0 → `null`, como o schema já dizia). 561 testes.
+   **Falta recolar o script no Maximo** e conferir `upperwarning: null` no MCE393.
    Correção no código (mesmo dia): `fields` sem `pointnum` deixava `points` vazio;
    agora cada tipo tem `key_fields` (measurement inclui `pointnum`). 560 testes.
-   **Falta recolar o script no Maximo** e conferir `points` com `fields` restrito.
+   **Recolada e conferida (2026-11-19):** `fields=reading` traz `pointnum` nos itens e
+   `points` completo; total jan–abr/2026 = 1425. `fields_unavailable` = `["delta"]` no
+   padrão de measurement (esperado).
    **Continua fora dos agentes** (`DORMANT_TOOLS`): leituras são de aferição/checklist,
    não de condição; levar ao consultor se algum gerente precisa disso.
 4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por

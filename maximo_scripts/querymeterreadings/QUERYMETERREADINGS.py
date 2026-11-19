@@ -775,6 +775,22 @@ def keep_pairs(points, pairs):
     return [point for point in points if (point["pointnum"], point["siteid"]) in pairs]
 
 
+POINT_LIMITS = ("upperwarning", "lowerwarning", "upperaction", "loweraction")
+
+
+def clear_zero_limits(points):
+    """Limit 0 -> None, in place: Maximo stores 0 when a limit is not set.
+
+    Found in homologation: points with lowerwarning 30 and upperwarning 0; read as
+    a limit, upper 0 would flag every reading.
+    """
+    for point in points:
+        for name in POINT_LIMITS:
+            if point.get(name) == 0:
+                point[name] = None
+    return points
+
+
 def build_response(query, total, items, unavailable, meters, points):
     response = paging(query["page"], query["page_size"], total, len(items))
     response["reading_type"] = query["reading_type"].lower()
@@ -824,7 +840,7 @@ def run(user_info, raw):
             distinct_values(items, "pointnum"), distinct_values(items, "siteid"), userid, fields
         )
         _, points = query_page(user_info, POINT_OBJECT, point_query, POINT_FIELD_TYPES)
-        points = keep_pairs(points, pairs)
+        points = clear_zero_limits(keep_pairs(points, pairs))
 
     return build_response(query, total, items, unavailable, meters, points)
 

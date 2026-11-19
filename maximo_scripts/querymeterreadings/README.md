@@ -88,13 +88,17 @@ Trecho entre `# --- BEGIN COMMON` e `# --- END COMMON ---` igual ao do `QUERYASS
 
 - [x] Itambé usa medidores? (2026-11-19) Sim, 3581 leituras mai/2025–abr/2026 em
       MEASUREMENT (aferição de balança, resistência de rotor; tipo `CALIBRE`, lançadas
-      por inspetor); nenhuma em METERREADING. Limites dos pontos todos 0.
+      por inspetor); nenhuma em METERREADING. Limites: a maioria 0, mas há pontos
+      com faixa (MCE393/MCE394, escova do `MCA0617`: lowerwarning 30, loweraction 24,
+      upper 0). Maximo grava 0 para "sem limite": o script devolve `null`
+      (`clear_zero_limits`, 2026-11-19).
 - [ ] Índices de `MEASUREMENT` e `METERREADING` (Database Configuration).
 - [x] Ferramenta aparece no MCP com 12 parâmetros (depois de trocar a variável
       `matername`, digitada errado, por `metername`).
 - [ ] Um ano de `measurement` e de `continuous`: `total` coerente com o app.
 - [x] `meters` traz a unidade; `points` traz os limites.
-- [ ] Depois de recolar `key_fields`: `fields=reading` ainda traz `points`.
-- [ ] `fields_unavailable` vazio no padrão (atributos existem na Itambé).
+- [x] Depois de recolar `key_fields`: `fields=reading` ainda traz `points` (2026-11-19).
+- [x] `fields_unavailable` no padrão de measurement = `["delta"]` (esperado: MEASUREMENT
+      não tem delta); demais atributos existem na Itambé.
 - [ ] `location` com `continuous` dá `not_supported`; sem datas dá `required`.
 - [ ] Depois de confirmado o uso: tirar de `DORMANT_TOOLS` e pôr na receita.

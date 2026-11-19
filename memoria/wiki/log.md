@@ -727,3 +727,15 @@ trocada por `metername`. Filtro `metername` ok (1, 2 valores, inexistente). Itam
 Correção: `fields` sem `pointnum` esvaziava `points`; `key_fields` por tipo de leitura
 (measurement inclui `pointnum`). 560 testes, Ruff limpo. Falta recolar.
 [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-11-19] test | QUERYMETERREADINGS recolado (key_fields)
+`fields=reading` em measurement traz `pointnum` nos itens e `points` completo (antes
+vazio). Total jan–abr/2026 = 1425. `fields_unavailable=["delta"]` no padrão (esperado).
+Limites não são todos 0: MCE393/MCE394 (escova do MCA0617) com lowerwarning 30 e
+loweraction 24, upper 0 (0 = sem limite, script não converte em null). Páginas:
+[[estado-do-projeto]], [[ferramentas-maximo]].
+
+## [2026-11-19] fix | QUERYMETERREADINGS: limite 0 vira null
+Maximo grava 0 nos limites não configurados do MEASUREPOINT (MCE393: upper 0, lower
+30). `clear_zero_limits` devolve `null`, como o schema e a allowlist já descreviam.
+Teste novo; 561 testes. Falta recolar no Maximo. Páginas: [[estado-do-projeto]].

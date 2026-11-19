@@ -152,9 +152,11 @@ Cliente piloto: **Itambé Cimentos**.
 - `QUERYMETERREADINGS` (leituras de medidores e Monitoramento de Condições:
   MEASUREMENT ou METERREADING, com unidade do METER e limites do MEASUREPOINT)
   **funcionando via MCP** desde 2026-11-19 (variável `metername`, não `matername`).
-  Itambé: 3581 leituras/ano em MEASUREMENT (aferição/checklist, limites 0), nenhuma em
-  METERREADING; fica fora dos agentes (`DORMANT_TOOLS`). Correção `key_fields`
-  (`pointnum` sempre lido em measurement) a recolar no Maximo.
+  Itambé: 3581 leituras/ano em MEASUREMENT (aferição/checklist; limites quase todos 0,
+  alguns pontos com faixa, 0 = sem limite), nenhuma em METERREADING; fica fora dos
+  agentes (`DORMANT_TOOLS`). Correção `key_fields` (`pointnum` sempre lido em
+  measurement) recolada e conferida em 2026-11-19. Limite 0 → `null`
+  (`clear_zero_limits`) a recolar no Maximo.
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×
