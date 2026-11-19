@@ -102,7 +102,7 @@ Cliente piloto: **Itambé Cimentos**.
   `handoff` para os especialistas, resposta direta sem dados, histórico só com perguntas
   e respostas finais. Testado com modelo falso; falta LLM real. Ver
   `memoria/wiki/concepts/assistente-geral-roteador.md`.
-- 501 testes unitários. `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
+- `crewid` (equipe da Itambé, campo e filtro) no `QUERYWORKORDERS` **funcionando via
   MCP** desde 2026-11-16.
 - `QUERYASSETS` com `include_specs=Y` (ficha técnica/dados de placa, ASSETSPEC)
   **funcionando via MCP** desde 2026-11-16; `specs_truncated` chega desde 2026-11-17
@@ -141,6 +141,14 @@ Cliente piloto: **Itambé Cimentos**.
   tipo ou modalidade. CLI `... analysis preventive-compliance`; ferramenta
   `analyze_preventive_compliance`. **Funcionando com dados reais** (mar/2026: 63,3%;
   APROG fica fora da fórmula e é a maioria: levar ao consultor).
+- **Perguntas 6, 10, 13-14 do guia** (2026-11-18), instalados e commitados em
+  2026-11-19 (`c5b36cb`, `a675bfe`): `QUERYASSETS` filtro por especificação
+  (`spec_*`, CV↔kW no SQL) **funcionando via MCP** (40 motores iguais em CV e kW);
+  `QUERYWORKORDERS` filtro `laborcode` (WPLABOR) roda, **falta código real**;
+  `QUERYSRS` (SR) busca e `include_workorders` **funcionando via MCP**;
+  `include_history` corrigido (TKSTATUS da Itambé sem `OWNER`) e `ownergroup` lido de
+  `itcownergroup` (campo próprio da Itambé; `ownergroup` vazio): **falta reinstalar
+  o `QUERYSRS` e conferir**. Manutenção externa (15-17): 2º passo. 531 testes.
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×

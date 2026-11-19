@@ -47,6 +47,7 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `crewid` | não | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
 | `pmnum` | não | PM numbers, comma-separated (max 20): work orders generated from these PMs. |
+| `laborcode` | não | Labor codes, comma-separated (max 20): work orders with planned labor for them. |
 | `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
 | `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. Also pmnum, pmduedate, jpnum, description_longdescription (max 50 per page) and modalidade (client field). |
 | `page` | não | Page number, starting at 1 (default 1). |
@@ -86,6 +87,12 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
 - **Preventivas** (desde 2026-11-17, guia da Itambé): filtro `pmnum` (OS geradas
   pelas PMs; variável nova, 17 parâmetros) e campos `pmnum`, `pmduedate` (vencimento
   da PM para o qual a OS foi gerada) e `jpnum`. Cadastro das PMs no `QUERYPMS`.
+- **Mão de obra planejada** (desde 2026-11-18, pergunta 6 do guia; consultor:
+  designação = mão de obra planejada): filtro `laborcode` (variável nova, 18
+  parâmetros). OS com linha em WPLABOR desses códigos na própria OS ou numa tarefa
+  dela (`exists`, binds `WPLABOR.LABORCODE`). Não há campo de saída: o filtro basta
+  para "OS do colaborador X". O gerente fala o nome; o código da mão de obra ainda
+  não tem ferramenta de busca.
 - **Campo do cliente** `modalidade` (Itambé, desde 2026-11-17): aceito em `fields`
   só se o atributo existe neste Maximo (dicionário de dados, conferido em execução);
   senão `unknown_field`. Nunca no padrão. Lista curada em `CLIENT_FIELDS`: campo
@@ -134,3 +141,6 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
       OS 1633892; lista `MSA0_100,MSK1_65` ok; PM inexistente = 0; sem datas →
       `required`; `fields=pmnum,pmduedate,jpnum,modalidade` preenchidos (PF);
       `pmnum` nulo em corretiva (CO/EM).
+- [ ] Mão de obra planejada (`laborcode`, 2026-11-18): 18 parâmetros; só OS com a
+      mão de obra (na OS ou em tarefa); código inexistente = 0 (conferido em
+      2026-11-19). **Falta código real** (aba Plans → Labor).

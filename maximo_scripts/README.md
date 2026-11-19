@@ -39,3 +39,5 @@ Scripts:
 - [`querymatusage/`](querymatusage/README.md) – consumo real de material: baixas e devoluções (MATUSETRANS).
 - [`querypms/`](querypms/README.md) – cadastro de preventivas (PM): vencimento, ativo,
   location, plano, frequência, última geração e conclusão.
+- [`querysrs/`](querysrs/README.md) – solicitações de serviço (SR): status, grupo
+  proprietário, histórico de status e OS geradas sob pedido.

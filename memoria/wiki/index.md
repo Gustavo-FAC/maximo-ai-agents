@@ -8,7 +8,8 @@ Catálogo de páginas. Atualizar a cada alteração.
   `analysis/` ou no LLM, decisões (histórico, bloco comum, campos `cci_*`,
   `QUERYJOBPLANS`, histórico de status em 2 scripts, site explícito,
   `QUERYASSETDOWNTIME`, ficha técnica `include_specs` no `QUERYASSETS`, descrição
-  longa da OS no `QUERYWORKORDERS`, `QUERYPMS` e campo do cliente `modalidade`).
+  longa da OS no `QUERYWORKORDERS`, `QUERYPMS`, campo do cliente `modalidade`,
+  filtros `laborcode` e por especificação, `QUERYSRS`).
 - [[prompts-de-teste]] – 40 perguntas (33-40 em `tests/evals/`): 32 para OS e ativos via MCP (filtros,
   `text`, hierarquia, limites, segurança) e 8 de gerente para o agente `analise-os`;
   base para `tests/evals/`.

@@ -29,16 +29,16 @@ Cimento; ~3000 OS/mês; usa Maximo há 20 anos.
 | 3 | Última MP gerada para posição/ativo | esporádica | Maximo | **falta**: `pmnum` no `QUERYWORKORDERS` ou `QUERYPMS` (`laststartdate`) |
 | 4 | OS vencidas por equipe, setor, ativo ou posição | semanal | Power BI | `analyze_overdue_work_orders` (2026-11-18; com e sem tolerância; falta dado real); "setor" = qual campo? |
 | 5 | Última OS executada para ativo/posição | mensal | Maximo | ok: `QUERYWORKORDERS` por `actfinish` |
-| 6 | OS designadas para um colaborador | semanal | Power BI | **falta**: filtro `lead` ou designação (ASSIGNMENT)? |
+| 6 | OS designadas para um colaborador | semanal | Power BI | filtro `laborcode` (mão de obra planejada, WPLABOR) no `QUERYWORKORDERS` (2026-11-18, consultor); falta reinstalar; código da mão de obra sem busca |
 | 7 | % OS emitidas × executadas no mês por equipe | mensal | Power BI | `analyze_issued_vs_executed` (2026-11-18; coorte e fluxo; validado com dado real); qual leitura o BI usa? |
 | 8 | % OS executadas por modalidade | mensal | Power BI | `analyze_issued_vs_executed` `group_by=modality` (2026-11-18; campo `modalidade` vazio em 49%); campo × tipo a confirmar |
 | 9 | Dados de especificação de um equipamento | esporádica | Maximo | ok: `QUERYASSETS include_specs` |
-| 10 | Quantos equipamentos com tal especificação (motor 50 CV) | esporádica | Maximo | **falta**: filtro por spec no `QUERYASSETS` |
+| 10 | Quantos equipamentos com tal especificação (motor 50 CV) | esporádica | Maximo | filtro `spec_attribute`/`spec_min`/`spec_max`/`spec_unit` no `QUERYASSETS`, CV↔kW convertido (2026-11-18); falta reinstalar |
 | 11 | Última quebra/falha de um equipamento | esporádica | Maximo | parcial: OS corretivas do ativo (tipos a confirmar) |
 | 12 | Quantas vezes o equipamento teve tal falha no período | esporádica | Maximo | parcial: `text` + reincidência; sem classe de falha |
-| 13 | SS pendentes por grupo proprietário | mensal | Power BI | **falta**: script de SS |
-| 14 | Status / tratativa de uma SS | esporádica | Power BI | **falta**: script de SS |
-| 15-17 | Equipamentos em manutenção externa (módulo de SS): quais, há quantos dias, por fornecedor | mensal | Power BI | **falta**: script de SS; entender o módulo |
+| 13 | SS pendentes por grupo proprietário | mensal | Power BI | `QUERYSRS` (SR padrão, `ownergroup`; 2026-11-18); falta instalar e saber os status em aberto |
+| 14 | Status / tratativa de uma SS | esporádica | Power BI | `QUERYSRS` `ticketids` + `include_history` + `include_workorders` (2026-11-18); falta instalar |
+| 15-17 | Equipamentos em manutenção externa (módulo de SS): quais, há quantos dias, por fornecedor | mensal | Power BI | **falta**: fornecedor na ordem de compra (consultor, 2026-11-18); 2º passo |
 
 ## 3. Status (visão do gerente)
 

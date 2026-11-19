@@ -679,3 +679,23 @@ emitidos no mês, concluídas ÷ (concluídas + pendentes), outros status fora; 
 Idioma da chave de volta em EN. Jan–mar/2026: 92,7%, 61,7%, 63,3%. Conferido no
 Maximo: mar 988 concluídas; ELETRICA 452 pendentes. APROG (2818 em mar) fica fora da
 fórmula: pergunta 23 nova ao consultor ([[perguntas-consultor]], também no doc).
+
+## [2026-11-18] code | Designação, especificação e SS (perguntas 6, 10, 13-14)
+`QUERYWORKORDERS` filtro `laborcode` (mão de obra planejada, WPLABOR). `QUERYASSETS`
+filtro por especificação (`spec_attribute`, `spec_min`, `spec_max`, `spec_unit`) com
+conversão CV/kW/HP/W/MW e V/kV no SQL. Script novo `QUERYSRS` (SR: status,
+`ownergroup`, histórico de status, OS geradas). Allowlist, receita (regras 14-16),
+subagente, evals (g06, g10, g13, g14). 527 testes. Falta instalar no Maximo.
+[[estado-do-projeto]], [[ferramentas-maximo]], [[guia-levantamento-fase1]].
+
+## [2026-11-18] session | Fim de sessão: instalação adiada para 2026-11-19
+Usuário reinstala `QUERYWORKORDERS`/`QUERYASSETS` e instala `QUERYSRS` amanhã; depois
+reiniciar o Claude Code, validar via MCP, commitar e testar o subagente. Roteiro em
+"Onde paramos" de [[estado-do-projeto]]. Mudanças ainda não commitadas.
+
+## [2026-11-19] test | Perguntas 6, 10, 13-14 instaladas e validadas via MCP
+Spec em CV e kW: mesmos 40 motores (ok). `laborcode` roda, falta código real.
+`QUERYSRS`: busca e OS geradas ok; `include_history` com BMXAA4176E (TKSTATUS sem
+`OWNER`), corrigido conferindo campos no dicionário. `ownergroup` vazio: Itambé usa
+`ITCOWNERGROUP`; script lê o primeiro existente, nome na resposta igual. Commits
+`c5b36cb`, `a675bfe`. Falta recolar `QUERYSRS` e conferir. [[estado-do-projeto]].

@@ -41,6 +41,10 @@ Todas: tipo **IN**, binding **Literal**, `literaldatatype` **ALN**, valor padrã
 | `priority` | Priority integers, comma-separated (max 20). |
 | `failurecode` | Failure class codes, comma-separated (max 20). |
 | `text` | Words that must all appear in the description (max 5 words, 100 chars). |
+| `spec_attribute` | Specification attribute codes, comma-separated (max 5), e.g. POTENCIA. |
+| `spec_min` | Minimum numeric value of the specification (inclusive), in spec_unit. |
+| `spec_max` | Maximum numeric value of the specification (inclusive), in spec_unit. |
+| `spec_unit` | Unit of spec_min/spec_max, e.g. CV, KW. Power and voltage units are converted. |
 | `include_specs` | Y returns each asset's specifications (technical data sheet) under specs. Default N; max 50/page. |
 | `fields` | Fields to return, comma-separated. assetnum and siteid always included. |
 | `page` | Page number, starting at 1 (default 1). |
@@ -76,6 +80,16 @@ o guia da Itambé explicar o significado de cada um.
   `specs_truncated` = true. Lidas pelo ativo dono (relação ad hoc `$QASSETSPECS`,
   lição do JOBTASK: filho sem dono dá NullPointerException); `assetuid` volta
   junto. Descrição do atributo em cache por atributo/organização.
+- **Filtro por especificação** (desde 2026-11-18, pergunta 10 do guia): `spec_attribute`
+  (até 5 códigos, ex.: `POTENCIA` dos motores, `POT.NOM` dos acoplamentos),
+  `spec_min`/`spec_max` (inclusive; aceita vírgula decimal) e `spec_unit`. Vira
+  `exists (select 1 from assetspec ...)`. Com unidade de potência (KW, W, MW, CV, HP)
+  ou tensão (V, KV), o valor de cada spec é convertido para a unidade base no SQL
+  (`case upper(measureunitid)`, fatores fixos em `UNIT_FACTORS`) e specs em outra
+  unidade ou sem unidade ficam fora. Unidade fora da tabela: só ela (bind). Sem
+  unidade: valor como cadastrado. Limites vão como **inteiro em milésimos** da
+  unidade base (`SqlFormat` lê decimal pela localidade do usuário: vírgula × ponto).
+  Unidades vêm em caixa mista no cadastro (`mm`/`MM`): comparação em maiúsculas.
 
 ## Bloco comum
 
@@ -107,4 +121,7 @@ Validado em 2026-10-29 (Itambé, chave MAXADMIN): marcados com [x].
 - [x] `include_specs=Y` com página de 50 ativos: tempo aceitável (2026-11-16).
 - [x] `specs_truncated` presente na resposta MCP com `include_specs=Y` (2026-11-17:
       `false` com MCA6477, após recolar `response_schema.json` na MCP Tool).
+- [x] Filtro por especificação (2026-11-18): 18 parâmetros; `POTENCIA` 45–55 CV e
+      33,1–40,45 kW devolvem os mesmos 40 motores (MCA0120, MCA0314, ...; valor em CV)
+      em 2026-11-19. Falta conferir `requires_spec_attribute` sem `spec_attribute`.
 - [ ] Usuário **sem** acesso a um site não recebe ativos desse site.

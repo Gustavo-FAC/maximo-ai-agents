@@ -25,6 +25,31 @@ mas é outro para o código.
   - `maximo_scripts/queryworkorders/response_schema.json`
 - Anotar o commit do repositório que está sendo instalado (`git log -1 --oneline`).
 
+## Atualizar instalação existente (2026-11-18: mão de obra planejada)
+
+Pergunta 6 do guia (OS designadas a um colaborador): o consultor disse que a
+designação é a **mão de obra planejada** (WPLABOR). Filtro novo `laborcode`.
+
+1. Abrir o script `QUERYWORKORDERS`. Log Level `DEBUG` durante o teste.
+2. Aba **Variables → New Row**, com os mesmos valores das outras (IN, LITERAL,
+   ALN, `*`). Variable `laborcode` (digitar), Description:
+   `Labor codes, comma-separated (max 20): work orders with planned labor for them.`
+3. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYWORKORDERS.py`
+   novo. **Save**. O `response_schema.json` não muda.
+4. Conferir no OAS (passo 5): **18** parâmetros, sem `u200b`. Esperar o MCP
+   recarregar (10 min; passo 6).
+5. Testes. Pegar no Maximo uma OS com mão de obra planejada (aba Plans → Labor) e o
+   código da mão de obra (`<LABOR>`); se possível, uma OS em que a mão de obra está
+   só numa tarefa.
+
+   ```json
+   {"date_from": "2025-11-18", "date_to": "2026-11-18", "odelaborcode": "<LABOR>", "page_size": "5"}
+   ```
+
+   Esperado: `total` > 0, só OS com essa mão de obra planejada (na OS ou numa
+   tarefa dela); `filters.laborcode` = `["<LABOR>"]`. Código inexistente → `total` 0.
+6. Voltar o Log Level para `ERROR`. Me enviar as respostas e o commit instalado.
+
 ## Atualizar instalação existente (2026-11-17: preventivas e modalidade)
 
 Inclui também a descrição longa (seção seguinte), se ainda não instalada.
@@ -99,14 +124,14 @@ invisíveis, como na 1ª instalação):
 
 ### Passo 1 do wizard – dados do script
 
-| Campo | Valor |
-|---|---|
-| Script | `QUERYWORKORDERS` (digitar) |
-| Description | `Read-only work order search: date range (YYYY-MM-DD) or wonums, filters, paging, total.` |
-| Script Language | `python` (se não houver, `jython`: é o mesmo engine) |
-| Log Level | `DEBUG` (só durante a validação; voltar para `ERROR` no passo 8) |
-| Active? | marcado |
-| Allow Invoking Script Functions? | **desmarcado** |
+| Campo                            | Valor                                                                                       |
+| -------------------------------- | ------------------------------------------------------------------------------------------- |
+| Script                           | `QUERYWORKORDERS` (digitar)                                                               |
+| Description                      | `Read-only work order search: date range (YYYY-MM-DD) or wonums, filters, paging, total.` |
+| Script Language                  | `python` (se não houver, `jython`: é o mesmo engine)                                  |
+| Log Level                        | `DEBUG` (só durante a validação; voltar para `ERROR` no passo 8)                     |
+| Active?                          | marcado                                                                                     |
+| Allow Invoking Script Functions? | **desmarcado**                                                                        |
 
 A Description é o que o MCP mostra como descrição da ferramenta (o long description
 não aparece). Nosso agente terá descrição própria mais completa na allowlist.
@@ -125,24 +150,24 @@ Criar **16 linhas** (New Row). Em todas:
 Nome **digitado em minúsculas**. Descrição em até 100 caracteres (o Maximo corta o
 resto).
 
-| Variable | Description |
-|---|---|
-| `date_from` | Start date, YYYY-MM-DD, inclusive. Required unless wonums is given. |
-| `date_to` | End date, YYYY-MM-DD, inclusive. Max 366 days after date_from. Required unless wonums is given. |
-| `date_field` | Range date: reportdate (default), statusdate, targstartdate, targcompdate, actstart, actfinish |
-| `siteid` | Site IDs, comma-separated (max 20). |
-| `wonums` | Work order numbers, comma-separated (max 50). Dates optional when given. |
-| `status` | Status values, comma-separated (max 20), e.g. APPR,INPRG,COMP. |
-| `priority` | Priority integers, comma-separated (max 20). |
-| `assetnum` | Asset numbers, comma-separated (max 20). |
-| `location` | Location codes, comma-separated (max 20). |
-| `persongroup` | Person group (work group) codes, comma-separated (max 20). |
-| `crewid` | Crew IDs (work order crew/team), comma-separated (max 20). |
-| `worktype` | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
-| `text` | Words that must all appear in the description (max 5 words, 100 chars). |
-| `fields` | Fields to return, comma-separated. wonum and siteid always included. |
-| `page` | Page number, starting at 1 (default 1). |
-| `page_size` | Items per page, 1 to 500 (default 100). |
+| Variable        | Description                                                                                     |
+| --------------- | ----------------------------------------------------------------------------------------------- |
+| `date_from`   | Start date, YYYY-MM-DD, inclusive. Required unless wonums is given.                             |
+| `date_to`     | End date, YYYY-MM-DD, inclusive. Max 366 days after date_from. Required unless wonums is given. |
+| `date_field`  | Range date: reportdate (default), statusdate, targstartdate, targcompdate, actstart, actfinish  |
+| `siteid`      | Site IDs, comma-separated (max 20).                                                             |
+| `wonums`      | Work order numbers, comma-separated (max 50). Dates optional when given.                        |
+| `status`      | Status values, comma-separated (max 20), e.g. APPR,INPRG,COMP.                                  |
+| `priority`    | Priority integers, comma-separated (max 20).                                                    |
+| `assetnum`    | Asset numbers, comma-separated (max 20).                                                        |
+| `location`    | Location codes, comma-separated (max 20).                                                       |
+| `persongroup` | Person group (work group) codes, comma-separated (max 20).                                      |
+| `crewid`      | Crew IDs (work order crew/team), comma-separated (max 20).                                      |
+| `worktype`    | Work types, comma-separated (max 20), e.g. PM,CM,EM.                                            |
+| `text`        | Words that must all appear in the description (max 5 words, 100 chars).                         |
+| `fields`      | Fields to return, comma-separated. wonum and siteid always included.                            |
+| `page`        | Page number, starting at 1 (default 1).                                                         |
+| `page_size`   | Items per page, 1 to 500 (default 100).                                                         |
 
 `date_field` também aceita `schedstart` e `schedfinish` (não cabem na descrição; se o
 valor for inválido, o erro lista todos).
@@ -171,14 +196,14 @@ conteúdo de `response_schema.json`. **Save**.
 
 Com o script aberto: **More Actions → Add/Modify MCP Tool**.
 
-| Campo | Valor |
-|---|---|
-| Title | `Query work orders` |
-| Processing notes | `Always pass date_from and date_to, except when looking up specific wonums (dates then optional). Use "*" for unused parameters. Read "total" for counts; never count items of a single page. If "has_more" is true, request the next page or narrow the filters.` |
-| Read only? | marcado |
-| Destructive hint? | desmarcado |
-| Query API as a response? | desmarcado |
-| Active? | marcado |
+| Campo                    | Valor                                                                                                                                                                                                                                                                |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title                    | `Query work orders`                                                                                                                                                                                                                                                |
+| Processing notes         | `Always pass date_from and date_to, except when looking up specific wonums (dates then optional). Use "*" for unused parameters. Read "total" for counts; never count items of a single page. If "has_more" is true, request the next page or narrow the filters.` |
+| Read only?               | marcado                                                                                                                                                                                                                                                              |
+| Destructive hint?        | desmarcado                                                                                                                                                                                                                                                           |
+| Query API as a response? | desmarcado                                                                                                                                                                                                                                                           |
+| Active?                  | marcado                                                                                                                                                                                                                                                              |
 
 Se houver campo de nome MCP, deixar o padrão. Clicar **OK** e **Save**.
 
@@ -253,15 +278,15 @@ variáveis implícitas o Maximo injetou e se os parâmetros chegaram como
 
 ## Se algo der errado
 
-| Sintoma | O que fazer |
-|---|---|
-| Erro de compilação no Create | Copiar mensagem, não editar no Maximo. |
-| `u200b` no OAS | Caractere invisível colado. Apagar o script e recriar digitando os nomes. |
-| Ferramenta não aparece após 10 min | Conferir Active? no script e no MCP Tool; testar `/api/oas?aitools=1`. |
-| `{"error": {"code": "no_user"}}` | `request.getUserInfo()` não disponível no caminho MCP. Avisar. |
-| `{"error": {"code": "not_authorized"}}` | Usuário da `apikey` sem READ em WOTRACK. |
-| `{"error": {"code": "internal_error"}}` | Pegar o erro no log do Manage (`QUERYWORKORDERS failed: ...`). |
-| `total` = 0 com certeza de haver OS | Me enviar a linha de log do SQL (autoscript em DEBUG). |
+| Sintoma                                   | O que fazer                                                                |
+| ----------------------------------------- | -------------------------------------------------------------------------- |
+| Erro de compilação no Create            | Copiar mensagem, não editar no Maximo.                                    |
+| `u200b` no OAS                          | Caractere invisível colado. Apagar o script e recriar digitando os nomes. |
+| Ferramenta não aparece após 10 min      | Conferir Active? no script e no MCP Tool; testar `/api/oas?aitools=1`.   |
+| `{"error": {"code": "no_user"}}`        | `request.getUserInfo()` não disponível no caminho MCP. Avisar.         |
+| `{"error": {"code": "not_authorized"}}` | Usuário da `apikey` sem READ em WOTRACK.                                |
+| `{"error": {"code": "internal_error"}}` | Pegar o erro no log do Manage (`QUERYWORKORDERS failed: ...`).           |
+| `total` = 0 com certeza de haver OS     | Me enviar a linha de log do SQL (autoscript em DEBUG).                     |
 
 **Observação (2026-10-29):** em homologação, a chamada via MCP voltou com
 `BMXAA10147E - O código de idioma do usuário PT é inválido para inferência` antes de

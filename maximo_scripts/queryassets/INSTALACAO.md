@@ -10,6 +10,52 @@ Regra do projeto: o conteúdo colado no Maximo é **exatamente** o do repositór
 código, schema e descrições do arquivo aberto no editor de texto (não do preview,
 chat ou terminal). O passo 5 confere `u200b`.
 
+## Atualizar instalação existente (2026-11-18: filtro por especificação)
+
+Pergunta 10 do guia ("motores de 50 CV"). Consultor: potência em CV ou kW conforme a
+classificação; o filtro converte. 4 variáveis novas, `response_schema.json` não muda.
+
+1. Abrir o script `QUERYASSETS`. Log Level `DEBUG` durante o teste.
+2. Aba **Variables → New Row**, 4 vezes, com os mesmos valores das outras (IN,
+   LITERAL, ALN, `*`). Nomes digitados:
+
+   | Variable | Description |
+   |---|---|
+   | `spec_attribute` | Specification attribute codes, comma-separated (max 5), e.g. POTENCIA. |
+   | `spec_min` | Minimum numeric value of the specification (inclusive), in spec_unit. |
+   | `spec_max` | Maximum numeric value of the specification (inclusive), in spec_unit. |
+   | `spec_unit` | Unit of spec_min/spec_max, e.g. CV, KW. Power and voltage units are converted. |
+
+3. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYASSETS.py` novo.
+   **Save**.
+4. Conferir no OAS: **18** parâmetros, sem `u200b`. Esperar o MCP recarregar (10 min).
+5. Testes (achar antes no Maximo um motor com `POTENCIA` preenchida, ex.: 9,2 KW):
+
+   ```json
+   {"spec_attribute": "POTENCIA", "spec_min": "8", "spec_max": "10", "spec_unit": "KW", "include_specs": "Y", "page_size": "5"}
+   ```
+
+   Esperado: só ativos com `POTENCIA` entre 8 e 10 kW **ou** o equivalente em CV
+   (10,9 a 13,6 CV); `filters.spec_units_compared` = `["KW","W","MW","CV","HP"]`.
+   O mesmo motor tem que aparecer pedindo em CV:
+
+   ```json
+   {"spec_attribute": "POTENCIA", "spec_min": "11", "spec_max": "14", "spec_unit": "CV", "page_size": "5"}
+   ```
+
+   Contagem de motores de ~50 CV (para a pergunta 10):
+
+   ```json
+   {"spec_attribute": "POTENCIA", "spec_min": "45", "spec_max": "55", "spec_unit": "CV", "page_size": "5"}
+   ```
+
+   Erro esperado: `{"spec_min": "10"}` sem `spec_attribute` →
+   `{"error": {"code": "requires_spec_attribute", ...}}`.
+6. Voltar o Log Level para `ERROR`. Me enviar as respostas e o commit instalado.
+
+Se `total` vier 0 com certeza de haver motor na faixa: mandar a linha de SQL do log
+(o limite vai como inteiro em milésimos da unidade base, ex.: 50 CV = `36775`).
+
 ## 0. Antes de começar
 
 - Usuário com acesso ao app **Automation Scripts** (em homologação: MAXADMIN).
@@ -54,6 +100,10 @@ Data Type `ALN`, Binding Value `*`. Nome digitado em minúsculas.
 | `priority` | Priority integers, comma-separated (max 20). |
 | `failurecode` | Failure class codes, comma-separated (max 20). |
 | `text` | Words that must all appear in the description (max 5 words, 100 chars). |
+| `spec_attribute` | Specification attribute codes, comma-separated (max 5), e.g. POTENCIA. |
+| `spec_min` | Minimum numeric value of the specification (inclusive), in spec_unit. |
+| `spec_max` | Maximum numeric value of the specification (inclusive), in spec_unit. |
+| `spec_unit` | Unit of spec_min/spec_max, e.g. CV, KW. Power and voltage units are converted. |
 | `include_specs` | Y returns each asset's specifications (technical data sheet) under specs. Default N; max 50/page. |
 | `fields` | Fields to return, comma-separated. assetnum and siteid always included. |
 | `page` | Page number, starting at 1 (default 1). |
@@ -92,7 +142,7 @@ Abrir o script (aba Main), colar `response_schema.json` em **Response Schema**, 
 - [ ] `script_queryassets` aparece.
 - [ ] `u200b` não aparece.
 - [ ] `authapp` e `authsigoption` não aparecem.
-- [ ] 14 parâmetros no `requestBody` (com `include_specs`).
+- [ ] 18 parâmetros no `requestBody` (com `include_specs` e os 4 `spec_*`).
 
 ## 6. Conferir no MCP Server
 

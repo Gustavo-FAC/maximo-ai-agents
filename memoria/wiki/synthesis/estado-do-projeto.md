@@ -4,14 +4,81 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-18
+updated: 2026-11-19
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-18, madrugada): cumprimento de preventivas
+## Onde paramos (2026-11-19): instalação e validação das perguntas 6, 10, 13-14
+
+Usuário reinstalou `QUERYWORKORDERS`/`QUERYASSETS` e instalou `QUERYSRS`. Código
+commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
+- **Q10 spec: funcionando via MCP.** `POTENCIA` 45–55 CV e 33,1–40,45 kW devolvem
+  os mesmos 40 motores (valores cadastrados em CV).
+- **Q6 `laborcode`:** roda (código inventado = 0 OS); **falta código real** do usuário.
+- **Q13-14 `QUERYSRS`:** busca, `ticketids`, limite de 366 dias e
+  `include_workorders` ok (SR 10200 → OS 1632462). Homologação quase sem SR (54 desde
+  abr/2026, testes; nenhuma mai/2025–abr/2026); status NOVO, AGAPROV, CANCELADO,
+  FECHADO. `ticketid` pula muito (sequência partilhada com outros tickets?).
+- `include_history` falhava: **BMXAA4176E, TKSTATUS sem `OWNER`**. Corrigido: campos
+  do histórico conferidos no dicionário de dados (`available_fields`).
+- **`ownergroup` vazio em todas as SR:** a Itambé usa o campo próprio
+  `ITCOWNERGROUP` (apischema MXAPISR: "para o status não mudar sozinho para
+  QUEUED"). `QUERYSRS` agora lê o primeiro de (`itcownergroup`, `ownergroup`) que
+  existir; nome na resposta continua `ownergroup` (sem mudança de schema/agentes).
+
+**Próximo, nesta ordem:**
+1. Usuário recola o código do `QUERYSRS` (sem variável nova). Conferir SR 10200 com
+   `include_history=Y` (quais campos voltam) e `ownergroup` preenchido / filtro.
+2. Código real de mão de obra para validar `laborcode`.
+3. Testar o subagente `analise-os` com as ferramentas novas (atraso, emitidas ×
+   executadas, modalidade, cumprimento, SS, spec, laborcode).
+4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
+   nome; respostas pendentes do consultor; evals com LLM real (conta sem crédito).
+
+## 2026-11-18: designação, especificação e SS (perguntas 6, 10, 13-14)
+
+Pedido do usuário ("Faça essas coisas"). 527 testes, Ruff limpo. **Nada instalado
+ainda:** o usuário reinstala no Maximo e reinicia o Claude Code.
+- **Q6** `QUERYWORKORDERS` filtro `laborcode` (18 parâmetros): `exists` em WPLABOR na
+  OS ou numa tarefa dela. Sem ferramenta para achar o código da mão de obra pelo nome
+  (receita manda pedir o código).
+- **Q10** `QUERYASSETS` filtro `spec_attribute` (até 5), `spec_min`, `spec_max`,
+  `spec_unit` (18 parâmetros): `exists` em ASSETSPEC; potência (KW, W, MW, CV, HP) e
+  tensão (V, KV) convertidas no SQL (`case upper(measureunitid)`), limites em
+  milésimos inteiros (SqlFormat lê decimal pela localidade). Atributo da Itambé:
+  `POTENCIA` (motores, classe 54), `POT.NOM` (acoplamentos); muitos valores vazios.
+- **Q13-14** script novo `QUERYSRS` (SR, app SR/READ, 18 parâmetros): datas
+  obrigatórias salvo `ticketids`; filtros `ownergroup`, `owner`, `status`...;
+  `include_history` (TKSTATUS pela SR dona) e `include_workorders` (OS com
+  `origrecordid`, com autorização por site). SR sem site não volta (conferir).
+  Na allowlist, receita (regras 14-16) e subagente regenerado. Q15-17 (manutenção
+  externa, fornecedor na ordem de compra): 2º passo.
+- Evals g06, g10, g13, g14 viraram chamadas esperadas; g15-17 continuam lacuna.
+- **Não commitado** (decisão do usuário: instalar antes). Árvore com as mudanças acima.
+
+**Roteiro dado para 2026-11-19 (cumprido em parte, ver acima):**
+1. Usuário reinstala `QUERYWORKORDERS` (1 variável nova `laborcode`) e `QUERYASSETS`
+   (4 variáveis `spec_*`) e instala `QUERYSRS` (18 variáveis, schema, MCP Tool).
+   Roteiro: seção 2026-11-18 de cada `INSTALACAO.md`. Antes: idioma EN no usuário da
+   chave (BMXAA10147E) e READ no app SR.
+2. Reiniciar o Claude Code (carrega `script_querysrs` e as análises novas no servidor
+   `analises`, que estava só com as 5 antigas).
+3. Validar via MCP: `laborcode` com um código real de mão de obra (pegar no Maximo,
+   aba Plans → Labor); spec com um motor de `POTENCIA` preenchida, pedindo em KW e
+   em CV (mesmo motor nos dois); ~50 CV (45-55); SR de um mês (status e `ownergroup`
+   em uso → quais status são "pendentes" para a pergunta 13) e uma SR com
+   `include_history` e `include_workorders`; ver se há SR sem site.
+4. Marcar os checklists dos READMEs, ajustar o que falhar, commitar código + docs.
+5. Testar o subagente `analise-os` com as ferramentas novas (atraso, emitidas ×
+   executadas, modalidade, cumprimento, SS, spec, laborcode).
+6. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
+   nome (se o gerente precisar); respostas pendentes do consultor (15-23, tolerância,
+   período do cumprimento, origem das HH); evals com LLM real (conta sem crédito).
+
+## 2026-11-18 (madrugada): cumprimento de preventivas
 
 8ª análise (pedido do usuário, destravada pelas respostas do consultor). 501 testes,
 Ruff limpo. **Validado com dados reais** (jan–mar/2026, 8268 OS em 37 s, depois de
@@ -63,8 +130,8 @@ limpo.
   só mai–ago/2026 quase vazio (202 OS). Nota abaixo ("poucas OS antes de set") estava
   errada.
 - **Perguntas ao consultor consolidadas** (22, priorizadas) em [[perguntas-consultor]]
-  e num doc para enviar: <https://claude.ai/artifact/Ld4N1zJxc1MzwqgDBG39UU> (privado
-  até o usuário compartilhar; coluna Resposta para o consultor preencher).
+  e num doc para enviar (claude.ai; respostas 1-14 vieram nele). Doc apagado depois;
+  usuário não quis recriar (2026-11-18). Fonte única: [[perguntas-consultor]].
 
 ## 2026-11-18 (noite): OS emitidas × executadas
 
