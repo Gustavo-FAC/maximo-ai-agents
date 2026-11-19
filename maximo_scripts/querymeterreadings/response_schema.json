@@ -1,0 +1,42 @@
+{
+  "title": "Meter readings response",
+  "type": "object",
+  "properties": {
+    "total": {"type": "integer", "description": "Total readings matching the filters (all pages)."},
+    "page": {"type": "integer", "description": "Current page, starting at 1."},
+    "page_size": {"type": "integer", "description": "Maximum items per page."},
+    "total_pages": {"type": "integer", "description": "Number of pages for this query."},
+    "returned": {"type": "integer", "description": "Items returned in this page."},
+    "has_more": {"type": "boolean", "description": "True if there are more pages after this one."},
+    "reading_type": {"type": "string", "description": "measurement (gauge, characteristic, condition monitoring) or continuous."},
+    "date_field": {"type": "string", "description": "Always readingdate (date of the reading)."},
+    "date_from": {"type": "string", "description": "Start date applied (YYYY-MM-DD, inclusive)."},
+    "date_to": {"type": "string", "description": "End date applied (YYYY-MM-DD, inclusive)."},
+    "filters": {"type": "object", "description": "Normalized filters applied, by parameter name."},
+    "fields_unavailable": {"type": "array", "description": "Requested fields this reading type or this Maximo does not have; left out of the items.", "items": {"type": "string"}},
+    "items": {
+      "type": "array",
+      "description": "Readings in this page, ordered by site, asset, meter and reading date (oldest first). Only the requested fields are present; dates are yyyy-MM-ddTHH:mm:ss in server time.",
+      "items": {"type": "object"}
+    },
+    "meters": {
+      "type": "array",
+      "description": "Meters of the readings in this page: metername, description, metertype, measureunitid (unit), domainid.",
+      "items": {"type": "object"}
+    },
+    "points": {
+      "type": "array",
+      "description": "Only for measurement: condition monitoring points of the readings in this page, with limits (upperwarning, lowerwarning, upperaction, loweraction; null = no limit).",
+      "items": {"type": "object"}
+    },
+    "error": {
+      "type": "object",
+      "description": "Present only when the request is invalid. No other field is returned.",
+      "properties": {
+        "code": {"type": "string", "description": "Machine-readable error code."},
+        "parameter": {"type": ["string", "null"], "description": "Parameter that caused the error."},
+        "message": {"type": "string", "description": "Human-readable explanation."}
+      }
+    }
+  }
+}

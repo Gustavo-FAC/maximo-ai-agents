@@ -35,7 +35,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 6b | `QUERYMATUSAGE` | MATUSETRANS (+ WORKORDER) | consumo real (baixas/devoluções); custo/consumo em `analysis/` | P2 | funcionando via MCP (2026-11-04) |
 | 8 | `QUERYPMS` | PM | preventivas: vencendo/vencidas, PM do ativo ou location, última geração (guia, perguntas 1-3) | P0 | funcionando via MCP (2026-11-17) |
 | 9 | `QUERYSRS` | SR (TICKET), TKSTATUS, WORKORDER (`origrecordid`) | SS por status/grupo proprietário, histórico de status e OS geradas (guia, perguntas 13-14) | P0 | funcionando via MCP (2026-11-19): busca, `itcownergroup`, histórico e OS geradas |
-| 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
+| 7 | `QUERYMETERREADINGS` | MEASUREMENT (padrão), METERREADING (`reading_type=continuous`); METER (unidade) e MEASUREPOINT (limites) da página | consultar_medicoes, Monitoramento de Condições | P3 | no código (2026-11-19), falta instalar; **fora dos agentes** (`DORMANT_TOOLS`) até confirmar que a Itambé registra leituras |
 
 Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos` (conteúdo de anexos) não vira script:
 exige RAG e guardar documento do cliente (decisão de arquitetura, adiada).

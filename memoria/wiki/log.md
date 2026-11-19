@@ -711,3 +711,10 @@ cumprimento, SS, motores por potência, OS por colaborador): números conferidos
 o Maximo e à mão. Falhas: agente generalizava a unidade da POTENCIA ("em kW"; 33 de 44
 em CV) e tabela de emitidas sem as canceladas (percentual não fechava). Receita: regra
 16 reforçada e regra 17 nova; retestes ok. [[estado-do-projeto]].
+
+## [2026-11-19] code | QUERYMETERREADINGS (medidores e Monitoramento de Condições)
+Script novo (pedido do usuário): leituras de MEASUREMENT (padrão) ou METERREADING
+(`reading_type=continuous`), datas obrigatórias, mesmos nomes de saída nos dois tipos,
+`meters` (unidade) e `points` (limites) da página, campos conferidos no dicionário de
+dados. Allowlist em `DORMANT_TOOLS` até confirmar uso na Itambé. Falta instalar.
+[[ferramentas-maximo]], [[estado-do-projeto]].

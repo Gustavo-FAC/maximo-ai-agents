@@ -31,6 +31,7 @@ def test_scripts_found():
         "QUERYMATUSAGE.py",
         "QUERYPMS.py",
         "QUERYSRS.py",
+        "QUERYMETERREADINGS.py",
     }
 
 

@@ -149,6 +149,10 @@ Cliente piloto: **Itambé Cimentos**.
   lido de `itcownergroup` (campo próprio da Itambé; `ownergroup` padrão vazio);
   TKSTATUS da Itambé sem owner/ownergroup. SR: NOVO → AGAPROV → EMAND → SOLUC →
   FECHADO / CANCELADO. Manutenção externa (15-17): 2º passo. 531 testes.
+- `QUERYMETERREADINGS` (leituras de medidores e Monitoramento de Condições:
+  MEASUREMENT ou METERREADING, com unidade do METER e limites do MEASUREPOINT) no
+  código desde 2026-11-19; falta instalar; fora dos agentes (`DORMANT_TOOLS`) até
+  confirmar que a Itambé registra leituras.
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×

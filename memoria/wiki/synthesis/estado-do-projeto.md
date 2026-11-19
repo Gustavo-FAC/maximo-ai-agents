@@ -45,7 +45,14 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
    Correções na receita: regra 16 (unidade da spec é por ativo: o agente dizia "POTENCIA
    em kW", mas 33 dos 44 estão em CV) e regra 17 (mostrar a base do percentual:
    canceladas ao lado). Retestes ok.
-3. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
+3. **Leituras de medidores (`QUERYMETERREADINGS`, 2026-11-19, pedido do usuário):**
+   script no código, 12 parâmetros; `reading_type` measurement (MEASUREMENT: indicador,
+   característica, pontos de Monitoramento de Condições) ou continuous (METERREADING:
+   horímetro, `delta`); resposta traz `meters` (unidade) e `points` (limites de
+   alerta/ação). Campos conferidos no dicionário de dados (`fields_unavailable`).
+   **Fora dos agentes** (`DORMANT_TOOLS`) até confirmar que a Itambé registra
+   leituras; falta instalar e validar. Depois: análise de leituras fora do limite.
+4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
    nome; respostas pendentes do consultor; evals com LLM real (conta sem crédito).
 
 ## 2026-11-18: designação, especificação e SS (perguntas 6, 10, 13-14)
