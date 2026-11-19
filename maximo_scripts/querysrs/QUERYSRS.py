@@ -490,6 +490,12 @@ DEFAULT_FIELDS = (
 )
 KEY_FIELDS = ("ticketid", "siteid")
 
+# Attribute behind "ownergroup" (field and filter): the first one this Maximo has.
+# Itambe keeps the owner group in its own ITCOWNERGROUP (so the status does not go
+# to QUEUED on its own) and leaves OWNERGROUP empty (homologation, 2026-11-19).
+OWNERGROUP_ATTRIBUTES = ("itcownergroup", "ownergroup")
+READ_FIELD_TYPES = dict(FIELD_TYPES, itcownergroup="str")
+
 # Parameter -> (SR attribute, value type, max values).
 LIST_FILTERS = (
     ("siteid", "siteid", "str", MAX_LIST_VALUES),
@@ -571,6 +577,22 @@ def available_fields(candidates, exists):
     return [name for name in candidates if exists(name)]
 
 
+def first_available(candidates, exists):
+    """First candidate this Maximo has; the last one (standard) if none."""
+    for name in candidates:
+        if exists(name):
+            return name
+    return candidates[-1]
+
+
+def rename_fields(items, aliases):
+    """Rename each attribute read to its output name, in place."""
+    for item in items:
+        for attribute, name in aliases.items():
+            if attribute in item:
+                item[name] = item.pop(attribute)
+
+
 def attribute_checker(object_name):
     """exists(name): True if object_name has the attribute in this Maximo."""
     from psdi.server import MXServer
@@ -602,11 +624,13 @@ def authorized_sites_query(userid):
     return " and ".join(clauses), binds
 
 
-def build_query(raw, userid, authorized_sites=None):
+def build_query(raw, userid, authorized_sites=None, ownergroup_attribute="ownergroup"):
     """Validate raw parameters and build the where clause with bind values.
 
     Returns a dict. "binds" is a list of (object, attribute, value) in placeholder
-    order; values never go into the where text.
+    order; values never go into the where text. "fields" are the attributes to
+    read; "aliases" maps an attribute read to its output name (ownergroup comes
+    out of ownergroup_attribute).
 
     The date range is required (service requests are movement), except when
     ticketids is given and both dates are omitted: ticketids is capped at
@@ -649,6 +673,10 @@ def build_query(raw, userid, authorized_sites=None):
     )
     if include_history and "ticketuid" not in fields:
         fields.append("ticketuid")  # reopens each SR to read its status history
+    aliases = {}
+    if ownergroup_attribute != "ownergroup" and "ownergroup" in fields:
+        fields[fields.index("ownergroup")] = ownergroup_attribute
+        aliases[ownergroup_attribute] = "ownergroup"
 
     binds = []
     clauses = [BASE_WHERE]
@@ -660,6 +688,8 @@ def build_query(raw, userid, authorized_sites=None):
 
     filters = {}
     for name, attribute, kind, max_items in LIST_FILTERS:
+        if name == "ownergroup":
+            attribute = ownergroup_attribute
         values = parse_list(name, raw.get(name), kind, max_items)
         if values:
             filters[name] = values
@@ -684,6 +714,7 @@ def build_query(raw, userid, authorized_sites=None):
         "date_to": date_to.isoformat() if date_to is not None else None,
         "filters": filters,
         "fields": fields,
+        "aliases": aliases,
         "include_workorders": include_workorders,
         "include_history": include_history,
         "page": page,
@@ -800,8 +831,10 @@ def run(user_info, raw):
     sites = read_authorized_sites(user_info, userid)
     if not sites:
         return error_response("not_authorized", "siteid", "User has no authorized site.")
-    query = build_query(raw, userid, sites)
-    total, items = query_page(user_info, OBJECT_NAME, query, FIELD_TYPES)
+    ownergroup_attribute = first_available(OWNERGROUP_ATTRIBUTES, attribute_checker(OBJECT_NAME))
+    query = build_query(raw, userid, sites, ownergroup_attribute)
+    total, items = query_page(user_info, OBJECT_NAME, query, READ_FIELD_TYPES)
+    rename_fields(items, query["aliases"])
     workorders_truncated = False
     history_truncated = False
     if items and query["include_workorders"]:

@@ -164,3 +164,33 @@ def test_available_fields_keeps_existing_history_fields_in_order():
         "ownergroup",
         "memo",
     ]
+
+
+def test_ownergroup_reads_client_attribute():
+    q = qsr.build_query(
+        {**BASE, "ownergroup": "eletrica", "fields": "status,ownergroup"},
+        "GERENTE1",
+        ownergroup_attribute="itcownergroup",
+    )
+    assert q["fields"] == ["ticketid", "siteid", "status", "itcownergroup"]
+    assert q["aliases"] == {"itcownergroup": "ownergroup"}
+    assert q["filters"]["ownergroup"] == ["ELETRICA"]
+    assert "itcownergroup in (" in q["where"]
+    assert " ownergroup in (" not in q["where"]
+    assert ("SR", "ITCOWNERGROUP", "ELETRICA") in [
+        (o, a.upper(), v) for o, a, v in q["binds"] if isinstance(v, str)
+    ]
+
+
+def test_ownergroup_standard_attribute_has_no_alias():
+    q = query(fields="ownergroup")
+    assert q["fields"] == ["ticketid", "siteid", "ownergroup"]
+    assert q["aliases"] == {}
+
+
+def test_first_available_and_rename_fields():
+    assert qsr.first_available(qsr.OWNERGROUP_ATTRIBUTES, lambda n: True) == "itcownergroup"
+    assert qsr.first_available(qsr.OWNERGROUP_ATTRIBUTES, lambda n: False) == "ownergroup"
+    items = [{"ticketid": "1", "itcownergroup": "ELETRICA"}, {"ticketid": "2"}]
+    qsr.rename_fields(items, {"itcownergroup": "ownergroup"})
+    assert items == [{"ticketid": "1", "ownergroup": "ELETRICA"}, {"ticketid": "2"}]
