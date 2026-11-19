@@ -142,7 +142,8 @@ QUERY_ASSETS = ToolSpec(
             "Specification attribute codes (e.g. a power attribute), comma-separated, "
             "max 5: assets that have one of them in their technical data sheet. Codes "
             "vary by asset class: first look at include_specs Y of a similar asset to "
-            "learn the codes and units; do not guess them."
+            "learn the codes; do not guess them. The unit is per asset: the same "
+            "attribute may be in CV on one asset and KW on another."
         ),
         "spec_min": (
             "Minimum numeric value of the specification, inclusive (e.g. 45). Requires "

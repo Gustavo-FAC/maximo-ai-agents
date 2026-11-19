@@ -704,3 +704,10 @@ Spec em CV e kW: mesmos 40 motores (ok). `laborcode` roda, falta código real.
 SR 10200: NOVO → AGAPROV → EMAND → SOLUC → FECHADO. TKSTATUS sem owner/ownergroup.
 Grupos DEM-PCM, DEE-PCM, DRB-PCM, DPROD-PCM, DPROD-CL; filtro conferido à mão (27).
 Status pendentes para a pergunta 13: confirmar com o consultor. [[estado-do-projeto]].
+
+## [2026-11-19] test | Subagente analise-os com as ferramentas novas
+6 perguntas de gerente (atraso, emitidas × executadas por equipe/modalidade,
+cumprimento, SS, motores por potência, OS por colaborador): números conferidos com
+o Maximo e à mão. Falhas: agente generalizava a unidade da POTENCIA ("em kW"; 33 de 44
+em CV) e tabela de emitidas sem as canceladas (percentual não fechava). Receita: regra
+16 reforçada e regra 17 nova; retestes ok. [[estado-do-projeto]].

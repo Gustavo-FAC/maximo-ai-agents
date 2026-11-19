@@ -38,8 +38,13 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
 
 **Próximo, nesta ordem:**
 1. Código real de mão de obra para validar `laborcode`.
-2. Testar o subagente `analise-os` com as ferramentas novas (atraso, emitidas ×
-   executadas, modalidade, cumprimento, SS, spec, laborcode).
+2. ~~Testar o subagente `analise-os` com as ferramentas novas.~~ Feito em 2026-11-19:
+   6 perguntas (atraso 2049; emitidas × executadas out/2026 546 / 24,0%, por equipe e
+   modalidade; cumprimento mar/2026 63,3%; SS pendentes 38 por grupo + SS 10200;
+   motores 50 CV 38 e 30–40 kW 44; "OS do João" pede o código). Números conferidos.
+   Correções na receita: regra 16 (unidade da spec é por ativo: o agente dizia "POTENCIA
+   em kW", mas 33 dos 44 estão em CV) e regra 17 (mostrar a base do percentual:
+   canceladas ao lado). Retestes ok.
 3. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
    nome; respostas pendentes do consultor; evals com LLM real (conta sem crédito).
 
