@@ -145,10 +145,10 @@ Cliente piloto: **Itambé Cimentos**.
   2026-11-19 (`c5b36cb`, `a675bfe`): `QUERYASSETS` filtro por especificação
   (`spec_*`, CV↔kW no SQL) **funcionando via MCP** (40 motores iguais em CV e kW);
   `QUERYWORKORDERS` filtro `laborcode` (WPLABOR) roda, **falta código real**;
-  `QUERYSRS` (SR) busca e `include_workorders` **funcionando via MCP**;
-  `include_history` corrigido (TKSTATUS da Itambé sem `OWNER`) e `ownergroup` lido de
-  `itcownergroup` (campo próprio da Itambé; `ownergroup` vazio): **falta reinstalar
-  o `QUERYSRS` e conferir**. Manutenção externa (15-17): 2º passo. 531 testes.
+  `QUERYSRS` (SR) **funcionando via MCP** (busca, histórico, OS geradas); `ownergroup`
+  lido de `itcownergroup` (campo próprio da Itambé; `ownergroup` padrão vazio);
+  TKSTATUS da Itambé sem owner/ownergroup. SR: NOVO → AGAPROV → EMAND → SOLUC →
+  FECHADO / CANCELADO. Manutenção externa (15-17): 2º passo. 531 testes.
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×

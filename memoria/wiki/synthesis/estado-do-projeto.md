@@ -29,13 +29,18 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
   QUEUED"). `QUERYSRS` agora lê o primeiro de (`itcownergroup`, `ownergroup`) que
   existir; nome na resposta continua `ownergroup` (sem mudança de schema/agentes).
 
+- **Recolado e conferido (2026-11-19): `QUERYSRS` funcionando via MCP.** Histórico
+  da SR 10200: NOVO → AGAPROV → EMAND → SOLUC ("Concluído pelo Mobile") → FECHADO;
+  TKSTATUS só com status, changedate, changeby, memo. `ownergroup` (de
+  `itcownergroup`): DEM-PCM, DEE-PCM, DRB-PCM, DPROD-PCM, DPROD-CL; filtro DEM-PCM +
+  NOVO/AGAPROV/EMAND = 27 (igual à mão). Pendentes da pergunta 13: provavelmente
+  NOVO, AGAPROV, EMAND (e SOLUC?): confirmar com o consultor.
+
 **Próximo, nesta ordem:**
-1. Usuário recola o código do `QUERYSRS` (sem variável nova). Conferir SR 10200 com
-   `include_history=Y` (quais campos voltam) e `ownergroup` preenchido / filtro.
-2. Código real de mão de obra para validar `laborcode`.
-3. Testar o subagente `analise-os` com as ferramentas novas (atraso, emitidas ×
+1. Código real de mão de obra para validar `laborcode`.
+2. Testar o subagente `analise-os` com as ferramentas novas (atraso, emitidas ×
    executadas, modalidade, cumprimento, SS, spec, laborcode).
-4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
+3. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
    nome; respostas pendentes do consultor; evals com LLM real (conta sem crédito).
 
 ## 2026-11-18: designação, especificação e SS (perguntas 6, 10, 13-14)

@@ -699,3 +699,8 @@ Spec em CV e kW: mesmos 40 motores (ok). `laborcode` roda, falta código real.
 `OWNER`), corrigido conferindo campos no dicionário. `ownergroup` vazio: Itambé usa
 `ITCOWNERGROUP`; script lê o primeiro existente, nome na resposta igual. Commits
 `c5b36cb`, `a675bfe`. Falta recolar `QUERYSRS` e conferir. [[estado-do-projeto]].
+
+## [2026-11-19] test | QUERYSRS recolado: histórico e itcownergroup ok
+SR 10200: NOVO → AGAPROV → EMAND → SOLUC → FECHADO. TKSTATUS sem owner/ownergroup.
+Grupos DEM-PCM, DEE-PCM, DRB-PCM, DPROD-PCM, DPROD-CL; filtro conferido à mão (27).
+Status pendentes para a pergunta 13: confirmar com o consultor. [[estado-do-projeto]].

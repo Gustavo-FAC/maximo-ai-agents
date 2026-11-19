@@ -33,8 +33,8 @@ pediu para decidirmos.
 | 10 | Sim, backlog em HH previstas e HH disponíveis | Origem das HH ainda aberta (`estdur` ou mão de obra planejada; HH disponíveis por equipe). |
 | 11 | Não tem campo "setor" | Pergunta 4 sem "setor": responder por equipe, ativo ou location. |
 | 12 | Mão de obra planejada | Filtro `laborcode` (WPLABOR, na OS ou em tarefa) no `QUERYWORKORDERS` (2026-11-18), falta reinstalar. |
-| 13 | SR padrão (Maximo/Mobile); grupo proprietário = `ownergroup`; fornecedor na ordem de compra; cadastro em Empresas | Script `QUERYSRS` (app SR, `ownergroup`, histórico, OS geradas; 2026-11-18), falta instalar. Manutenção externa pela ordem de compra: 2º passo. |
-| 14 | Alguns em CV, outros em kW, conforme a classificação | Filtro por especificação no `QUERYASSETS` converte CV, kW, HP, W, MW (e V, kV) no SQL (2026-11-18), falta reinstalar. |
+| 13 | SR padrão (Maximo/Mobile); grupo proprietário = `ownergroup`; fornecedor na ordem de compra; cadastro em Empresas | Script `QUERYSRS` funcionando via MCP (2026-11-19). Na Itambé o grupo está no campo próprio `itcownergroup` (`ownergroup` vazio); o script lê ele. Manutenção externa pela ordem de compra: 2º passo. |
+| 14 | Alguns em CV, outros em kW, conforme a classificação | Filtro por especificação no `QUERYASSETS` converte CV, kW, HP, W, MW (e V, kV) no SQL; funcionando via MCP (2026-11-19). |
 
 ## Novas (2026-11-18, depois das respostas)
 
@@ -42,6 +42,9 @@ pediu para decidirmos.
     (aguardando programação) não entram. Em mar/2026 foram 2818 de 4605 preventivas
     (63,3% de cumprimento sobre as 1562 que entram). Está certo deixá-las fora? COMP
     (concluída pelo mobile) e POSEXEC (pós-execução) contam como concluídas?
+24. **SS pendentes (Q13):** fluxo visto na homologação NOVO → AGAPROV → EMAND →
+    SOLUC → FECHADO (ou CANCELADO). "Pendente" = NOVO, AGAPROV e EMAND? SOLUC
+    (solucionada, falta fechar) conta como pendente? (2026-11-19)
 
 ## 0. Base de homologação
 

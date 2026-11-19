@@ -88,12 +88,14 @@ Trecho entre `# --- BEGIN COMMON` e `# --- END COMMON ---` igual ao do `QUERYASS
 - [x] Ferramenta aparece no MCP com 18 parâmetros (2026-11-19, `script_querysrs`).
 - [ ] Um ano por `reportdate`: `total` coerente com o app SR (filtro de site igual).
       Homologação quase sem SR: 54 desde abr/2026 (testes), nenhuma mai/2025–abr/2026.
-- [ ] Status em uso e grupos vistos nos dados (para a pergunta 13). Status: NOVO,
-      AGAPROV, CANCELADO, FECHADO. `ownergroup` vazio em todas: grupo fica em
-      `itcownergroup` (troca feita em 2026-11-19, **falta reinstalar e conferir**).
+- [x] Status em uso e grupos vistos nos dados (2026-11-19). Fluxo: NOVO → AGAPROV →
+      EMAND → SOLUC → FECHADO, ou CANCELADO. Grupos (`itcownergroup`): DEM-PCM,
+      DEE-PCM, DRB-PCM, DPROD-PCM, DPROD-CL. Filtro `ownergroup=dem-pcm` +
+      `status=AGAPROV,EMAND,NOVO` = 27, igual à contagem à mão.
 - [x] `ticketids` sem datas acha a SR; `include_workorders=Y` traz as OS geradas
       (SR 10200 → OS 1632462, 2026-11-19); limite de 366 dias dá `range_too_large`.
-- [ ] `include_history=Y`: falhava com BMXAA4176E (TKSTATUS sem `OWNER`); corrigido
-      (campos conferidos no dicionário), **falta reinstalar e conferir**.
+- [x] `include_history=Y` (2026-11-19, após corrigir BMXAA4176E): SR 10200 traz
+      NOVO, AGAPROV, EMAND, SOLUC ("Concluído pelo Mobile"), FECHADO. A TKSTATUS da
+      Itambé só tem `status`, `changedate`, `changeby`, `memo` (sem owner/ownergroup).
 - [ ] SR sem site existe na Itambé? (Se sim, decidir regra.)
 - [ ] Usuário sem READ no app SR recebe `not_authorized`.

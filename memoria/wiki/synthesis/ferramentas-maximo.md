@@ -34,7 +34,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 | 6a | `QUERYWOMATERIALS` | WPMATERIAL (+ WORKORDER), INVBALANCES | verificar_materiais (planejado + saldo) | P2 | instalado (2026-11-04); erros ok; **fora dos agentes** (Itambé não planeja material no Maximo) |
 | 6b | `QUERYMATUSAGE` | MATUSETRANS (+ WORKORDER) | consumo real (baixas/devoluções); custo/consumo em `analysis/` | P2 | funcionando via MCP (2026-11-04) |
 | 8 | `QUERYPMS` | PM | preventivas: vencendo/vencidas, PM do ativo ou location, última geração (guia, perguntas 1-3) | P0 | funcionando via MCP (2026-11-17) |
-| 9 | `QUERYSRS` | SR (TICKET), TKSTATUS, WORKORDER (`origrecordid`) | SS por status/grupo proprietário, histórico de status e OS geradas (guia, perguntas 13-14) | P0 | instalado (2026-11-19); busca e OS geradas ok; histórico e `itcownergroup` falta reinstalar |
+| 9 | `QUERYSRS` | SR (TICKET), TKSTATUS, WORKORDER (`origrecordid`) | SS por status/grupo proprietário, histórico de status e OS geradas (guia, perguntas 13-14) | P0 | funcionando via MCP (2026-11-19): busca, `itcownergroup`, histórico e OS geradas |
 | 7 | `QUERYMETERREADINGS` | METERREADING, MEASUREMENT | consultar_medicoes | P3 | a fazer |
 
 Ordem combinada: 1 → 2 → 3; com o 2 cancelado, segue o 3. `buscar_documentos` (conteúdo de anexos) não vira script:
