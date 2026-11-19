@@ -705,7 +705,8 @@ QUERY_METER_READINGS = ToolSpec(
             "Fields to return, comma-separated. Default: assetnum, siteid, metername, "
             "readingdate, location, pointnum, reading, observation, delta, inspector. "
             "Also accepted: readingsource, enterby, enterdate, orgid, readingid. "
-            "assetnum, siteid, metername and readingdate are always included. location, "
+            "assetnum, siteid, metername and readingdate are always included, and pointnum "
+            "too for measurement (needed for the point limits). location, "
             "pointnum and observation exist only for measurement; delta, enterby and "
             "enterdate only for continuous."
         ),

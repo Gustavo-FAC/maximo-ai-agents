@@ -74,6 +74,10 @@ mesmos nos dois tipos (`readingdate` = `measuredate` ou `readingdate`; `reading`
 - `meters`: medidores da página (`metername in (...)`, até `page_size`). `points`
   (só `measurement`): pontos da página por `pointnum` e site, com autorização por
   site; pares fora da página descartados.
+- Campos-chave por tipo (`key_fields` em `READING_TYPES`), sempre lidos mesmo que
+  `fields` os omita: `assetnum`, `siteid`, `metername`, `readingdate` e, em
+  `measurement`, `pointnum`. Sem eles `meters`/`points` vinham vazios (achado na
+  homologação em 2026-11-19 com `fields=metername,assetnum,readingdate,reading`).
 
 ## Bloco comum
 
@@ -82,12 +86,15 @@ Trecho entre `# --- BEGIN COMMON` e `# --- END COMMON ---` igual ao do `QUERYASS
 
 ## Validar em homologação
 
-- [ ] Itambé usa medidores/Monitoramento de Condições? (apps Medidores e
-      Monitoramento de Condições; leituras recentes em quais ativos?)
+- [x] Itambé usa medidores? (2026-11-19) Sim, 3581 leituras mai/2025–abr/2026 em
+      MEASUREMENT (aferição de balança, resistência de rotor; tipo `CALIBRE`, lançadas
+      por inspetor); nenhuma em METERREADING. Limites dos pontos todos 0.
 - [ ] Índices de `MEASUREMENT` e `METERREADING` (Database Configuration).
-- [ ] Ferramenta aparece no MCP com 12 parâmetros.
+- [x] Ferramenta aparece no MCP com 12 parâmetros (depois de trocar a variável
+      `matername`, digitada errado, por `metername`).
 - [ ] Um ano de `measurement` e de `continuous`: `total` coerente com o app.
-- [ ] `meters` traz a unidade; `points` traz os limites.
+- [x] `meters` traz a unidade; `points` traz os limites.
+- [ ] Depois de recolar `key_fields`: `fields=reading` ainda traz `points`.
 - [ ] `fields_unavailable` vazio no padrão (atributos existem na Itambé).
 - [ ] `location` com `continuous` dá `not_supported`; sem datas dá `required`.
 - [ ] Depois de confirmado o uso: tirar de `DORMANT_TOOLS` e pôr na receita.

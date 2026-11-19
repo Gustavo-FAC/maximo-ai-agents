@@ -13,6 +13,9 @@ Ler no início de cada sessão. Atualizar no fim.
 
 ## Onde paramos (2026-11-19): instalação e validação das perguntas 6, 10, 13-14
 
+Também em 2026-11-19: `QUERYMETERREADINGS` funcionando via MCP (item 3 abaixo);
+falta recolar a correção de `key_fields`.
+
 Usuário reinstalou `QUERYWORKORDERS`/`QUERYASSETS` e instalou `QUERYSRS`. Código
 commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
 - **Q10 spec: funcionando via MCP.** `POTENCIA` 45–55 CV e 33,1–40,45 kW devolvem
@@ -50,8 +53,21 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
    característica, pontos de Monitoramento de Condições) ou continuous (METERREADING:
    horímetro, `delta`); resposta traz `meters` (unidade) e `points` (limites de
    alerta/ação). Campos conferidos no dicionário de dados (`fields_unavailable`).
-   **Fora dos agentes** (`DORMANT_TOOLS`) até confirmar que a Itambé registra
-   leituras; falta instalar e validar. Depois: análise de leituras fora do limite.
+   **Instalado e funcionando via MCP (2026-11-19)** após duas correções na instalação:
+   usuário da chave com idioma EN (`BMXAA10147E` derrubava todos os scripts) e
+   variável criada como `matername` (typo) trocada por `metername`. Conferido:
+   filtro `metername` com 1 e 2 valores, nome inexistente = 0, limite de 366 dias.
+   **Dados da Itambé (mai/2025–abr/2026):** 3581 leituras em MEASUREMENT, **zero em
+   METERREADING** (sem horímetro/contador). Medidores vistos tipo `CALIBRE`: aferição
+   de balança (`AFERFIN*`, kg, `ENS0001`, FABRICA) e resistência ôhmica de rotor
+   (`MROR60`, ohm, MINERACAO), lançados por inspetor (checklist). **Limites dos pontos
+   todos 0**: sem Monitoramento de Condições com faixa configurada, análise de
+   "fora do limite" não serve hoje.
+   Correção no código (mesmo dia): `fields` sem `pointnum` deixava `points` vazio;
+   agora cada tipo tem `key_fields` (measurement inclui `pointnum`). 560 testes.
+   **Falta recolar o script no Maximo** e conferir `points` com `fields` restrito.
+   **Continua fora dos agentes** (`DORMANT_TOOLS`): leituras são de aferição/checklist,
+   não de condição; levar ao consultor se algum gerente precisa disso.
 4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
    nome; respostas pendentes do consultor; evals com LLM real (conta sem crédito).
 

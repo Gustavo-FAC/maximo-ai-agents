@@ -135,7 +135,15 @@ def test_permission_is_fixed_in_code():
 
 def test_fields_and_pagination():
     q = query(fields="Reading, delta, reading")
-    assert q["fields"] == ["assetnum", "siteid", "metername", "readingdate", "reading", "delta"]
+    assert q["fields"] == [
+        "assetnum",
+        "siteid",
+        "metername",
+        "readingdate",
+        "pointnum",
+        "reading",
+        "delta",
+    ]
     assert error_code(**BASE, fields="measurementvalue") == "unknown_field"
     q = query(page="2", page_size="500")
     assert (q["page"], q["page_size"], q["offset"]) == (2, 500, 500)
@@ -145,8 +153,24 @@ def test_fields_and_pagination():
 def test_every_reading_type_maps_every_field():
     for source in qmr.READING_TYPES.values():
         assert set(source["attributes"]) == set(qmr.FIELD_TYPES)
-        for field in qmr.KEY_FIELDS:
+        assert set(qmr.KEY_FIELDS) <= set(source["key_fields"])
+        for field in source["key_fields"]:
             assert source["attributes"][field] is not None
+
+
+def test_key_fields_feed_meters_and_points():
+    # Found in homologation: fields without pointnum left "points" empty.
+    measurement = query(fields="reading")
+    assert measurement["fields"] == [
+        "assetnum",
+        "siteid",
+        "metername",
+        "readingdate",
+        "pointnum",
+        "reading",
+    ]
+    continuous = query(fields="reading", reading_type="continuous")
+    assert continuous["fields"] == ["assetnum", "siteid", "metername", "readingdate", "reading"]
 
 
 def test_plan_read_maps_aliases_and_unavailable():

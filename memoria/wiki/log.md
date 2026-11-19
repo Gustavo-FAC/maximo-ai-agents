@@ -718,3 +718,12 @@ Script novo (pedido do usuário): leituras de MEASUREMENT (padrão) ou METERREAD
 `meters` (unidade) e `points` (limites) da página, campos conferidos no dicionário de
 dados. Allowlist em `DORMANT_TOOLS` até confirmar uso na Itambé. Falta instalar.
 [[ferramentas-maximo]], [[estado-do-projeto]].
+
+## [2026-11-19] test | QUERYMETERREADINGS instalado e funcionando via MCP
+Instalação: idioma EN no usuário da chave (`BMXAA10147E`) e variável `matername`
+trocada por `metername`. Filtro `metername` ok (1, 2 valores, inexistente). Itambé:
+3581 leituras/ano em MEASUREMENT (aferição de balança, resistência de rotor; tipo
+`CALIBRE`; limites dos pontos 0), zero em METERREADING. Fica em `DORMANT_TOOLS`.
+Correção: `fields` sem `pointnum` esvaziava `points`; `key_fields` por tipo de leitura
+(measurement inclui `pointnum`). 560 testes, Ruff limpo. Falta recolar.
+[[ferramentas-maximo]], [[estado-do-projeto]].

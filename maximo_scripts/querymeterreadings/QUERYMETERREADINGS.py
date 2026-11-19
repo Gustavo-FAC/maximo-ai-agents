@@ -462,13 +462,16 @@ DEFAULT_FIELDS = (
 )
 KEY_FIELDS = ("assetnum", "siteid", "metername", "readingdate")
 
-# Reading type -> object, output field -> attribute (None: the object has no such
-# attribute), and order. MEASUREMENT holds gauge and characteristic readings (asset or
-# location meters, condition monitoring points); METERREADING holds the readings of
-# continuous asset meters. Continuous location meters (LOCMETERREADING) are not read.
+# Reading type -> object, key fields, output field -> attribute (None: the object has
+# no such attribute), and order. MEASUREMENT holds gauge and characteristic readings
+# (asset or location meters, condition monitoring points); METERREADING holds the
+# readings of continuous asset meters. Continuous location meters (LOCMETERREADING)
+# are not read. Key fields are always read: metername and siteid feed "meters", and
+# pointnum (measurement) feeds "points", even when "fields" leaves them out.
 READING_TYPES = {
     "MEASUREMENT": {
         "object": "MEASUREMENT",
+        "key_fields": KEY_FIELDS + ("pointnum",),
         "attributes": {
             "assetnum": "assetnum",
             "siteid": "siteid",
@@ -490,6 +493,7 @@ READING_TYPES = {
     },
     "CONTINUOUS": {
         "object": "METERREADING",
+        "key_fields": KEY_FIELDS,
         "attributes": {
             "assetnum": "assetnum",
             "siteid": "siteid",
@@ -664,7 +668,7 @@ def build_query(raw, userid, authorized_sites=None):
 
     page = parse_int("page", raw.get("page"), 1, 1, 100000)
     page_size = parse_int("page_size", raw.get("page_size"), DEFAULT_PAGE_SIZE, 1, MAX_PAGE_SIZE)
-    fields = parse_fields(raw.get("fields"), FIELD_TYPES, DEFAULT_FIELDS, KEY_FIELDS)
+    fields = parse_fields(raw.get("fields"), FIELD_TYPES, DEFAULT_FIELDS, source["key_fields"])
 
     # date_to is inclusive: compare with the start of the next day.
     date_attribute = attributes["readingdate"]
