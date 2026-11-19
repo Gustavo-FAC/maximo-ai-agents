@@ -739,3 +739,7 @@ loweraction 24, upper 0 (0 = sem limite, script não converte em null). Páginas
 Maximo grava 0 nos limites não configurados do MEASUREPOINT (MCE393: upper 0, lower
 30). `clear_zero_limits` devolve `null`, como o schema e a allowlist já descreviam.
 Teste novo; 561 testes. Falta recolar no Maximo. Páginas: [[estado-do-projeto]].
+
+## [2026-11-19] sessão | Fim: estado registrado
+"Onde paramos" do [[estado-do-projeto]] reescrito: reteste de `key_fields` ok,
+limite 0 → `null` commitado (`6ed9b57`, sem push), pendente recolar e retestar MCE393.

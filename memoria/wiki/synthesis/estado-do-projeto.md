@@ -11,10 +11,29 @@ updated: 2026-11-19
 
 Ler no início de cada sessão. Atualizar no fim.
 
-## Onde paramos (2026-11-19): instalação e validação das perguntas 6, 10, 13-14
+## Onde paramos (2026-11-19, fim do dia): `QUERYMETERREADINGS`
 
-Também em 2026-11-19: `QUERYMETERREADINGS` funcionando via MCP (item 3 abaixo),
-correção de `key_fields` recolada e conferida; falta recolar limite 0 → `null`.
+**Feito nesta sessão:**
+- Reteste após recolar `key_fields`: `fields=reading` traz `pointnum` e `points`
+  completo (antes vazio). jan–abr/2026 = 1425 leituras em MEASUREMENT.
+  `fields_unavailable=["delta"]` no padrão de measurement é esperado.
+- Achado: limites **não** são todos 0 (como se anotou antes). MCE393/MCE394 (escova
+  do `MCA0617`): lowerwarning 30, loweraction 24, upper 0. Maximo grava 0 = sem limite.
+- Correção `clear_zero_limits` (limite 0 → `null`), teste novo, 561 testes, commit
+  `6ed9b57` na `main` (**sem push**).
+
+**Pendente:**
+1. **Usuário recolar `QUERYMETERREADINGS.py`** no Maximo; depois retestar:
+   MCE393 com `upperwarning`/`upperaction` `null`, `lowerwarning` 30, `loweraction` 24.
+2. Checklist do README ainda aberto: índices de MEASUREMENT/METERREADING; `total` de
+   um ano igual ao app; `location` com `continuous` dá `not_supported`; sem datas dá
+   `required`.
+3. Ferramenta continua em `DORMANT_TOOLS`: perguntar ao consultor se algum gerente
+   precisa de leituras (são aferição/checklist, poucos pontos com faixa).
+4. Fila geral (sem mudança): código real de mão de obra (`laborcode`); manutenção
+   externa (15-17); respostas do consultor; evals com LLM real (conta sem crédito).
+
+## 2026-11-19 (antes): instalação e validação das perguntas 6, 10, 13-14
 
 Usuário reinstalou `QUERYWORKORDERS`/`QUERYASSETS` e instalou `QUERYSRS`. Código
 commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
@@ -60,17 +79,13 @@ commitado (`c5b36cb`, `a675bfe`), docs neste commit. 531 testes, Ruff limpo.
    **Dados da Itambé (mai/2025–abr/2026):** 3581 leituras em MEASUREMENT, **zero em
    METERREADING** (sem horímetro/contador). Medidores vistos tipo `CALIBRE`: aferição
    de balança (`AFERFIN*`, kg, `ENS0001`, FABRICA) e resistência ôhmica de rotor
-   (`MROR60`, ohm, MINERACAO), lançados por inspetor (checklist). **Limites: a maioria
-   0, mas não todos**: MCE393/MCE394 (comprimento de escova do `MCA0617`, mm) têm
-   lowerwarning 30 e loweraction 24, com upper 0. Maximo grava 0 para "sem limite";
-   comparar leitura com upper 0 daria alarme falso. Corrigido no código
-   (`clear_zero_limits`: limite 0 → `null`, como o schema já dizia). 561 testes.
-   **Falta recolar o script no Maximo** e conferir `upperwarning: null` no MCE393.
-   Correção no código (mesmo dia): `fields` sem `pointnum` deixava `points` vazio;
-   agora cada tipo tem `key_fields` (measurement inclui `pointnum`). 560 testes.
-   **Recolada e conferida (2026-11-19):** `fields=reading` traz `pointnum` nos itens e
-   `points` completo; total jan–abr/2026 = 1425. `fields_unavailable` = `["delta"]` no
-   padrão de measurement (esperado).
+   (`MROR60`, ohm, MINERACAO), lançados por inspetor (checklist).
+   Correção 1 (mesmo dia): `fields` sem `pointnum` deixava `points` vazio; agora cada
+   tipo tem `key_fields` (measurement inclui `pointnum`). **Recolada e conferida.**
+   Correção 2 (mesmo dia): limites quase todos 0, mas MCE393/MCE394 (escova do
+   `MCA0617`, mm) têm lowerwarning 30 e loweraction 24 com upper 0; Maximo grava 0 para
+   "sem limite" (upper 0 daria alarme falso). `clear_zero_limits` (0 → `null`), commit
+   `6ed9b57`. **Falta recolar** (ver "Onde paramos").
    **Continua fora dos agentes** (`DORMANT_TOOLS`): leituras são de aferição/checklist,
    não de condição; levar ao consultor se algum gerente precisa disso.
 4. Depois: manutenção externa (15-17) pela ordem de compra; busca de mão de obra por
