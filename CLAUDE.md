@@ -156,7 +156,7 @@ Cliente piloto: **Itambé Cimentos**.
   alguns pontos com faixa, 0 = sem limite), nenhuma em METERREADING; fica fora dos
   agentes (`DORMANT_TOOLS`). Correção `key_fields` (`pointnum` sempre lido em
   measurement) recolada e conferida em 2026-11-19. Limite 0 → `null`
-  (`clear_zero_limits`) a recolar no Maximo.
+  (`clear_zero_limits`) **funcionando via MCP** desde 2026-11-23.
 - Perguntas ao consultor (22, priorizadas) em `memoria/wiki/synthesis/perguntas-consultor.md`;
   1 a 14 respondidas em 2026-11-18 (homologação = cópia de produção de ~abr/2026;
   "setor" não existe; designação = mão de obra planejada; medida de emitidas ×

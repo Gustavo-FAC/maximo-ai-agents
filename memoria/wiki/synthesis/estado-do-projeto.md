@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-19
+updated: 2026-11-23
 ---
 
 # Estado do projeto
@@ -22,9 +22,13 @@ Ler no início de cada sessão. Atualizar no fim.
 - Correção `clear_zero_limits` (limite 0 → `null`), teste novo, 561 testes, commit
   `6ed9b57` na `main` (**sem push**).
 
+**Reteste 2026-11-23:** `clear_zero_limits` recolado e **funcionando via MCP**.
+`assetnum=MCA0617` (mai/2025–abr/2026, 414 leituras): pontos 2987 (MCE393) e 2988
+(MCE394) com upper `null`, lowerwarning 30, loweraction 24. Atenção: MCE393/MCE394
+são `metername`; `pointnum` é 2987/2988.
+
 **Pendente:**
-1. **Usuário recolar `QUERYMETERREADINGS.py`** no Maximo; depois retestar:
-   MCE393 com `upperwarning`/`upperaction` `null`, `lowerwarning` 30, `loweraction` 24.
+1. ~~Recolar e retestar limite 0 → `null`.~~ Feito em 2026-11-23.
 2. Checklist do README ainda aberto: índices de MEASUREMENT/METERREADING; `total` de
    um ano igual ao app; `location` com `continuous` dá `not_supported`; sem datas dá
    `required`.

@@ -743,3 +743,9 @@ Teste novo; 561 testes. Falta recolar no Maximo. Páginas: [[estado-do-projeto]]
 ## [2026-11-19] sessão | Fim: estado registrado
 "Onde paramos" do [[estado-do-projeto]] reescrito: reteste de `key_fields` ok,
 limite 0 → `null` commitado (`6ed9b57`, sem push), pendente recolar e retestar MCE393.
+
+## [2026-11-23] test | QUERYMETERREADINGS: limite 0 → null recolado e conferido
+`assetnum=MCA0617`, mai/2025–abr/2026: 414 leituras; pontos 2987 (MCE393) e 2988
+(MCE394) com `upperwarning`/`upperaction` `null`, `lowerwarning` 30, `loweraction` 24.
+MCE393/MCE394 são `metername` (filtro `pointnum` usa 2987/2988). Páginas:
+[[estado-do-projeto]].
