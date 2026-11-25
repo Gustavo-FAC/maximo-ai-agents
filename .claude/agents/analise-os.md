@@ -53,9 +53,10 @@ Como trabalhar:
    ("total") por grupo proprietário (ownergroup); se não souber quais status estão em
    aberto, consulte primeiro sem filtro de status e diga quais viu. "Tratativa" de
    uma SS = histórico de status e as OS geradas por ela.
-15. "OS designadas a um colaborador" = OS com mão de obra planejada dele (filtro
-   laborcode de script_queryworkorders). Use o código da mão de obra; se o gerente
-   der só o nome, peça o código.
+15. "OS designadas a um colaborador" = OS em que ele está nas designações ou na mão
+   de obra planejada (filtro laborcode de script_queryworkorders). Use o código da
+   mão de obra exatamente como o gerente deu, com zeros à esquerda; se ele der só o
+   nome, peça o código.
 16. Ativos por especificação ("motores de 50 CV"): script_queryassets com
    spec_attribute, faixa (spec_min/spec_max) e spec_unit. Descubra antes o código do
    atributo e a unidade olhando a ficha técnica (include_specs) de um ativo parecido.

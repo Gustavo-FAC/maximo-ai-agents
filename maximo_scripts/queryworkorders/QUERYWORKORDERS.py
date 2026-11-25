@@ -546,18 +546,37 @@ BASE_WHERE = (
     " and maxvalue in ('WORKORDER', 'ACTIVITY')) and istask = 0"
 )
 
-# Work orders with planned labor (WPLABOR) of these labor codes, on the work order
-# itself or on one of its tasks. Itambe: "designated worker" = planned labor
-# (consultant, 2026-11-18). Two exists, not "wonum = ... or wonum in (...)": the
-# "or" kept the database from using the WPLABOR index by work order; one month
-# took over 120 s (homologation 2026-11-19).
-LABOR_WHERE = (
-    "(exists (select 1 from wplabor wp where wp.siteid = workorder.siteid"
-    " and wp.wonum = workorder.wonum and wp.laborcode in (%s))"
-    " or exists (select 1 from workorder t, wplabor wp where t.siteid = workorder.siteid"
-    " and t.parent = workorder.wonum and t.istask = 1"
-    " and wp.siteid = t.siteid and wp.wonum = t.wonum and wp.laborcode in (%s)))"
+# Work orders with these labor codes in planned labor (WPLABOR) or in assignments
+# (ASSIGNMENT, the Assignments tab), on the work order itself or on one of its
+# tasks. Itambe designates the worker in the Assignments tab (user, 2026-11-24);
+# planned labor mostly has only the craft (labor codes there only until 2024-11).
+# One exists per table and level, not "wonum = ... or wonum in (...)": the "or"
+# kept the database from using the index by work order; one month took over 120 s
+# (homologation 2026-11-19).
+LABOR_TABLES = (("WPLABOR", "wplabor"), ("ASSIGNMENT", "assignment"))
+LABOR_ON_WORKORDER = (
+    "exists (select 1 from %(t)s lb where lb.siteid = workorder.siteid"
+    " and lb.wonum = workorder.wonum and lb.laborcode in (%(p)s))"
 )
+LABOR_ON_TASK = (
+    "exists (select 1 from workorder t, %(t)s lb where t.siteid = workorder.siteid"
+    " and t.parent = workorder.wonum and t.istask = 1"
+    " and lb.siteid = t.siteid and lb.wonum = t.wonum and lb.laborcode in (%(p)s))"
+)
+
+
+def add_labor_filter(clauses, binds, labor):
+    """Work orders with these labor codes planned or assigned (WO or its tasks)."""
+    parts = []
+    for object_name, table in LABOR_TABLES:
+        for template in (LABOR_ON_WORKORDER, LABOR_ON_TASK):
+            # Each exists gets its own binds (placeholders are positional).
+            placeholders = []
+            for value in labor:
+                binds.append((object_name, "LABORCODE", value))
+                placeholders.append(":%d" % len(binds))
+            parts.append(template % {"t": table, "p": ", ".join(placeholders)})
+    clauses.append("(" + " or ".join(parts) + ")")
 
 
 def authorized_sites_query(userid):
@@ -634,15 +653,7 @@ def build_query(raw, userid, authorized_sites=None):
     labor = parse_list("laborcode", raw.get("laborcode"), "str", MAX_LIST_VALUES)
     if labor:
         filters["laborcode"] = labor
-        # Each exists gets its own binds (placeholders are positional).
-        lists = []
-        for _ in range(2):
-            placeholders = []
-            for value in labor:
-                binds.append(("WPLABOR", "LABORCODE", value))
-                placeholders.append(":%d" % len(binds))
-            lists.append(", ".join(placeholders))
-        clauses.append(LABOR_WHERE % (lists[0], lists[1]))
+        add_labor_filter(clauses, binds, labor)
 
     words = parse_text(raw.get("text"))
     if words:

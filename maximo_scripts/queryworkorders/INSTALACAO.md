@@ -25,6 +25,27 @@ mas é outro para o código.
   - `maximo_scripts/queryworkorders/response_schema.json`
 - Anotar o commit do repositório que está sendo instalado (`git log -1 --oneline`).
 
+## Atualizar instalação existente (2026-11-24: designações)
+
+`laborcode` passa a ler também a aba **Designações** (ASSIGNMENT). Nenhuma variável
+nova (continuam **18** parâmetros); o `response_schema.json` não muda.
+
+1. Abrir o script `QUERYWORKORDERS`. Log Level `DEBUG` durante o teste.
+2. Aba **Variables**: na linha `laborcode`, trocar a Description por
+   `Labor codes, comma-separated (max 20): work orders where they are assigned or in planned labor.`
+3. Aba Main / Source Code: apagar tudo e colar **todo** o `QUERYWORKORDERS.py`
+   novo. **Save**. Esperar o MCP recarregar (10 min; passo 6).
+4. Testes. Pegar no Maximo uma OS com alguém na aba **Designações** e o código da
+   mão de obra (`<LABOR>`, com zeros à esquerda, se houver), e o período da OS.
+
+   ```json
+   {"date_from": "<INÍCIO>", "date_to": "<FIM>", "laborcode": "<LABOR>", "page_size": "5"}
+   ```
+
+   Esperado: `total` > 0 e a OS na lista. Repetir com 1 ano: anotar o tempo.
+   `laborcode=003120` em mai/2024–abr/2025 continua com 59 ou mais.
+5. Voltar o Log Level para `ERROR`. Me avisar o commit instalado.
+
 ## Atualizar instalação existente (2026-11-18: mão de obra planejada)
 
 Pergunta 6 do guia (OS designadas a um colaborador): o consultor disse que a
@@ -43,7 +64,7 @@ designação é a **mão de obra planejada** (WPLABOR). Filtro novo `laborcode`.
    só numa tarefa.
 
    ```json
-   {"date_from": "2025-11-18", "date_to": "2026-11-18", "odelaborcode": "<LABOR>", "page_size": "5"}
+   {"date_from": "2025-11-18", "date_to": "2026-11-18", "laborcode": "<LABOR>", "page_size": "5"}
    ```
 
    Esperado: `total` > 0, só OS com essa mão de obra planejada (na OS ou numa

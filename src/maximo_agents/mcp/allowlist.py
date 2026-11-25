@@ -68,9 +68,10 @@ QUERY_WORK_ORDERS = ToolSpec(
             "generated from these PMs. Find PM numbers with script_querypms."
         ),
         "laborcode": (
-            "Labor codes (workers), comma-separated, max 20: work orders with planned "
-            "labor for these workers, on the work order or on one of its tasks. This is "
-            "how work is designated to a worker. Use the exact labor code; do not guess it."
+            "Labor codes (workers), comma-separated, max 20: work orders where these "
+            "workers are assigned (Assignments) or in planned labor, on the work order or "
+            "on one of its tasks. This is how work is designated to a worker. Use the "
+            "exact labor code, leading zeros included (003120 is not 3120); do not guess it."
         ),
         "text": (
             "Words that must all appear in the work order description (case-insensitive, "

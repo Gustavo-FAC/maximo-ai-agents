@@ -47,7 +47,7 @@ exatos em [INSTALACAO.md](INSTALACAO.md).
 | `crewid` | não | Crew IDs (work order crew/team), comma-separated (max 20). |
 | `worktype` | não | Work types, comma-separated (max 20), e.g. PM,CM,EM. |
 | `pmnum` | não | PM numbers, comma-separated (max 20): work orders generated from these PMs. |
-| `laborcode` | não | Labor codes, comma-separated (max 20): work orders with planned labor for them. |
+| `laborcode` | não | Labor codes, comma-separated (max 20): work orders where they are assigned or in planned labor. |
 | `text` | não | Words that must all appear in the description (max 5 words, 100 chars). |
 | `fields` | não | Fields to return, comma-separated. Default: wonum, siteid, description, status, worktype, wopriority, assetnum, location, persongroup, crewid, reportdate, actstart, actfinish. wonum and siteid are always included. Also pmnum, pmduedate, jpnum, description_longdescription (max 50 per page) and modalidade (client field). |
 | `page` | não | Page number, starting at 1 (default 1). |
@@ -93,6 +93,13 @@ Passo a passo campo a campo em [INSTALACAO.md](INSTALACAO.md).
   dela (`exists`, binds `WPLABOR.LABORCODE`). Não há campo de saída: o filtro basta
   para "OS do colaborador X". O gerente fala o nome; o código da mão de obra ainda
   não tem ferramenta de busca.
+- **Designações** (desde 2026-11-24, usuário: a Itambé designa na aba Designações):
+  `laborcode` também lê **ASSIGNMENT** (na OS ou numa tarefa dela). Quatro `exists`
+  (WPLABOR e ASSIGNMENT × OS e tarefa), cada um com seus binds. Motivo: na
+  homologação, a mão de obra planejada quase sempre tem só a categoria (ex.: `MEC`);
+  dos 13 códigos testados, só `003120` aparece em WPLABOR (59 OS de 2024, MS de
+  calibração externa) e nada depois de nov/2024. Códigos têm zeros à esquerda:
+  `003120` acha, `3120` não.
 - **Campo do cliente** `modalidade` (Itambé, desde 2026-11-17): aceito em `fields`
   só se o atributo existe neste Maximo (dicionário de dados, conferido em execução);
   senão `unknown_field`. Nunca no padrão. Lista curada em `CLIENT_FIELDS`: campo
@@ -141,6 +148,11 @@ script biblioteca). `tests/unit/test_script_common.py` falha se divergir.
       OS 1633892; lista `MSA0_100,MSK1_65` ok; PM inexistente = 0; sem datas →
       `required`; `fields=pmnum,pmduedate,jpnum,modalidade` preenchidos (PF);
       `pmnum` nulo em corretiva (CO/EM).
-- [ ] Mão de obra planejada (`laborcode`, 2026-11-18): 18 parâmetros; só OS com a
-      mão de obra (na OS ou em tarefa); código inexistente = 0 (conferido em
-      2026-11-19). **Falta código real** (aba Plans → Labor).
+- [x] Mão de obra planejada (`laborcode`, 2026-11-18): 18 parâmetros; código
+      inexistente = 0 (2026-11-19). Código real (2026-11-24, via MCP): `003120` =
+      59 OS (mai/2024–abr/2025), OS 1100135 conferida à mão na aba Planos → Mão de
+      obra; `3120` = 0; 12 outros códigos = 0 em 2023–2026.
+- [x] Designações (`laborcode` em ASSIGNMENT, 2026-11-25, via MCP): `003120` =
+      70 OS em mai/2024–abr/2025 (59 WPLABOR + 11 designações) e 7 em
+      mai/2025–abr/2026 (inspeções MS de painel CLP/SDCD, antes 0); OS 1553920
+      conferida à mão na aba Designações; 1 ano responde rápido.
