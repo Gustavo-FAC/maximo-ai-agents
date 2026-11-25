@@ -749,3 +749,24 @@ limite 0 → `null` commitado (`6ed9b57`, sem push), pendente recolar e retestar
 (MCE394) com `upperwarning`/`upperaction` `null`, `lowerwarning` 30, `loweraction` 24.
 MCE393/MCE394 são `metername` (filtro `pointnum` usa 2987/2988). Páginas:
 [[estado-do-projeto]].
+
+## [2026-11-24] feat | laborcode: designações (ASSIGNMENT) além da mão de obra planejada
+Teste via MCP com códigos reais: WPLABOR só tem `003120` (59 OS de 2024, OS 1100135
+conferida à mão); `3120` = 0 (zeros à esquerda contam); nada depois de nov/2024.
+Usuário: a Itambé designa na aba Designações. Filtro `laborcode` passa a ler WPLABOR e
+ASSIGNMENT (OS ou tarefa, 4 `exists`); allowlist, receita (regra 15), subagente, README,
+INSTALACAO. 562 testes. Falta recolar e commitar. Páginas: [[estado-do-projeto]],
+[[perguntas-consultor]], [[guia-levantamento-fase1]].
+
+## [2026-11-24] sessão | Fim: continuar amanhã
+Estado no "Onde paramos" do [[estado-do-projeto]]. Retomar: usuário recola
+`QUERYWORKORDERS` (INSTALACAO, seção 2026-11-24) e manda OS com alguém na aba
+Designações + código; testar (e 1 ano, tempo); commitar. Teste via `mcp/session.py`
+(`open_maximo_session`) se o MCP `maximo` do Claude Code seguir sem abrir.
+
+## [2026-11-25] test | laborcode com designações (ASSIGNMENT) recolado e conferido
+Via MCP: `laborcode=003120` → 70 OS em mai/2024–abr/2025 (59 WPLABOR + 11 designações)
+e 7 em mai/2025–abr/2026 (antes 0; inspeções MS de painel CLP/SDCD). OS 1553920
+conferida à mão pelo usuário na aba Designações. MCP `maximo` do Claude Code abriu.
+Commitado. Páginas: [[estado-do-projeto]], [[ferramentas-maximo]],
+[[perguntas-consultor]], [[guia-levantamento-fase1]].

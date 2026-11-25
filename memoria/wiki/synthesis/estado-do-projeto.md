@@ -4,12 +4,52 @@ type: synthesis
 sources: []
 related: [[mas-mcp-server]], [[allowlist-somente-leitura]], [[automation-scripts-como-ferramentas]], [[chave-api-por-usuario]], [[doc-mcp-server]], [[guia-automation-scripts]]
 created: 2026-10-21
-updated: 2026-11-23
+updated: 2026-11-25
 ---
 
 # Estado do projeto
 
 Ler no início de cada sessão. Atualizar no fim.
+
+## Onde paramos (2026-11-25): `laborcode` com designações validado e commitado
+
+**Feito nesta sessão:**
+- Usuário recolou `QUERYWORKORDERS`. Teste via MCP do Claude Code (MCP `maximo` abriu):
+  `laborcode=003120` → 70 OS em mai/2024–abr/2025 (antes 59: +11 das designações,
+  OS sem tipo, ex. 1129691, 1115295) e 7 em mai/2025–abr/2026 (antes 0: inspeções MS de
+  painel CLP/SDCD em EMAND, ex. 1553920). 1 ano responde rápido.
+- OS 1553920 conferida à mão pelo usuário na aba Designações.
+- 562 testes, Ruff ok. Código e docs commitados.
+
+**Pendente:**
+1. Busca de mão de obra pelo nome continua sem ferramenta (agente pede o código).
+2. Demais pendências: seções abaixo (consultor; perguntas do guia sem ferramenta;
+   rodar `tests/evals/` com a chave do LLM).
+
+## Onde paramos (2026-11-24): `laborcode` com designações (pergunta 6)
+
+**Validado via MCP** (pela sessão do repo; MCP `maximo` do Claude Code não abriu:
+`'url' is not a valid URL`). Antes, chave voltou para PT (BMXAA10147E), corrigida
+pelo usuário.
+- Filtro `laborcode` (WPLABOR) certo: `003120` = 59 OS (mai/2024–abr/2025, 52 de
+  nov/2024, MS de calibração externa, INSTRUM); OS 1100135 conferida à mão pelo
+  usuário. `3120` = 0 (zeros à esquerda contam). Outros 12 códigos do cadastro = 0
+  em 2023–2026; nada em WPLABOR depois de nov/2024 (planejam só a categoria, ex.
+  `MEC`).
+- **Usuário: a Itambé designa na aba Designações (ASSIGNMENT).** Substitui a resposta
+  do consultor ("mão de obra planejada").
+- Feito (**não instalado, não commitado**): `laborcode` lê WPLABOR **e** ASSIGNMENT,
+  na OS ou numa tarefa (4 `exists`, binds `ASSIGNMENT.LABORCODE`); 18 parâmetros,
+  schema igual. Allowlist e receita (regra 15: designações; zeros à esquerda);
+  subagente regenerado; README, INSTALACAO (seção 2026-11-24). 562 testes, Ruff ok.
+
+**Pendente:**
+1. Usuário recolar `QUERYWORKORDERS` (roteiro em INSTALACAO, seção 2026-11-24) e
+   mandar uma OS com alguém na aba Designações + código; testar 1 ano (tempo).
+2. Conferido: commitar código + docs.
+3. Arrumar o `.mcp.json` / variável `MAXIMO_MCP_URL` para o MCP `maximo` abrir no
+   Claude Code.
+4. Busca de mão de obra pelo nome continua sem ferramenta (agente pede o código).
 
 ## Onde paramos (2026-11-19, fim do dia): `QUERYMETERREADINGS`
 

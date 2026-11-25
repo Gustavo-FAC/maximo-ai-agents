@@ -4,7 +4,7 @@ type: synthesis
 sources: [raw/guia-levantamento-fase1-itambe-2026-11-16.docx]
 related: [[guia-levantamento-fase1]], [[itambe-cimentos]], [[estado-do-projeto]]
 created: 2026-11-18
-updated: 2026-11-18
+updated: 2026-11-25
 ---
 
 # Perguntas ao consultor funcional (Itambé)
@@ -32,7 +32,7 @@ pediu para decidirmos.
 | 9 | PMs ficam ativas porque o processo antigo não as fechava; processo novo entrando em produção agora | "MPs vencidas" pela PM não é confiável na homologação. |
 | 10 | Sim, backlog em HH previstas e HH disponíveis | Origem das HH ainda aberta (`estdur` ou mão de obra planejada; HH disponíveis por equipe). |
 | 11 | Não tem campo "setor" | Pergunta 4 sem "setor": responder por equipe, ativo ou location. |
-| 12 | Mão de obra planejada | Filtro `laborcode` (WPLABOR, na OS ou em tarefa) no `QUERYWORKORDERS` (2026-11-18), falta reinstalar. |
+| 12 | Mão de obra planejada; **corrigido pelo usuário em 2026-11-24: aba Designações (ASSIGNMENT)** | Na homologação, WPLABOR quase só tem categoria (código de pessoa só até nov/2024). Filtro `laborcode` lê WPLABOR e ASSIGNMENT (na OS ou em tarefa), funcionando via MCP desde 2026-11-25. |
 | 13 | SR padrão (Maximo/Mobile); grupo proprietário = `ownergroup`; fornecedor na ordem de compra; cadastro em Empresas | Script `QUERYSRS` funcionando via MCP (2026-11-19). Na Itambé o grupo está no campo próprio `itcownergroup` (`ownergroup` vazio); o script lê ele. Manutenção externa pela ordem de compra: 2º passo. |
 | 14 | Alguns em CV, outros em kW, conforme a classificação | Filtro por especificação no `QUERYASSETS` converte CV, kW, HP, W, MW (e V, kV) no SQL; funcionando via MCP (2026-11-19). |
 

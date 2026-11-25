@@ -144,7 +144,8 @@ Cliente piloto: **Itambé Cimentos**.
 - **Perguntas 6, 10, 13-14 do guia** (2026-11-18), instalados e commitados em
   2026-11-19 (`c5b36cb`, `a675bfe`): `QUERYASSETS` filtro por especificação
   (`spec_*`, CV↔kW no SQL) **funcionando via MCP** (40 motores iguais em CV e kW);
-  `QUERYWORKORDERS` filtro `laborcode` (WPLABOR) roda, **falta código real**;
+  `QUERYWORKORDERS` filtro `laborcode` (WPLABOR validado com `003120`; Itambé designa
+  na aba Designações: ASSIGNMENT **funcionando via MCP** desde 2026-11-25);
   `QUERYSRS` (SR) **funcionando via MCP** (busca, histórico, OS geradas); `ownergroup`
   lido de `itcownergroup` (campo próprio da Itambé; `ownergroup` padrão vazio);
   TKSTATUS da Itambé sem owner/ownergroup. SR: NOVO → AGAPROV → EMAND → SOLUC →

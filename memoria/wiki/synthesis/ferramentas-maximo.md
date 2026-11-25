@@ -4,7 +4,7 @@ type: synthesis
 sources: []
 related: [[automation-scripts-como-ferramentas]], [[allowlist-somente-leitura]], [[estado-do-projeto]], [[itambe-cimentos]]
 created: 2026-10-29
-updated: 2026-11-19
+updated: 2026-11-25
 ---
 
 # Ferramentas de dados – plano
@@ -26,7 +26,7 @@ Decisão do usuário (2026-10-29): focar primeiro nas ferramentas feitas por scr
 |---|---|---|---|---|---|
 | 1 | `QUERYASSETS` | ASSET, ASSETANCESTOR, ASSETSPEC | buscar_ativos, histórico do ativo (cadastro), ficha técnica | P0 | funcionando via MCP; filtro por especificação com conversão CV↔kW (pergunta 10) no código (2026-11-18), falta reinstalar |
 | 2 | ~~`QUERYFAILUREREPORTS`~~ | FAILUREREPORT + WORKORDER | consultar_falhas, consultar_falhas_por_ativo | P0 | **cancelado** (Itambé não usa classe de falha) |
-| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16); `description_longdescription` em `fields` (máx 50 por página) funcionando via MCP (2026-11-17); `pmnum` (filtro e campo), `pmduedate`, `jpnum` e `modalidade` (campo do cliente) funcionando via MCP (2026-11-17); filtro `laborcode` (mão de obra planejada, pergunta 6) no código (2026-11-18), falta reinstalar |
+| 3 | `QUERYWORKORDERS` + `text` | WORKORDER | consultar_os, histórico de OS, buscar_os_similares, consultar_backlog | P0 | funcionando, com `text` (2026-10-30); `crewid` (campo + filtro) funcionando via MCP (2026-11-16); `description_longdescription` em `fields` (máx 50 por página) funcionando via MCP (2026-11-17); `pmnum` (filtro e campo), `pmduedate`, `jpnum` e `modalidade` (campo do cliente) funcionando via MCP (2026-11-17); filtro `laborcode` (pergunta 6): mão de obra planejada (WPLABOR, validado 2026-11-24 com `003120`) e designações (ASSIGNMENT, funcionando via MCP desde 2026-11-25) |
 | 4a | `QUERYWOSTATUS` | WOSTATUS (+ WORKORDER) | histórico de status de OS, tempo em status (conta em `analysis/`) | P0 | funcionando via MCP (2026-11-04) |
 | 4b | `QUERYASSETDOWNTIME` | ASSETSTATUS | paradas do ativo (horas, código, OS); MTBF/MTTR/disponibilidade em `analysis/reliability.py` (2026-11-10) | P0 | funcionando via MCP (2026-11-04); pouco dado na homologação |
 | 4c | movimentações (opção) | ASSETTRANS | ativo entre locations | P3 | adiado (uso provável baixo) |
