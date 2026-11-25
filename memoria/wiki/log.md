@@ -770,3 +770,8 @@ e 7 em mai/2025–abr/2026 (antes 0; inspeções MS de painel CLP/SDCD). OS 1553
 conferida à mão pelo usuário na aba Designações. MCP `maximo` do Claude Code abriu.
 Commitado. Páginas: [[estado-do-projeto]], [[ferramentas-maximo]],
 [[perguntas-consultor]], [[guia-levantamento-fase1]].
+
+## [2026-11-25] decisão | Próxima fase: LLM real e portal
+Usuário: testar com LLM real e com o portal no ar. Conta da Anthropic ainda sem
+crédito; `.env` sem `LLM_PROVIDER`/`LLM_MODEL`. Portal não existe (`api/`, `auth/`,
+`audit/` vazios); usuário pediu para não começar ainda. Páginas: [[estado-do-projeto]].

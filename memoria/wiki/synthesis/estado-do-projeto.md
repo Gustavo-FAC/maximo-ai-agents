@@ -21,10 +21,17 @@ Ler no início de cada sessão. Atualizar no fim.
 - OS 1553920 conferida à mão pelo usuário na aba Designações.
 - 562 testes, Ruff ok. Código e docs commitados.
 
+**Próxima fase (usuário, 2026-11-25): LLM real e portal no ar.**
+1. **LLM real:** conta da Anthropic ainda sem crédito. Quando tiver: pôr
+   `LLM_PROVIDER=anthropic` e `LLM_MODEL` no `.env` (hoje só tem `ANTHROPIC_API_KEY`),
+   1 chamada curta de teste, depois `uv run python -m maximo_agents.evals --today <data>`.
+2. **Portal:** não existe ainda (`api/`, `auth/`, `audit/` vazios). Usuário pediu para
+   **não começar** por enquanto. Sugestão dada: MVP local (FastAPI + Jinja/HTMX, login
+   com convite, Argon2id, MFA TOTP, sessão no servidor, chat ligado ao roteador).
+
 **Pendente:**
 1. Busca de mão de obra pelo nome continua sem ferramenta (agente pede o código).
-2. Demais pendências: seções abaixo (consultor; perguntas do guia sem ferramenta;
-   rodar `tests/evals/` com a chave do LLM).
+2. Demais pendências: seções abaixo (consultor; perguntas do guia sem ferramenta).
 
 ## Onde paramos (2026-11-24): `laborcode` com designações (pergunta 6)
 
